@@ -3,82 +3,136 @@
 
 @theme {
   --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
-
   /* Brand palette — extracted from Figma */
-  --color-grape: #40186e; /* deep purple, gradient end */
-  --color-plum: #2b0b4e; /* heading purple (FAQ) */
-  --color-magenta: #f71350; /* gradient start / hot accent */
-  --color-lime: #bce42d; /* primary accent */
-  --color-lime-soft: #ddf196; /* light lime, gradient end */
-  --color-ink: #0d0d0d; /* body text */
+  --color-grape: #40186e;
+  /* deep purple, gradient end */
+  --color-plum: #2b0b4e;
+  /* heading purple (FAQ) */
+  --color-magenta: #f71350;
+  /* gradient start / hot accent */
+  --color-lime: #bce42d;
+  /* primary accent */
+  --color-lime-soft: #ddf196;
+  /* light lime, gradient end */
+  --color-ink: #0d0d0d;
+  /* body text */
   --color-ink-soft: #1a1a1a;
-  --color-smoke: #404040; /* muted meta text */
+  --color-smoke: #404040;
+  /* muted meta text */
   --color-mint: #98e3cf;
   --color-blush: #fa7196;
   --color-lavender: #c3c8e9;
   --color-mauve: #8d74a8;
-  --color-paper: #f5f5f5; /* light section background */
-
+  --color-paper: #f5f5f5;
+  /* light section background */
   /* Type scale — 1:1 with the 1684px Figma artboard */
-  --text-display: 4.625rem; /* 74px hero */
+  --text-display: 4.625rem;
+  /* 74px hero */
   --text-display--line-height: 1.1;
-  --text-h2: 3.8125rem; /* 61px section headings */
+  --text-h2: 3.8125rem;
+  /* 61px section headings */
   --text-h2--line-height: 1.12;
-  --text-h2-lg: 4.25rem; /* 67px statement headings */
+  --text-h2-lg: 4.25rem;
+  /* 67px statement headings */
   --text-h2-lg--line-height: 1.16;
-  --text-lede: 1.6rem; /* 25.6px section ledes */
+  --text-lede: 1.6rem;
+  /* 25.6px section ledes */
   --text-lede--line-height: 1.35;
-  --text-card: 1.7rem; /* 27.3px card titles */
+  --text-card: 1.7rem;
+  /* 27.3px card titles */
   --text-card--line-height: 1.2;
-
   --radius-card: 1.25rem;
 }
 
 /* Radial hero / CTA gradient — exact stops from Figma */
 @utility bg-brand-radial {
-  background: radial-gradient(
-    115% 140% at 78% 110%,
-    #f71350 0%,
-    #c71458 15%,
-    #9e155f 30%,
-    #7f1664 44%,
-    #671768 57%,
-    #54176b 70%,
-    #48186d 82%,
-    #41186e 95%,
-    #40186e 100%
-  );
+  background: radial-gradient(115% 140% at 78% 110%,
+      #f71350 0%,
+      #c71458 15%,
+      #9e155f 30%,
+      #7f1664 44%,
+      #671768 57%,
+      #54176b 70%,
+      #48186d 82%,
+      #41186e 95%,
+      #40186e 100%);
 }
 
 @utility bg-brand-radial-cta {
-  background: radial-gradient(
-    90% 160% at 50% 135%,
-    #f71350 0%,
-    #b3155b 21%,
-    #811663 39%,
-    #5d1769 54%,
-    #47186d 65%,
-    #40186e 71%,
-    #40186e 100%
-  );
+  background: radial-gradient(90% 160% at 50% 135%,
+      #f71350 0%,
+      #b3155b 21%,
+      #811663 39%,
+      #5d1769 54%,
+      #47186d 65%,
+      #40186e 71%,
+      #40186e 100%);
 }
 
 @utility bg-lime-sweep {
-  background: linear-gradient(
-    100deg,
-    #bce42d 0%,
-    #bee532 14%,
-    #c3e744 37%,
-    #cdeb63 64%,
-    #dbf18e 93%,
-    #ddf296 100%
-  );
+  background: linear-gradient(100deg,
+      #bce42d 0%,
+      #bee532 14%,
+      #c3e744 37%,
+      #cdeb63 64%,
+      #dbf18e 93%,
+      #ddf296 100%);
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+/* Keep in-page anchors clear of the fixed header. */
+section[id] {
+  scroll-margin-top: 6.5rem;
+}
+
 body {
   @apply font-sans text-ink antialiased;
+}
+
+/* Infinite logo marquee — the track holds two copies of the logos, so
+   translating it by -50% loops seamlessly. Pauses on hover. */
+@keyframes cs-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.cs-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: cs-marquee 40s linear infinite;
+}
+
+.cs-marquee:hover .cs-marquee-track {
+  animation-play-state: paused;
+}
+
+/* Respect users who ask for less motion: hold every animation still. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .cs-marquee-track {
+    animation: none;
+    justify-content: center;
+  }
+}
+
+[data-grid-component] {
+  --columns-count: 4;
+  --gap: 1rem;
+  --max-width: 1rem;
+
+  --gap-count: calc(var(--columns-count, 3) - 1);
+  --total-gap: calc(var(--gap-count) * var(--gap, 0px));
+  --column-max-width: calc((100% - var(--total-gap)) / (var(--columns-count, 3) + 1));
+  --width: min(100%, max(var(--max-width, 14rem), var(--column-max-width)));
 }

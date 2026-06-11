@@ -1,18 +1,19 @@
-import SiteHeader from '../components/sections/SiteHeader'
-import Hero from '../components/sections/Hero'
-import LogoMarquee from '../components/sections/LogoMarquee'
-import DesignedFor from '../components/sections/DesignedFor'
-import NoHiring from '../components/sections/NoHiring'
-import HighImpact from '../components/sections/HighImpact'
-import FasterOutput from '../components/sections/FasterOutput'
-import Process from '../components/sections/Process'
-import Intelligence from '../components/sections/Intelligence'
-import Testimonials from '../components/sections/Testimonials'
-import Expertise from '../components/sections/Expertise'
-import WorkShowcase from '../components/sections/WorkShowcase'
-import Faq from '../components/sections/Faq'
-import CtaBanner from '../components/sections/CtaBanner'
-import SiteFooter from '../components/sections/SiteFooter'
+import CtaBanner from "../sections/CtaBanner";
+import DesignedFor from "../sections/DesignedFor";
+import Expertise from "../sections/Expertise";
+import Faq from "../sections/Faq";
+import FasterOutput from "../sections/FasterOutput";
+import Hero from "../sections/Hero";
+import HighImpact from "../sections/HighImpact";
+import Intelligence from "../sections/Intelligence";
+import LogoMarquee from "../sections/LogoMarquee";
+import NoHiring from "../sections/NoHiring";
+import Process from "../sections/Process";
+import SiteFooter from "../sections/SiteFooter";
+import SiteHeader from "../sections/SiteHeader";
+import Testimonials from "../sections/Testimonials";
+import WorkShowcase from "../sections/WorkShowcase";
+
 
 export default function Home() {
   return (
