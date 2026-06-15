@@ -2,9 +2,9 @@ import Container from '../components/container'
 import Em from '../components/em'
 
 const testimonials = [
-  ['testimonial-avatar-1.png', 'testimonial-logo-1.png', 'Anja Niewoudt', 'Senior Designer, Onlvee Engineering'],
-  ['testimonial-avatar-2.png', 'testimonial-logo-2.png', 'Michael Reddy', 'Marketing Lead, Sojern'],
-  ['testimonial-avatar-3.png', 'testimonial-logo-3.png', 'Tara Naidoo', 'Growth Manager, Finmap'],
+  ['placeholder.svg', 'brands/onvlee-engineering.svg', 'Anja Niewoudt', 'Senior Designer, Onvlee Engineering'],
+  ['placeholder.svg', 'brands/sojern.svg', 'Michael Reddy', 'Marketing Lead, Sojern'],
+  ['placeholder.svg', 'brands/finmap.svg', 'Tara Naidoo', 'Growth Manager, Finmap'],
 ]
 
 export default function Testimonials() {

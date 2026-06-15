@@ -3,12 +3,12 @@ import Container from '../components/container'
 import Em from '../components/em'
 
 const tiles = [
-  ['hero-tile-tl.png', 'Brand campaign shown on a phone'],
-  ['hero-tile-tc.png', 'Styled food photography'],
-  ['hero-tile-tr.png', 'Laptop with presentation creative'],
-  ['hero-tile-bl.png', 'Reddit campaign creative'],
-  ['hero-tile-bc.png', 'Product launch kit'],
-  ['hero-tile-br.png', 'Jewellery campaign image'],
+  ['placeholder.svg', 'Brand campaign shown on a phone'],
+  ['placeholder.svg', 'Styled food photography'],
+  ['placeholder.svg', 'Laptop with presentation creative'],
+  ['placeholder.svg', 'Reddit campaign creative'],
+  ['placeholder.svg', 'Product launch kit'],
+  ['placeholder.svg', 'Jewellery campaign image'],
 ]
 
 export default function Hero() {
@@ -27,7 +27,7 @@ export default function Hero() {
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-7">
           {tiles.map(([src, alt], index) => (
             <img
-              key={src}
+              key={alt}
               src={`/images/${src}`}
               alt={alt}
               className={`aspect-square w-full rounded-card object-cover shadow-2xl shadow-black/20 ${index === 1 || index === 4 ? 'md:translate-y-16' : ''}`}

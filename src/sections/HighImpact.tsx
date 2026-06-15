@@ -18,7 +18,7 @@ export default function HighImpact() {
           <p className="mt-8 max-w-[620px] text-2xl leading-snug">Launch standout campaigns and content that perform on every platform.</p>
           <Button href="#contact" className="mt-10">Book a Demo</Button>
         </div>
-        <img src="/images/highimpact-mockup.png" alt="Montage of creative across platforms" className="w-full rounded-lg object-cover" />
+        <img src="/images/placeholder.svg" alt="Montage of creative across platforms" className="w-full rounded-lg object-cover" />
       </Container>
     </section>
   )

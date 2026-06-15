@@ -20,7 +20,7 @@ export default function DesignedFor() {
           </p>
           <Button href="#contact" className="mt-10">Book a Demo</Button>
         </div>
-        <img src="/images/designedfor-photo.png" alt="Marketing professional working from a chair" className="w-full rounded-card object-cover" />
+        <img src="/images/placeholder.svg" alt="Marketing professional working from a chair" className="w-full rounded-card object-cover" />
       </div>
     </Section>
   )

@@ -3,12 +3,12 @@ import Container from '../components/container'
 import Em from '../components/em'
 
 const work = [
-  ['work-tile-1.png', 'Dried Fruit South Africa', 'Motion Design, Social Media Creative, Ad Creative, Video Production', 'lg:col-span-2'],
-  ['work-tile-2.png', 'DuToit Agri', 'Motion Design, Social Media Creative, Ad Creative', ''],
-  ['work-tile-3.png', 'CherryTime', 'Motion Design, Social Media Creative, Ad Creative, Video Production', ''],
-  ['work-tile-4.png', 'Onvlee Engineering', 'Motion Design, Social Media Creative, Ad Creative', ''],
-  ['work-tile-5.png', 'Holiday', 'Motion Design, Social Media Creative, Ad Creative', ''],
-  ['work-tile-6.png', 'Daniel Wellington', 'Motion Design, Social Media Creative, Ad Creative', 'lg:col-span-2'],
+  ['placeholder.svg', 'Dried Fruit South Africa', 'Motion Design, Social Media Creative, Ad Creative, Video Production', 'lg:col-span-2'],
+  ['placeholder.svg', 'DuToit Agri', 'Motion Design, Social Media Creative, Ad Creative', ''],
+  ['placeholder.svg', 'CherryTime', 'Motion Design, Social Media Creative, Ad Creative, Video Production', ''],
+  ['placeholder.svg', 'Onvlee Engineering', 'Motion Design, Social Media Creative, Ad Creative', ''],
+  ['placeholder.svg', 'Holiday', 'Motion Design, Social Media Creative, Ad Creative', ''],
+  ['placeholder.svg', 'Daniel Wellington', 'Motion Design, Social Media Creative, Ad Creative', 'lg:col-span-2'],
 ]
 
 export default function WorkShowcase() {
@@ -27,7 +27,7 @@ export default function WorkShowcase() {
         <div className="mt-20 grid gap-x-6 gap-y-12 lg:grid-cols-4">
           {work.map(([src, title, meta, span]) => (
             <article key={title} className={span}>
-              <img src={`/images/${src}`} alt={`${title} project`} className="aspect-[1.95/1] w-full rounded-lg object-cover" />
+              <img src={`/images/${src}`} alt={`${title} project`} className="h-60 w-full rounded-lg object-cover sm:h-72 lg:h-[320px]" />
               <h3 className="mt-7 text-3xl font-medium">{title}</h3>
               <p className="mt-3 text-sm text-smoke">{meta}</p>
             </article>

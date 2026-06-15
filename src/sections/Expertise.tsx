@@ -11,7 +11,7 @@ const services = [
 export default function Expertise() {
   return (
     <section className="grid bg-black text-white lg:grid-cols-2">
-      <img src="/images/expertise-photo.png" alt="Creative team walking outdoors" className="h-full min-h-[520px] w-full object-cover" />
+      <img src="/images/placeholder.svg" alt="Creative team walking outdoors" className="h-full min-h-[520px] w-full object-cover" />
       <div className="flex items-center py-20 md:py-28">
         <Container className="max-w-[760px] lg:px-16">
           <Eyebrow tone="light">A complete creative service</Eyebrow>

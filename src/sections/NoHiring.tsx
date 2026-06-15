@@ -4,10 +4,10 @@ import Em from '../components/em'
 import Eyebrow from '../components/eyebrow'
 
 const roles = [
-  ['avatar-pm.png', 'Project Manager'],
-  ['avatar-wd.png', 'Web Developer'],
-  ['avatar-gd.png', 'Graphic Designer'],
-  ['avatar-anim.png', 'Animator'],
+  ['placeholder.svg', 'Project Manager'],
+  ['placeholder.svg', 'Web Developer'],
+  ['placeholder.svg', 'Graphic Designer'],
+  ['placeholder.svg', 'Animator'],
 ]
 
 export default function NoHiring() {
@@ -23,17 +23,11 @@ export default function NoHiring() {
               </div>
             ))}
           </div>
-          <div className="mt-8 grid grid-cols-5 gap-3">
-            <img src="/images/nohiring-1.png" alt="Beauty product campaign" className="col-span-2 row-span-2 h-full rounded-lg object-cover" />
-            <div className="flex aspect-square items-center justify-center rounded-lg bg-white text-5xl font-serif">Aa</div>
-            <div className="col-span-2 flex items-center justify-center gap-3 rounded-lg bg-paper">
-              <span className="h-20 w-20 rounded-full bg-lavender" />
-              <span className="h-20 w-20 rounded-full bg-mauve" />
-              <span className="h-20 w-20 rounded-full bg-black" />
-            </div>
-            <div className="col-span-2 rounded-lg bg-white p-8 text-3xl font-black uppercase tracking-tight">Glossy Locks</div>
-            <img src="/images/nohiring-2.png" alt="Hair campaign visual" className="col-span-3 row-span-2 h-full rounded-lg object-cover" />
-          </div>
+          <img
+            src="/images/placeholder.svg"
+            alt="Campaign creative produced by a Creative Seat specialist team"
+            className="mt-4 aspect-[4/3] w-full rounded-card object-cover"
+          />
         </div>
         <div>
           <Eyebrow>Instant access to the skills you need</Eyebrow>
