@@ -1,11 +1,17 @@
 import Container from '../components/container'
 
+const socials = [
+  { name: 'Facebook', icon: '/images/icons/facebook.svg' },
+  { name: 'Instagram', icon: '/images/icons/instagram.svg' },
+  { name: 'YouTube', icon: '/images/icons/youtube.svg' },
+]
+
 export default function SiteFooter() {
   return (
     <footer className="bg-black py-14 text-white">
-      <Container className="flex flex-col gap-10 md:flex-row md:items-center md:justify-between">
-        <a href="/" className="text-4xl font-light tracking-wide" aria-label="Creative Seat home">
-          <strong className="font-extrabold">Creative</strong> Seat
+      <Container className="flex flex-row items-center justify-between gap-10 landscape:flex-col landscape:items-start">
+        <a href="/" aria-label="Creative Seat home">
+          <img src="/images/brands/creative-seat.svg" alt="Creative Seat" className="h-9 w-auto" />
         </a>
         <nav className="flex flex-wrap gap-10 text-sm text-white/70" aria-label="Footer navigation">
           <a href="#services" className="hover:text-lime">Services</a>
@@ -13,13 +19,13 @@ export default function SiteFooter() {
           <a href="#contact" className="hover:text-lime">Pricing</a>
         </nav>
         <div className="flex items-center gap-4">
-          {['f', '◎', '▶'].map((label) => (
-            <a key={label} href="#contact" className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-lg font-bold text-black" aria-label={`Social link ${label}`}>
-              {label}
+          {socials.map((social) => (
+            <a key={social.name} href="#contact" className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 transition hover:border-lime hover:bg-white/5" aria-label={social.name}>
+              <img src={social.icon} alt="" className="h-5 w-5" />
             </a>
           ))}
           <span className="ml-6 text-sm text-white/70">A product of</span>
-          <span className="text-3xl font-black tracking-tighter">11&1</span>
+          <img src="/images/brands/11and1.svg" alt="11&1" className="h-7 w-auto" />
         </div>
       </Container>
     </footer>

@@ -18,11 +18,9 @@ import WorkShowcase from "../sections/WorkShowcase";
 export default function Home() {
   return (
     <>
-      <div className="relative bg-brand-radial">
-        <SiteHeader />
-        <Hero />
-      </div>
+      <SiteHeader />
       <main>
+        <Hero />
         <LogoMarquee />
         <DesignedFor />
         <NoHiring />
