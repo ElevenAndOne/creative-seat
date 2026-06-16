@@ -1,0 +1,84 @@
+[
+  {
+    "title": "Daniel Wellington",
+    "category": "Fashion & Lifestyle",
+    "description": "Always-on motion and social creative that keeps a global lifestyle brand consistent across every market and campaign moment.",
+    "tags": ["Motion Design", "Social Media Creative", "Ad Creative"],
+    "cover": "/images/projects/daniel-wellington.avif",
+    "images": ["/images/projects/daniel-wellington.avif"],
+    "wide": true
+  },
+  {
+    "title": "Holiday",
+    "category": "Travel & Leisure",
+    "description": "A bright, flexible campaign toolkit that scales from hero key visuals to dozens of localized social and display variants.",
+    "tags": ["Campaign", "Social Media Creative", "Key Visuals"],
+    "cover": "/images/projects/holiday.avif",
+    "images": ["/images/projects/holiday.avif", "/images/projects/holiday-cranberry.avif"]
+  },
+  {
+    "title": "DuToit Agri",
+    "category": "Agriculture",
+    "description": "A refreshed brand identity and packaging language that brings a century-old agribusiness into a modern, premium shelf presence.",
+    "tags": ["Brand Identity", "Packaging Design"],
+    "cover": "/images/projects/dutoit.avif",
+    "images": ["/images/projects/dutoit.avif", "/images/projects/dutoit-2.avif"]
+  },
+  {
+    "title": "Sojern",
+    "category": "Marketing Technology",
+    "description": "A scalable presentation and content system that turns dense travel-marketing data into clear, persuasive stories.",
+    "tags": ["Presentation Design", "Illustration"],
+    "cover": "/images/projects/sojern.avif",
+    "images": ["/images/projects/sojern.avif"]
+  },
+  {
+    "title": "Finmap",
+    "category": "Fintech",
+    "description": "A crisp product brand and landing system that makes a complex finance tool feel simple, trustworthy, and fast.",
+    "tags": ["Web & Landing Pages", "Brand Identity"],
+    "cover": "/images/projects/finmap.avif",
+    "images": ["/images/projects/finmap.avif"]
+  },
+  {
+    "title": "Zonnehaven",
+    "category": "Real Estate",
+    "description": "A calm, sun-drenched brand world and site for a coastal living development — built to feel as warm as the place itself.",
+    "tags": ["Brand Identity", "Web Design"],
+    "cover": "/images/projects/zonnehaven.avif",
+    "images": ["/images/projects/zonnehaven.avif", "/images/projects/zonnehaven-2.avif"],
+    "wide": true
+  },
+  {
+    "title": "Voss Allan",
+    "category": "Fashion & Lifestyle",
+    "description": "A bold seasonal campaign and social system for a contemporary apparel label, art-directed to own the feed.",
+    "tags": ["Campaign", "Social Media Creative", "Art Direction"],
+    "cover": "/images/projects/voss-allan.avif",
+    "images": ["/images/projects/voss-allan.avif"]
+  },
+  {
+    "title": "Sterling Bel",
+    "category": "Luxury & Jewellery",
+    "description": "An elevated identity and packaging suite that gives a fine-jewellery house a quietly confident, timeless presence.",
+    "tags": ["Brand Identity", "Packaging Design"],
+    "cover": "/images/projects/sterling-bel.avif",
+    "images": ["/images/projects/sterling-bel.avif"]
+  },
+  {
+    "title": "Sunworx",
+    "category": "Renewable Energy",
+    "description": "A bright, optimistic brand and web presence that makes going solar feel effortless and genuinely exciting.",
+    "tags": ["Web Design", "Motion Design"],
+    "cover": "/images/projects/sunworx.avif",
+    "images": ["/images/projects/sunworx.avif"]
+  },
+  {
+    "title": "Sports Recovery Hub",
+    "category": "Health & Fitness",
+    "description": "A high-energy brand and landing system for a recovery studio, built to convert curious athletes into members.",
+    "tags": ["Web & Landing Pages", "Brand Identity"],
+    "cover": "/images/projects/sports-recovery-hub.avif",
+    "images": ["/images/projects/sports-recovery-hub.avif"]
+  }
+]

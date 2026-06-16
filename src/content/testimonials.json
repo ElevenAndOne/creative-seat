@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Anja Niewoudt",
+    "subscript": "Senior Designer, Onvlee Engineering",
+    "testimony": "Creative Seat has fundamentally changed how we approach creative production. Instead of managing freelancers and juggling timelines, we have immediate access to the specialist expertise we need through one simple workflow.",
+    "logo": "/images/brands/onvlee-engineering.svg",
+    "avatar": "/images/placeholder.svg"
+  },
+  {
+    "name": "Michael Reddy",
+    "subscript": "Marketing Lead, Sojern",
+    "testimony": "The output is consistently on-brand and the turnaround is unreal. It feels less like outsourcing and more like an extension of our own team that just happens to scale on demand.",
+    "logo": "/images/brands/sojern.svg",
+    "avatar": "/images/placeholder.svg"
+  },
+  {
+    "name": "Tara Naidoo",
+    "subscript": "Growth Manager, Finmap",
+    "testimony": "We went from a constant production bottleneck to shipping campaigns faster than we ever could in-house. The quality bar never drops, no matter the volume.",
+    "logo": "/images/brands/finmap.svg",
+    "avatar": "/images/placeholder.svg"
+  }
+]
