@@ -1,5 +1,5 @@
-import { cn } from "../utils/cn";
-import { cv } from "../utils/cv";
+import { cn } from "../../utils/cn";
+import { cv } from "../../utils/cv";
 
 type GridProps = {
     children: React.ReactNode;
