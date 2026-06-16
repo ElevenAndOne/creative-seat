@@ -1,38 +1,35 @@
-import Container from '../components/container'
+import { Section } from '../components/base/section'
 import Em from '../components/em'
-
-const testimonials = [
-  ['placeholder.svg', 'brands/onvlee-engineering.svg', 'Anja Niewoudt', 'Senior Designer, Onvlee Engineering'],
-  ['placeholder.svg', 'brands/sojern.svg', 'Michael Reddy', 'Marketing Lead, Sojern'],
-  ['placeholder.svg', 'brands/finmap.svg', 'Tara Naidoo', 'Growth Manager, Finmap'],
-]
+import { testimonials } from '../content'
 
 export default function Testimonials() {
   return (
-    <section className="bg-paper py-20 md:py-32">
-      <Container>
-        <p className="text-center font-medium uppercase tracking-[0.18em]">Redefining success. Together.</p>
-        <h2 className="mt-8 text-center text-5xl font-light leading-tight md:text-h2">
-          Why teams <Em className="text-grape">choose</Em> Creative Seat
-        </h2>
-        <div className="mt-20 grid gap-6 lg:grid-cols-3">
-          {testimonials.map(([avatar, logo, name, role]) => (
-            <article key={name} className="flex min-h-[520px] flex-col rounded-card border-2 border-grape bg-white p-8 md:p-10">
-              <div className="flex items-center gap-7">
-                <img src={`/images/${avatar}`} alt="" className="h-24 w-24 rounded-lg object-cover" />
-                <div>
-                  <h3 className="text-2xl font-medium">{name}</h3>
-                  <p className="mt-1 text-sm text-smoke">{role}</p>
-                </div>
+    <Section className="bg-mist" pad="md">
+      <p className="text-center font-medium uppercase tracking-[0.18em]">Redefining success. Together.</p>
+      <h2 className="mt-bg text-center text-h2 font-light">
+        Why teams <Em className="text-grape">choose</Em> Creative Seat
+      </h2>
+
+      {/* Desktop: static 3-up grid. Tablet & below: an edge-to-edge horizontal
+          snap carousel — it breaks out of the container margin so cards can
+          scroll all the way to the screen edges (no container clipping). */}
+      <div className="mt-xlg grid grid-cols-3 gap-bg [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden tablet:-mx-[var(--container-margin)] tablet:flex tablet:snap-x tablet:snap-mandatory tablet:overflow-x-auto tablet:px-[var(--container-margin)] tablet:pb-md">
+        {testimonials.map((t) => (
+          <article key={t.name} className="flex min-h-[32rem] shrink-0 snap-start flex-col rounded-card border-2 border-grape bg-white p-xlg tablet:w-[60%] landscape:w-[85%]">
+            <div className="flex items-center gap-bg">
+              {t.avatar && <img src={t.avatar} alt="" className="h-24 w-24 rounded-lg object-cover" />}
+              <div>
+                <h3 className="text-2xl font-medium">{t.name}</h3>
+                <p className="mt-xxsm text-sm text-smoke">{t.subscript}</p>
               </div>
-              <p className="mt-14 max-w-[420px] text-lg leading-relaxed text-ink-soft">
-                "CreativeSeat has fundamentally changed how we approach creative production. Instead of managing freelancers, juggling timelines, and worrying about capacity, we now have immediate access to the specialist expertise we need through one simple workflow."
-              </p>
-              <img src={`/images/${logo}`} alt="" className="mt-auto max-h-10 w-fit object-contain opacity-75" />
-            </article>
-          ))}
-        </div>
-      </Container>
-    </section>
+            </div>
+            <p className="mt-xxlg max-w-[26rem] text-lg leading-relaxed text-ink-soft">
+              "{t.testimony}"
+            </p>
+            <img src={t.logo} alt="" className="mt-auto max-h-10 w-fit object-contain opacity-75" />
+          </article>
+        ))}
+      </div>
+    </Section>
   )
 }

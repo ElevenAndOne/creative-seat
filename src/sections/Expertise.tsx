@@ -1,33 +1,44 @@
-import Container from '../components/container'
 import Em from '../components/em'
 import Eyebrow from '../components/eyebrow'
 
-const services = [
-  'Ad Creative', 'Social Assets', 'Video Production', 'Photography', 'Motion Graphics', 'Presentations',
-  'Web + UI Design', 'Illustration', 'Apps + Software', 'Brand Development', 'Email Design', 'Copywriting',
-  'Campaign Strategy', 'AI Assisted Creative',
+// [label, chip styling] — mix of filled and outlined pills per the design.
+const services: [string, string][] = [
+  ['Ad Creative', 'bg-white text-black'],
+  ['Social Assets', 'border border-mint text-mint'],
+  ['Video Production', 'border border-lime text-lime'],
+  ['photography', 'border border-blush text-blush'],
+  ['Motion Graphics', 'bg-grape text-white'],
+  ['Presentations', 'border border-white/70 text-white'],
+  ['Web + UI Design', 'bg-lime text-black'],
+  ['Illustration', 'border border-white/40 text-white/60'],
+  ['Apps + Software', 'bg-lavender text-plum'],
+  ['Brand Development', 'bg-magenta text-white'],
+  ['Email Design', 'border border-white/70 text-white'],
+  ['Copywriting', 'border border-lavender text-lavender'],
+  ['Campaign Strategy', 'border border-lavender text-white'],
+  ['AI Assisted Creative', 'border border-lime text-lime'],
 ]
 
 export default function Expertise() {
   return (
-    <section className="grid bg-black text-white lg:grid-cols-2">
-      <img src="/images/placeholder.svg" alt="Creative team walking outdoors" className="h-full min-h-[520px] w-full object-cover" />
-      <div className="flex items-center py-20 md:py-28">
-        <Container className="max-w-[760px] lg:px-16">
+    <section className="relative grid grid-cols-2 bg-black text-white tablet:grid-cols-1">
+      <img src="/images/placeholder.svg" alt="Creative team walking outdoors" className="h-full min-h-[32rem] w-full object-cover" />
+      <div className="flex items-center" style={{ paddingBlock: 'var(--section-pad-md)' }}>
+        <div className="mx-auto w-full max-w-[47.5rem] px-xxlg tablet:px-[var(--container-margin)]">
           <Eyebrow tone="light">A complete creative service</Eyebrow>
-          <h2 className="mt-10 text-5xl font-light leading-tight md:text-h2">Expertise <Em className="text-lime">on demand</Em></h2>
-          <p className="mt-8 max-w-[640px] text-2xl leading-snug text-white/90">
+          <h2 className="mt-xlg text-h2 font-light">Expertise <Em className="text-lime">on demand</Em></h2>
+          <p className="mt-xbg max-w-[40rem] text-2xl leading-snug text-white/90">
             One subscription. One workflow. Access every service you need to support your campaigns, launches, and ongoing content production.
           </p>
-          <div className="mt-16 flex flex-wrap gap-3">
-            {services.map((service, i) => (
-              <span key={service} className={`rounded-full border px-5 py-2 text-lg ${i % 5 === 0 ? 'bg-white text-black' : i % 5 === 1 ? 'border-mint text-mint' : i % 5 === 2 ? 'border-lime text-lime' : i % 5 === 3 ? 'border-magenta text-blush' : 'border-white/70 text-white'}`}>
-                {service}
+          <div className="mt-xxlg flex flex-wrap gap-sm">
+            {services.map(([label, cls]) => (
+              <span key={label} className={`rounded-full px-5 py-2 text-lg ${cls}`}>
+                {label}
               </span>
             ))}
-            <span className="px-2 py-2 text-lg">and more...</span>
+            <span className="px-2 py-2 text-lg text-white/70">and more...</span>
           </div>
-        </Container>
+        </div>
       </div>
     </section>
   )

@@ -1,4 +1,4 @@
-import Container from '../components/container'
+import { Section } from '../components/base/section'
 import Em from '../components/em'
 
 const steps = [
@@ -10,25 +10,23 @@ const steps = [
 
 export default function Process() {
   return (
-    <section className="bg-paper py-20 md:py-32">
-      <Container>
-        <p className="text-center font-medium uppercase tracking-[0.18em]">A simpler way to work</p>
-        <h2 className="mx-auto mt-8 max-w-[780px] text-center text-5xl font-light leading-tight md:text-h2">
-          Move <Em className="text-grape">effortlessly</Em> from brief to launch.
-        </h2>
-        <div className="mt-20 grid gap-12 rounded-card bg-lime-soft p-8 md:grid-cols-2 md:p-20">
-          {steps.map(([icon, title, subtitle, body]) => (
-            <article key={title} className="grid gap-6 sm:grid-cols-[86px_1fr]">
-              <img src={`/images/${icon}`} alt="" className="h-20 w-20 rounded-lg" />
-              <div>
-                <h3 className="text-4xl font-light text-grape">{title}</h3>
-                <p className="-mt-1 text-2xl font-medium">{subtitle}</p>
-                <p className="mt-8 max-w-[500px] leading-relaxed">{body}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </Container>
-    </section>
+    <Section pad="md">
+      <p className="text-center font-medium uppercase tracking-[0.18em]">A simpler way to work</p>
+      <h2 className="mx-auto mt-bg max-w-[49rem] text-center text-h2 font-light">
+        Move <Em className="text-grape">effortlessly</Em> from brief to launch.
+      </h2>
+      <div className="mt-xxlg grid grid-cols-2 gap-xlg rounded-card bg-lime-soft p-xxxlg landscape:grid-cols-1 landscape:p-xbg">
+        {steps.map(([icon, title, subtitle, body]) => (
+          <article key={title} className="grid grid-cols-[86px_1fr] gap-bg portrait:grid-cols-1">
+            <img src={`/images/${icon}`} alt="" className="h-20 w-20 rounded-lg" />
+            <div>
+              <h3 className="text-h3 font-light text-grape">{title}</h3>
+              <p className="-mt-1 text-2xl font-medium">{subtitle}</p>
+              <p className="mt-xbg max-w-[32rem] leading-relaxed">{body}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </Section>
   )
 }

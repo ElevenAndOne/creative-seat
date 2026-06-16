@@ -1,6 +1,6 @@
 import Accordion from '../components/accordion'
 import Button from '../components/autton'
-import Container from '../components/container'
+import { Section } from '../components/base/section'
 
 const items = [
   {
@@ -27,14 +27,12 @@ const items = [
 
 export default function Faq() {
   return (
-    <section id="resources" className="bg-paper py-20 md:py-28">
-      <Container className="grid gap-12 lg:grid-cols-[0.8fr_1fr]">
-        <div>
-          <h2 className="max-w-[430px] text-5xl font-light leading-tight text-grape md:text-h2">Frequently asked questions</h2>
-          <Button href="#contact" variant="black" className="mt-10">Get In Touch</Button>
-        </div>
-        <Accordion items={items} />
-      </Container>
-    </section>
+    <Section id="resources" className="bg-mist" pad="md" innerClassName="grid grid-cols-[0.8fr_1fr] gap-xlg tablet:grid-cols-1">
+      <div>
+        <h2 className="max-w-[28rem] text-h2 font-light text-grape">Frequently asked questions</h2>
+        <Button href="#contact" variant="black" className="mt-xlg">Get In Touch</Button>
+      </div>
+      <Accordion items={items} />
+    </Section>
   )
 }

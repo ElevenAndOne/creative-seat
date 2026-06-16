@@ -1,24 +1,43 @@
-import { Section } from "../components/section";
+import { Section } from '../components/base/section'
+import Container from '../components/container'
+import { logos } from '../content'
+
+// Two copies of the list sit on the track; the CSS animation translates it by
+// -50%, so the second copy seamlessly takes the first's place as it loops.
+const track = [...logos, ...logos]
 
 export default function LogoMarquee() {
   return (
-    <Section>
-      <div className="flex justify-center items-center gap-12 sm:gap-16">
-        <BrandLogo src='/images/brands/cherry-time.svg' />
-        <BrandLogo src='/images/brands/dried-fruit-sa.svg' />
-        <BrandLogo src='/images/brands/dutoit.svg' />
-        <BrandLogo src='/images/brands/finmap.svg' />
-        <BrandLogo src='/images/brands/holiday.svg' />
-        <BrandLogo src='/images/brands/leva-foundation.svg' />
-        <BrandLogo src='/images/brands/onvlee-engineering.svg' />
-        <BrandLogo src='/images/brands/sojern.svg' />
+    <Section bleed pad="sm" className="bg-mist">
+      <Container>
+        <h2 className="text-center text-h5 font-light">Creative partner to worldwide brands</h2>
+      </Container>
+      <div
+        className="cs-marquee relative mt-xlg w-full overflow-hidden [--edge:10%] [-webkit-mask-image:linear-gradient(to_right,transparent,#000_var(--edge),#000_calc(100%-var(--edge)),transparent)] [mask-image:linear-gradient(to_right,transparent,#000_var(--edge),#000_calc(100%-var(--edge)),transparent)] landscape:[--edge:7%]"
+      >
+        <div className="cs-marquee-track">
+          {track.map((logo, i) => (
+            <BrandLogo
+              key={i}
+              src={logo.src}
+              name={logo.name}
+              duplicate={i >= logos.length}
+            />
+          ))}
+        </div>
       </div>
     </Section>
   )
 }
 
-function BrandLogo({ src, alt }: { src: string; alt?: string }) {
+function BrandLogo({ src, name, duplicate }: { src: string; name: string; duplicate: boolean }) {
   return (
-    <img src={src} alt={alt} className="aspect-3/1 w-30 shrink-0 object-contain opacity-70 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0" />
+    <div className="flex shrink-0 items-center mx-11 landscape:mx-7" aria-hidden={duplicate || undefined}>
+      <img
+        src={src}
+        alt={duplicate ? '' : name}
+        className="h-10 w-auto object-contain opacity-60 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0 landscape:h-6"
+      />
+    </div>
   )
 }
