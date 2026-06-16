@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 
 export interface AccordionItem {
   question: string
@@ -7,7 +8,8 @@ export interface AccordionItem {
 
 /**
  * FAQ disclosure list — heading row with a "+" toggle and a hairline rule
- * between items, per the Figma FAQ section. The answer slides open.
+ * between items, per the Figma FAQ section. The answer slides open (height +
+ * fade) and the icon rotates into an "×".
  */
 export default function Accordion({
   items,
@@ -17,6 +19,7 @@ export default function Accordion({
   defaultOpen?: number | null
 }) {
   const [open, setOpen] = useState<number | null>(defaultOpen)
+  const reduce = useReducedMotion()
 
   return (
     <div>
@@ -33,16 +36,27 @@ export default function Accordion({
               <span className="text-2xl font-medium leading-snug">{item.question}</span>
               <span
                 aria-hidden
-                className={`mt-1 shrink-0 text-2xl font-light transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}
+                className={`mt-0.5 shrink-0 text-4xl font-light leading-none transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}
               >
                 +
               </span>
             </button>
-            {isOpen && item.answer && (
-              <p className="-mt-2 max-w-[510px] pb-7 text-base leading-relaxed text-ink">
-                {item.answer}
-              </p>
-            )}
+            <AnimatePresence initial={false}>
+              {isOpen && item.answer && (
+                <motion.div
+                  key="answer"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: reduce ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] }}
+                  className="overflow-hidden"
+                >
+                  <p className="-mt-2 max-w-[510px] pb-7 text-base leading-relaxed text-ink">
+                    {item.answer}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )
       })}

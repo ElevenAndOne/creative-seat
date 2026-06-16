@@ -1,82 +1,161 @@
 @import '@fontsource-variable/inter';
 @import 'tailwindcss';
 
+/* =============================================================================
+   Design tokens — mirrored from the Creative Seat system on
+   creative-seat.webflow.io. Everything downstream (components + sections)
+   should consume these, never raw hex / magic numbers.
+   ========================================================================== */
 @theme {
   --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
-  /* Brand palette — extracted from Figma */
-  --color-grape: #40186e;
-  /* deep purple, gradient end */
-  --color-plum: #2b0b4e;
-  /* heading purple (FAQ) */
-  --color-magenta: #f71350;
-  /* gradient start / hot accent */
-  --color-lime: #bce42d;
-  /* primary accent */
+
+  /* ---- Brand scale ---- */
+  --color-brand-50: #bce42d;  /* lime   */
+  --color-brand-100: #40186e; /* grape  */
+  --color-brand-200: #f71350; /* magenta*/
+  --color-brand-300: #5f932c; /* leaf   */
+  --color-brand-400: #39561c; /* moss   */
+  --color-brand-500: #1a230f; /* seed   */
+
+  /* ---- Neutral scale ---- */
+  --color-neutral-50: #fcfcfd;
+  --color-neutral-100: #f1f2f5;
+  --color-neutral-200: #ccd0d6;
+  --color-neutral-300: #616873;
+  --color-neutral-400: #313a46;
+  --color-neutral-500: #0f131a;
+
+  /* ---- Secondary / utility ---- */
+  --color-blue-50: #f3f9ff;
+  --color-blue-100: #cae6fe;
+  --color-blue-200: #77c4fd;
+  --color-blue-300: #1d89f6;
+  --color-blue-400: #0057ca;
+  --color-blue-500: #0f274b;
+  --color-error: #ec3d33;
+  --color-teal: #2a9d8f;
+
+  /* ---- Semantic aliases (keep class names readable) ---- */
+  --color-lime: var(--color-brand-50);
+  --color-grape: var(--color-brand-100);
+  --color-magenta: var(--color-brand-200);
+  --color-ink: var(--color-neutral-500);
+  --color-ink-soft: var(--color-neutral-400);
+  --color-smoke: var(--color-neutral-300);
+  --color-paper: var(--color-neutral-100);
+  --color-mist: #e6e6e6; /* light-gray section background */
+
+  /* ---- Extended accents (cards / chips) ---- */
   --color-lime-soft: #ddf196;
-  /* light lime, gradient end */
-  --color-ink: #0d0d0d;
-  /* body text */
-  --color-ink-soft: #1a1a1a;
-  --color-smoke: #404040;
-  /* muted meta text */
   --color-mint: #98e3cf;
   --color-blush: #fa7196;
   --color-lavender: #c3c8e9;
-  --color-mauve: #8d74a8;
-  --color-paper: #f5f5f5;
-  /* light section background */
-  /* Type scale — 1:1 with the 1684px Figma artboard */
-  --text-display: 4.625rem;
-  /* 74px hero */
-  --text-display--line-height: 1.1;
-  --text-h2: 3.8125rem;
-  /* 61px section headings */
+  --color-plum: #2b0b4e;
+  --color-sky: #a8d7e9;
+
+  /* ---- Fluid spacing scale (drives p-*, m-*, gap-*, w-*, …) ---- */
+  --spacing-xxxsm: 0.125rem;
+  --spacing-xxsm: 0.25rem;
+  --spacing-xsm: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-bg: clamp(1.125rem, 0.9575rem + 0.4717vi, 1.25rem);
+  --spacing-xbg: clamp(1.375rem, 1.2075rem + 0.4717vi, 1.5rem);
+  --spacing-xxbg: clamp(1.625rem, 1.4575rem + 0.4717vi, 1.75rem);
+  --spacing-xxxbg: clamp(1.75rem, 1.4151rem + 0.9434vi, 2rem);
+  --spacing-lg: clamp(2.125rem, 1.6226rem + 1.4151vi, 2.5rem);
+  --spacing-xlg: clamp(2.5rem, 1.8302rem + 1.8868vi, 3rem);
+  --spacing-xxlg: clamp(3.5rem, 2.8302rem + 1.8868vi, 4rem);
+  --spacing-xxxlg: clamp(4.25rem, 3.2453rem + 2.8302vi, 5rem);
+  --spacing-hg: clamp(5rem, 3.6604rem + 3.7736vi, 6rem);
+  --spacing-xhg: clamp(6.5rem, 4.4906rem + 5.6604vi, 8rem);
+  --spacing-xxhg: clamp(8rem, 5.3208rem + 7.5472vi, 10rem);
+  --spacing-xxxhg: clamp(9.25rem, 5.2311rem + 11.3208vi, 12.25rem);
+
+  /* ---- Fluid type scale (size + line-height; weight stays per-element) ---- */
+  --text-display: clamp(2.25rem, 1.4643rem + 3.9286vw, 5rem);
+  --text-display--line-height: 1.04;
+  --text-h1: clamp(2rem, 1.5714rem + 2.1429vw, 3.5rem);
+  --text-h1--line-height: 1.08;
+  --text-h2: clamp(1.75rem, 1.3929rem + 1.7857vw, 3rem);
   --text-h2--line-height: 1.12;
-  --text-h2-lg: 4.25rem;
-  /* 67px statement headings */
-  --text-h2-lg--line-height: 1.16;
-  --text-lede: 1.6rem;
-  /* 25.6px section ledes */
-  --text-lede--line-height: 1.35;
-  --text-card: 1.7rem;
-  /* 27.3px card titles */
-  --text-card--line-height: 1.2;
-  --radius-card: 1.25rem;
+  --text-h3: clamp(1.5rem, 1.2143rem + 1.4286vw, 2.5rem);
+  --text-h3--line-height: 1.16;
+  --text-h4: clamp(1.35rem, 1.1643rem + 0.9286vw, 2rem);
+  --text-h4--line-height: 1.2;
+  --text-h5: clamp(1.25rem, 1.1786rem + 0.3571vw, 1.5rem);
+  --text-h5--line-height: 1.3;
+  --text-h6: clamp(1.125rem, 1.0893rem + 0.1786vw, 1.25rem);
+  --text-h6--line-height: 1.4;
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.5;
+
+  /* ---- Radii (tight small → large scale; pills use round) ---- */
+  --radius-sm: 0.25rem;   /* small  — 4px  */
+  --radius-md: 0.5rem;    /* medium — 8px  */
+  --radius-bg: 0.625rem;  /* 10px          */
+  --radius-card: 0.75rem; /* large  — 12px */
+  --radius-round: 62.5rem; /* full pill — unchanged */
+
+  /* ---- Weights ---- */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 600;
+
+  /* Drop Tailwind's default min-width breakpoints — we use the named,
+     desktop-first set defined just below instead. */
+  --breakpoint-*: initial;
 }
 
-/* Radial hero / CTA gradient — exact stops from Figma */
+/* Desktop-first breakpoints (Webflow model): desktop is the base (unprefixed);
+   these max-width variants override downward. Declared widest → narrowest so
+   the narrower one wins when several match. Values in rem.
+     desktop  : base
+     tablet   : ≤ 62rem  (992px)
+     landscape: ≤ 48rem  (768px)
+     portrait : ≤ 30rem  (480px)  */
+@custom-variant tablet (@media (max-width: 62rem));
+@custom-variant landscape (@media (max-width: 48rem));
+@custom-variant portrait (@media (max-width: 30rem));
+
+/* Layout tokens — consumed by <Container> / <Section>. Kept out of @theme so
+   they don't collide with Tailwind's container/max-w namespaces. */
+:root {
+  --container-margin: clamp(1rem, 0.142857rem + 4.28571vw, 4rem);
+  --container-max-width: 90rem; /* 1440px */
+  --container-mid-width: 64rem; /* 1024px */
+  --paragraph-max-width: 48rem;
+
+  --section-pad-sm: clamp(3rem, 2.14286rem + 4.28571vw, 6rem);
+  --section-pad-md: clamp(4rem, 2.85714rem + 5.71429vw, 8rem);
+  --section-pad-bg: clamp(6.5rem, 4.92857rem + 7.85714vw, 12rem);
+}
+
+/* Radial hero / CTA gradient — exact stops from the brand system. */
 @utility bg-brand-radial {
   background: radial-gradient(115% 140% at 78% 110%,
-      #f71350 0%,
-      #c71458 15%,
-      #9e155f 30%,
-      #7f1664 44%,
-      #671768 57%,
-      #54176b 70%,
-      #48186d 82%,
-      #41186e 95%,
-      #40186e 100%);
+      #f71350 0%, #c71458 15%, #9e155f 30%, #7f1664 44%, #671768 57%,
+      #54176b 70%, #48186d 82%, #41186e 95%, #40186e 100%);
 }
 
 @utility bg-brand-radial-cta {
   background: radial-gradient(90% 160% at 50% 135%,
-      #f71350 0%,
-      #b3155b 21%,
-      #811663 39%,
-      #5d1769 54%,
-      #47186d 65%,
-      #40186e 71%,
-      #40186e 100%);
+      #f71350 0%, #b3155b 21%, #811663 39%, #5d1769 54%, #47186d 65%,
+      #40186e 71%, #40186e 100%);
 }
 
 @utility bg-lime-sweep {
   background: linear-gradient(100deg,
-      #bce42d 0%,
-      #bee532 14%,
-      #c3e744 37%,
-      #cdeb63 64%,
-      #dbf18e 93%,
-      #ddf296 100%);
+      #bce42d 0%, #bee532 14%, #c3e744 37%, #cdeb63 64%, #dbf18e 93%, #ddf296 100%);
+}
+
+/* Decorative card gradients (Intelligence bento). */
+@utility bg-mia {
+  background: linear-gradient(157deg, #7a2fa6 0%, #a82a86 46%, #cb1f6b 100%);
+}
+
+@utility bg-flow {
+  background: linear-gradient(125deg, #0c3b34 0%, #157064 52%, #4fd3bf 100%);
 }
 
 html {
