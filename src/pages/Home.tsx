@@ -1,10 +1,10 @@
-import CtaBanner from "../sections/CtaBanner";
-import DesignedFor from "../sections/DesignedFor";
-import Expertise from "../sections/Expertise";
-import Faq from "../sections/Faq";
-import FasterOutput from "../sections/FasterOutput";
-import Hero from "../sections/Hero";
-import HighImpact from "../sections/HighImpact";
+import CtaBanner from "../sections/cat-banner";
+import ModernMarketing from "../sections/modern-marketing";
+import Expertise from "../sections/expertise";
+import Faq from "../sections/faq";
+import FasterOutput from "../sections/faster-output";
+import Hero from "../sections/hero";
+import HighImpact from "../sections/high-impact";
 import Intelligence from "../sections/Intelligence";
 import LogoMarquee from "../sections/LogoMarquee";
 import NoHiring from "../sections/NoHiring";
@@ -22,7 +22,7 @@ export default function Home() {
       <main>
         <Hero />
         <LogoMarquee />
-        <DesignedFor />
+        <ModernMarketing />
         <NoHiring />
         <HighImpact />
         <FasterOutput />
