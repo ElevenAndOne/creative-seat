@@ -1,5 +1,37 @@
-@import '@fontsource-variable/inter';
 @import 'tailwindcss';
+
+/* Self-hosted brand typeface (files in /public/font). Latinka ships Regular,
+   Medium and Bold plus a Medium Italic — there is no Light face, so any lighter
+   weight the design asks for resolves to Regular, keeping the default weight
+   regular across the site. */
+@font-face {
+  font-family: 'Latinka';
+  src: url('/font/latinka-regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Latinka';
+  src: url('/font/latinka-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Latinka';
+  src: url('/font/latinka-medium-italic.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Latinka';
+  src: url('/font/latinka-bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* =============================================================================
    Design tokens — mirrored from the Creative Seat system on
@@ -7,7 +39,7 @@
    should consume these, never raw hex / magic numbers.
    ========================================================================== */
 @theme {
-  --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Latinka', ui-sans-serif, system-ui, sans-serif;
 
   /* ---- Brand scale ---- */
   --color-brand-50: #bce42d;  /* lime   */
@@ -168,7 +200,7 @@ section[id] {
 }
 
 body {
-  @apply font-sans text-ink antialiased;
+  @apply font-sans font-normal text-ink antialiased;
 }
 
 /* Infinite logo marquee — the track holds two copies of the logos, so
