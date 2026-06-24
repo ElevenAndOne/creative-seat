@@ -2,24 +2,7 @@ import Em from '../components/em'
 import Eyebrow from '../components/eyebrow'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
-
-// [label, chip styling] — mix of filled and outlined pills per the design.
-const services: [string, string][] = [
-  ['Ad Creative', 'bg-white text-black'],
-  ['Social Assets', 'border border-mint text-mint'],
-  ['Video Production', 'border border-lime text-lime'],
-  ['photography', 'border border-blush text-blush'],
-  ['Motion Graphics', 'bg-grape text-white'],
-  ['Presentations', 'border border-white/70 text-white'],
-  ['Web + UI Design', 'bg-lime text-black'],
-  ['Illustration', 'border border-white/40 text-white/60'],
-  ['Apps + Software', 'bg-lavender text-plum'],
-  ['Brand Development', 'bg-magenta text-white'],
-  ['Email Design', 'border border-white/70 text-white'],
-  ['Copywriting', 'border border-lavender text-lavender'],
-  ['Campaign Strategy', 'border border-lavender text-white'],
-  ['AI Assisted Creative', 'border border-lime text-lime'],
-]
+import { services } from '../content'
 
 export default function Expertise() {
   return (
@@ -33,8 +16,8 @@ export default function Expertise() {
             One subscription. One workflow. Access every service you need to support your campaigns, launches, and ongoing content production.
           </Paragraph>
           <div className="mt-xxlg flex flex-wrap gap-sm">
-            {services.map(([label, cls]) => (
-              <span key={label} className={`rounded-full px-5 py-2 text-lg ${cls}`}>
+            {services.map(({ label, className }) => (
+              <span key={label} className={`rounded-full px-5 py-2 text-lg ${className}`}>
                 {label}
               </span>
             ))}
