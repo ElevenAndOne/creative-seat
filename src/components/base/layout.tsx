@@ -1,6 +1,8 @@
+import { cn } from "../../utils/cn";
+
 function Grid({ children, className }: { children: React.ReactNode; className?: string }) {
     return (
-        <div className={className}>
+        <div className={cn('grid items-center gap-xlg grid-cols-2', className)}>
             {children}
         </div>
     )
