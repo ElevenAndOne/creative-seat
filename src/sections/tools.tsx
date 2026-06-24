@@ -3,6 +3,7 @@ import { Section } from '../components/base/section'
 import Em from '../components/em'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
+import { automationItems } from '../content'
 
 export default function Intelligence() {
   return (
@@ -73,7 +74,7 @@ export default function Intelligence() {
               Smart automations. Less friction.
             </Heading.H3>
             <ul className="mt-bg space-y-xsm self-end rounded-2xl bg-white/15 p-sm backdrop-blur-sm">
-              {['Sharpen briefs', 'Organise assets', 'Reduce admin', 'Minimise reverts'].map((item) => (
+              {automationItems.map((item) => (
                 <li key={item} className="flex items-center gap-xsm rounded-full bg-white py-1.5 pl-2 pr-md text-xs font-medium text-ink">
                   <span className="flex h-4 w-4 items-center justify-center rounded-full bg-lime text-[9px] font-bold text-black">✓</span>
                   {item}

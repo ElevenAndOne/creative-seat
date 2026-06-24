@@ -1,10 +1,5 @@
 import Container from '../components/container'
-
-const socials = [
-  { name: 'Facebook', icon: '/images/icons/facebook.svg' },
-  { name: 'Instagram', icon: '/images/icons/instagram.svg' },
-  { name: 'YouTube', icon: '/images/icons/youtube.svg' },
-]
+import { socials } from '../content'
 
 export default function SiteFooter() {
   return (

@@ -3,10 +3,7 @@ import { Section } from '../components/base/section'
 import Em from '../components/em'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
-import { projects } from '../content'
-
-// Same projects collection as the hero, same order, limited to six.
-const work = projects.slice(0, 6)
+import { showcasedProjects } from '../content'
 
 export default function WorkShowcase() {
   return (
@@ -21,7 +18,7 @@ export default function WorkShowcase() {
         <Button href="#contact" variant="outline-black" className="mt-xsm shrink-0 landscape:mt-0">Download our portfolio</Button>
       </div>
       <div className="mt-xxlg grid grid-cols-4 gap-x-bg gap-y-xlg tablet:grid-cols-2 portrait:grid-cols-1">
-        {work.map((project) => (
+        {showcasedProjects.map((project) => (
           <article key={project.title} className={project.wide ? 'col-span-2 portrait:col-span-1' : ''}>
             <img src={project.cover} alt={`${project.title} project`} className="h-[20rem] w-full rounded-lg object-cover tablet:h-72 portrait:h-60" />
             <Heading.H6 as="h3" className="mt-bg">{project.title}</Heading.H6>
