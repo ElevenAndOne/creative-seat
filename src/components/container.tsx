@@ -4,7 +4,7 @@ import { cn } from '../utils/cn'
 type Width = 'max' | 'mid' | 'full'
 
 const MAX_WIDTH: Record<Width, string> = {
-  max: 'max-w-[var(--container-max-width)]', // 90rem
+  max: 'max-w-[var(--container-width)]', // 90rem
   mid: 'max-w-[var(--container-mid-width)]', // 64rem
   full: 'max-w-full',
 }
@@ -16,17 +16,9 @@ const MAX_WIDTH: Record<Width, string> = {
  * variant for narrower content; anything in `className` can still override
  * (it's merged with tailwind-merge).
  */
-export default function Container({
-  width = 'max',
-  className = '',
-  children,
-}: {
-  width?: Width
-  className?: string
-  children: ReactNode
-}) {
+export default function Container({ width = 'max', className = '', children }: { width?: Width, className?: string, children: ReactNode}) {
   return (
-    <div className={cn('mx-auto w-full px-[var(--container-margin)]', MAX_WIDTH[width], className)}>
+    <div className={cn('mx-auto w-full', MAX_WIDTH[width], className)}>
       {children}
     </div>
   )

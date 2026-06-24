@@ -154,9 +154,11 @@
    they don't collide with Tailwind's container/max-w namespaces. */
 :root {
   --container-margin: clamp(1rem, 0.142857rem + 4.28571vw, 4rem);
-  --container-max-width: 90rem; /* 1440px */
+  --container-max-width: 110rem; /* 1440px */
   --container-mid-width: 64rem; /* 1024px */
   --paragraph-max-width: 48rem;
+
+  --container-width: calc(min(100%, var(--container-max-width)) - var(--container-margin) * 2);
 
   --section-pad-sm: clamp(3rem, 2.14286rem + 4.28571vw, 6rem);
   --section-pad-md: clamp(4rem, 2.85714rem + 5.71429vw, 8rem);
