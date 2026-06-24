@@ -1,6 +1,7 @@
 import Accordion from '../components/accordion'
 import Button from '../components/autton'
 import { Section } from '../components/base/section'
+import Heading from '../components/heading'
 
 const items = [
   {
@@ -29,7 +30,7 @@ export default function Faq() {
   return (
     <Section id="resources" className="bg-mist" pad="md" innerClassName="grid grid-cols-[0.8fr_1fr] gap-xlg tablet:grid-cols-1">
       <div>
-        <h2 className="max-w-[28rem] text-h2 font-light text-grape">Frequently asked questions</h2>
+        <Heading.H2>Frequently asked questions</Heading.H2>
         <Button href="#contact" variant="black" className="mt-xlg">Get In Touch</Button>
       </div>
       <Accordion items={items} />

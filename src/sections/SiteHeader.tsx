@@ -20,13 +20,7 @@ export default function SiteHeader() {
   }, [])
 
   return (
-    <header
-      ref={ref}
-      className={cn(
-        'fixed inset-x-0 top-0 z-50 py-8 text-white transition-colors duration-300',
-        scrolled && 'bg-grape',
-      )}
-    >
+    <header ref={ref} className={cn( 'fixed inset-x-0 top-0 z-50 py-8 text-white transition-colors duration-300', scrolled && 'bg-grape')}>
       <Container className="flex items-center justify-between gap-6">
         <a href="/" aria-label="Creative Seat home">
           <img src="/images/brands/creative-seat.svg" alt="Creative Seat" className="h-7 w-auto landscape:h-6" />

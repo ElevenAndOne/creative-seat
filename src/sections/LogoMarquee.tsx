@@ -1,5 +1,6 @@
 import { Section } from '../components/base/section'
 import Container from '../components/container'
+import Heading from '../components/heading'
 import { logos } from '../content'
 
 // Two copies of the list sit on the track; the CSS animation translates it by
@@ -10,7 +11,7 @@ export default function LogoMarquee() {
   return (
     <Section bleed pad="sm" className="bg-mist">
       <Container>
-        <h2 className="text-center text-h5 font-light">Creative partner to worldwide brands</h2>
+        <Heading.H5 as="h2">Creative partner to worldwide brands</Heading.H5>
       </Container>
       <div
         className="cs-marquee relative mt-xlg w-full overflow-hidden [--edge:10%] [-webkit-mask-image:linear-gradient(to_right,transparent,#000_var(--edge),#000_calc(100%-var(--edge)),transparent)] [mask-image:linear-gradient(to_right,transparent,#000_var(--edge),#000_calc(100%-var(--edge)),transparent)] landscape:[--edge:7%]"

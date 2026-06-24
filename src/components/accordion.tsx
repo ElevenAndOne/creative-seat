@@ -36,7 +36,7 @@ export default function Accordion({
               <span className="text-2xl font-medium leading-snug">{item.question}</span>
               <span
                 aria-hidden
-                className={`mt-0.5 shrink-0 text-4xl font-light leading-none transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}
+                className={`mt-0.5 shrink-0 text-4xl leading-none transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}
               >
                 +
               </span>

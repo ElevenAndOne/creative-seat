@@ -90,7 +90,7 @@ export default function Lightbox({ project, onClose }: LightboxProps) {
           >
             <div className="flex items-end justify-between gap-xlg landscape:flex-col landscape:items-start landscape:gap-md">
               <div className="shrink-0">
-                <h2 className="text-h2 font-light leading-none">{project.title}</h2>
+                <h2 className="text-h2 leading-none">{project.title}</h2>
                 <p className="mt-sm text-sm uppercase tracking-[0.18em] text-white/60">{project.category}</p>
               </div>
               <p className="max-w-[34rem] text-base leading-relaxed text-white/85">{project.description}</p>

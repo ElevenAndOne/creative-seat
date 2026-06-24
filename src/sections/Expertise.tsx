@@ -1,5 +1,7 @@
 import Em from '../components/em'
 import Eyebrow from '../components/eyebrow'
+import Heading from '../components/heading'
+import Paragraph from '../components/paragraph'
 
 // [label, chip styling] — mix of filled and outlined pills per the design.
 const services: [string, string][] = [
@@ -26,10 +28,10 @@ export default function Expertise() {
       <div className="flex items-center" style={{ paddingBlock: 'var(--section-pad-md)' }}>
         <div className="mx-auto w-full max-w-[47.5rem] px-xxlg tablet:px-[var(--container-margin)]">
           <Eyebrow tone="light">A complete creative service</Eyebrow>
-          <h2 className="mt-xlg text-h2 font-light">Expertise <Em className="text-lime">on demand</Em></h2>
-          <p className="mt-xbg max-w-[40rem] text-2xl leading-snug text-white/90">
+          <Heading.H2 className="mt-xlg">Expertise <Em className="text-lime">on demand</Em></Heading.H2>
+          <Paragraph className="mt-xbg">
             One subscription. One workflow. Access every service you need to support your campaigns, launches, and ongoing content production.
-          </p>
+          </Paragraph>
           <div className="mt-xxlg flex flex-wrap gap-sm">
             {services.map(([label, cls]) => (
               <span key={label} className={`rounded-full px-5 py-2 text-lg ${cls}`}>
