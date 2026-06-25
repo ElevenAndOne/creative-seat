@@ -1,21 +1,24 @@
 import { styledText } from './base/polymorphic'
 
 /**
- * Body copy. The dot-notation members carry the *style* (size + leading) and
+ * Body copy. The dot-notation members carry the *style* (size + leading, both
+ * from the `--text-p-*` ramp — bg 24 / md 18 / sm 14, all at 1.5 leading) and
  * render <p> by default; override with `as` for inline or other contexts:
  *
- *   <Paragraph>Default body copy</Paragraph>
- *   <Paragraph.Lead>Intro line</Paragraph.Lead>
- *   <Paragraph.Small as="span">Inline caption</Paragraph.Small>
+ *   <Paragraph>Default body copy</Paragraph>       // md (18)
+ *   <Paragraph.Big>Lead-in line</Paragraph.Big>    // bg (24)
+ *   <Paragraph.Small as="span">Caption</Paragraph.Small>  // sm (14)
  *
- * Plain <Paragraph> is the body size; `.Body` is the explicit alias.
+ * Plain <Paragraph> is the md body size; `.Body` is the explicit alias, and
+ * `.Lead` is kept as an alias of `.Big` for intro paragraphs.
  */
 const Paragraph = Object.assign(
-  styledText('text-base leading-relaxed', 'p', 'Paragraph'),
+  styledText('text-p-md', 'p', 'Paragraph'),
   {
-    Lead: styledText('text-lead leading-relaxed', 'p', 'Paragraph.Lead'),
-    Body: styledText('text-base leading-relaxed', 'p', 'Paragraph.Body'),
-    Small: styledText('text-sm leading-relaxed', 'p', 'Paragraph.Small'),
+    Big: styledText('text-p-bg', 'p', 'Paragraph.Big'),
+    Lead: styledText('text-p-bg', 'p', 'Paragraph.Lead'),
+    Body: styledText('text-p-md', 'p', 'Paragraph.Body'),
+    Small: styledText('text-p-sm', 'p', 'Paragraph.Small'),
   },
 )
 
