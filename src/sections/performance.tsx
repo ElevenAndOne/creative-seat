@@ -1,3 +1,4 @@
+import AnimatedGradient from '../components/animated-gradient'
 import Button from '../components/autton'
 import { Layout } from '../components/base/layout';
 import { Media } from '../components/base/media';
@@ -9,7 +10,8 @@ import Paragraph from '../components/paragraph'
 
 export default function HighImpact() {
   return (
-    <Section className="bg-brand-radial text-white" pad="md">
+    <Section className="relative isolate overflow-hidden bg-brand-radial text-white" pad="md">
+      <AnimatedGradient />
       <Layout.Grid className="grid-cols-2 landscape:grid-cols-1 gap-xhg">
         <div>
           <Eyebrow tone="light">Multi-platform performance</Eyebrow>
