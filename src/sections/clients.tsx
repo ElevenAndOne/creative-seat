@@ -6,9 +6,9 @@ import { logoMarqueeTrack } from '../content'
 
 export default function LogoMarquee() {
   return (
-    <Section bleed pad="sm" className="bg-mist">
+    <Section bleed pad="sm" className="bg-mist text-center">
       <Container>
-        <Heading.H5 as="h2">Creative partner to worldwide brands</Heading.H5>
+        <Heading.H4 as="h2">Creative partner to worldwide brands</Heading.H4>
       </Container>
       <div className="cs-marquee relative mt-xlg w-full overflow-hidden [--edge:10%] [-webkit-mask-image:linear-gradient(to_right,transparent,#000_var(--edge),#000_calc(100%-var(--edge)),transparent)] [mask-image:linear-gradient(to_right,transparent,#000_var(--edge),#000_calc(100%-var(--edge)),transparent)] landscape:[--edge:7%]">
         <div className="cs-marquee-track">

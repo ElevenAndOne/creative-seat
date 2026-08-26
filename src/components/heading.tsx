@@ -10,20 +10,21 @@ import { styledText } from './base/polymorphic'
  *   <Heading.Display as="h1">Hero</Heading.Display>   // <h1>, styled display
  *   <Heading.H3 as="p">Looks like h3, off the outline</Heading.H3>
  *
- * Weight is intentionally left off: headings inherit the regular body weight by
- * default (Latinka ships no Light face) — add `font-medium`/`font-bold` via
- * `className` where a heading needs emphasis. Plain <Heading> renders an <h2>.
+ * Weight: every heading renders Latinka Medium (weight 500) per the brand spec
+ * — `font-medium` is baked into each style below. Override with `font-bold` via
+ * `className` where a heading needs extra emphasis (tailwind-merge lets the
+ * caller's class win). Plain <Heading> renders an <h2>.
  */
 const Heading = Object.assign(
-  styledText('text-h2', 'h2', 'Heading'),
+  styledText('text-h2 font-medium', 'h2', 'Heading'),
   {
-    Display: styledText('text-display', 'h1', 'Heading.Display'),
-    H1: styledText('text-h1', 'h1', 'Heading.H1'),
-    H2: styledText('text-h2', 'h2', 'Heading.H2'),
-    H3: styledText('text-h3', 'h3', 'Heading.H3'),
-    H4: styledText('text-h4', 'h4', 'Heading.H4'),
-    H5: styledText('text-h5', 'h5', 'Heading.H5'),
-    H6: styledText('text-h6', 'h6', 'Heading.H6'),
+    Display: styledText('text-display font-medium', 'h1', 'Heading.Display'),
+    H1: styledText('text-h1 font-medium', 'h1', 'Heading.H1'),
+    H2: styledText('text-h2 font-medium', 'h2', 'Heading.H2'),
+    H3: styledText('text-h3 font-medium', 'h3', 'Heading.H3'),
+    H4: styledText('text-h4 font-medium', 'h4', 'Heading.H4'),
+    H5: styledText('text-h5 font-medium', 'h5', 'Heading.H5'),
+    H6: styledText('text-h6 font-medium', 'h6', 'Heading.H6'),
   },
 )
 

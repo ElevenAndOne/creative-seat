@@ -23,7 +23,7 @@ export default function Eyebrow({
   if (reduce) {
     return (
       <div className={className}>
-        <p className={`text-base font-medium uppercase tracking-wide ${text}`}>{children}</p>
+        <p className={`text-p-sm font-medium uppercase tracking-wider ${text}`}>{children}</p>
         <hr className={`mt-4 ${rule}`} />
       </div>
     )
@@ -37,7 +37,7 @@ export default function Eyebrow({
       viewport={{ once: true, margin: '0px 0px -12% 0px' }}
     >
       <motion.p
-        className={`text-base font-medium uppercase tracking-wide ${text}`}
+        className={`text-p-sm font-medium uppercase tracking-wider ${text}`}
         variants={{ hidden: { opacity: 0, y: 14 }, visible: { opacity: 1, y: 0 } }}
         transition={{ duration: 0.5, ease: EASE }}
       >

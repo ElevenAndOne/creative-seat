@@ -16,8 +16,9 @@ export interface ButtonProps extends HTMLMotionProps<'a'> {
 }
 
 /**
- * Pill CTA — 12.8px Inter Bold in Figma, ~45px tall. Lifts a touch on hover
- * and presses in on tap, the way Superside's CTAs respond.
+ * Pill CTA — 15px Latinka Medium, ~53px tall, no extra tracking, per the Figma
+ * button spec. Lifts a touch on hover and presses in on tap, the way Superside's
+ * CTAs respond.
  */
 export default function Button({
   variant = 'lime',
@@ -31,7 +32,7 @@ export default function Button({
   return (
     <motion.a
       href={href}
-      className={`inline-flex h-[45px] items-center justify-center rounded-full px-7 text-[12.8px] font-bold tracking-wide transition-colors duration-200 landscape:flex landscape:w-full ${variants[variant]} ${className}`}
+      className={`inline-flex h-[53px] items-center justify-center rounded-full px-6 text-[15px] font-medium transition-colors duration-200 landscape:flex landscape:w-full ${variants[variant]} ${className}`}
       whileHover={reduce ? undefined : { scale: 1.04 }}
       whileTap={reduce ? undefined : { scale: 0.96 }}
       transition={{ type: 'spring', stiffness: 400, damping: 17 }}
