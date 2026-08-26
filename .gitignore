@@ -13,7 +13,7 @@ dist-ssr
 .playwright-cli
 .playwright-mcp
 output
-.vite-react-ssg-temp
+.astro
 *.local
 
 # Editor directories and files
