@@ -1,7 +1,18 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "extends": "astro/tsconfigs/base",
+  "compilerOptions": {
+    /* React islands compile with the automatic runtime; .astro files are
+       handled by Astro's own language tooling. */
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "moduleDetection": "force",
+
+    /* Linting — carried over from the previous tsconfig.app.json. */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist", "node_modules"]
 }

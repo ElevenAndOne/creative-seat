@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../layouts/base.astro'
+
+// Static sections — server-rendered to HTML and shipped with no client JS.
+import LogoMarquee from '../sections/clients'
+import FasterOutput from '../sections/benefits'
+import Process from '../sections/process'
+import Testimonials from '../sections/testimonials'
+import SiteFooter from '../sections/footer'
+
+// Interactive sections — hydrated as islands. Each one either holds scroll
+// state or reaches motion/Base UI through Button, Eyebrow, Media or Accordion.
+import SiteHeader from '../sections/header'
+import Hero from '../sections/hero'
+import ModernMarketing from '../sections/pitch'
+import NoHiring from '../sections/team'
+import HighImpact from '../sections/performance'
+import Intelligence from '../sections/tools'
+import Expertise from '../sections/expertise'
+import WorkShowcase from '../sections/projects'
+import Faq from '../sections/faq'
+import CtaBanner from '../sections/cta'
+
+// Hydrate a screen's-worth early so a section's `whileInView` entrance
+// animation still has a live island by the time it scrolls into view.
+const nearViewport = { rootMargin: '200px' }
+---
+
+<BaseLayout title="Creative Seat — Increase your brand's creative capability" description="Scale your brand's content production through a simple subscription to your very own specialised creative team.">
+  <SiteHeader client:load />
+  <main>
+    <Hero client:load />
+    <LogoMarquee />
+    <ModernMarketing client:visible={nearViewport} />
+    <NoHiring client:visible={nearViewport} />
+    <HighImpact client:visible={nearViewport} />
+    <FasterOutput />
+    <Process />
+    <Intelligence client:visible={nearViewport} />
+    <Testimonials />
+    <Expertise client:visible={nearViewport} />
+    <WorkShowcase client:visible={nearViewport} />
+    <Faq client:visible={nearViewport} />
+    <CtaBanner client:visible={nearViewport} />
+  </main>
+  <SiteFooter />
+</BaseLayout>
