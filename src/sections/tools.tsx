@@ -1,9 +1,15 @@
+import type { ReactNode } from 'react'
 import Button from '../components/autton'
 import { Section } from '../components/base/section'
 import Em from '../components/em'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
-import { automationItems } from '../content'
+import { cn } from '../utils/cn'
+
+// Decorative artwork. Each card is a full-bleed background image with only the
+// copy living as HTML on top. Swap these for the real per-breakpoint assets when
+// they land — `img` is desktop, `imgMobile` (optional) is served ≤48rem.
+const PLACEHOLDER = '/images/placeholder.svg'
 
 export default function Intelligence() {
   return (
@@ -24,68 +30,96 @@ export default function Intelligence() {
         </div>
       </div>
 
-      {/* Each PNG is decorative artwork only; all copy below is live HTML text. */}
+      {/* Every card is image-backed; the copy sits above on brand-tinted scrims. */}
       <div id="mia" className="mt-xxlg grid grid-cols-[0.9fr_1.8fr] gap-bg tablet:grid-cols-1">
-        {/* Mia — gradient + transparent logo */}
-        <article className="bg-mia relative row-span-2 flex h-full min-h-[30rem] flex-col justify-between overflow-hidden rounded-card p-xlg text-white tablet:row-span-1 tablet:h-auto">
-          <Heading.H3>
-            Creative decisions driven by data, not guesswork
-          </Heading.H3>
-          <img src="/images/placeholder.svg" alt="" className="mx-auto my-xbg w-32 drop-shadow-2xl" />
-          <Paragraph>
+        {/* Mia — tall left card */}
+        <PhotoCard
+          base="bg-mia"
+          img={PLACEHOLDER}
+          alt="Mia marketing-intelligence agent"
+          className="row-span-2 min-h-[30rem] tablet:row-span-1 tablet:min-h-[22rem]"
+        >
+          <Heading.H4>Creative decisions driven by data, not guesswork</Heading.H4>
+          <Paragraph className="mt-auto">
             <strong className="font-semibold">Mia</strong> is Creative Seat's integrated marketing intelligence agent that analyses the data from all your channels, identifies immediate opportunities and provides actionable insights.
           </Paragraph>
-        </article>
+        </PhotoCard>
 
-        {/* AI tools — sky panel + hands artwork */}
-        <article className="bg-sky relative flex h-[21.25rem] flex-row overflow-hidden rounded-card tablet:h-[20rem] landscape:h-auto landscape:flex-col">
-          <div className="relative z-10 flex w-[60%] flex-col justify-center p-xlg landscape:w-full landscape:p-xbg">
-            <Heading.H3>
-              AI tools remove the repetitive so talented people can create the remarkable.
-            </Heading.H3>
-            <Paragraph.Small className="mt-sm">
-              Our purpose-built AI studio automates repetitive tasks and project administration, giving creatives more time to focus on ideas, craft, and high-quality design.
-            </Paragraph.Small>
-          </div>
-          <img
-            src="/images/placeholder.svg"
-            alt=""
-            className="absolute inset-y-0 right-0 h-full w-[50%] object-cover object-right landscape:static landscape:h-44 landscape:w-[62%] landscape:self-end"
-          />
-        </article>
+        {/* AI tools — wide top-right; light artwork keeps dark copy */}
+        <PhotoCard
+          base="bg-sky"
+          text="dark"
+          img={PLACEHOLDER}
+          alt="AI studio automating repetitive production tasks"
+          className="h-[21.25rem] tablet:h-[20rem]"
+        >
+          <Heading.H4>AI tools remove the repetitive so talented people can create the remarkable.</Heading.H4>
+          <Paragraph.Small>
+            Our purpose-built AI studio automates repetitive tasks and project administration, giving creatives more time to focus on ideas, craft, and high-quality design.
+          </Paragraph.Small>
+        </PhotoCard>
 
         <div className="grid grid-cols-2 gap-bg portrait:grid-cols-1">
-          {/* AI knowledge — grape card; grape scrims hide baked text on artwork */}
-          <article className="relative h-[21.25rem] overflow-hidden rounded-card bg-grape text-white tablet:h-[20rem]">
-            <img src="/images/placeholder.svg" alt="" className="absolute inset-0 h-full w-full object-cover" />
-            <div className="absolute inset-x-0 top-0 h-[40%]" style={{ background: 'linear-gradient(to bottom, var(--color-grape) 0%, var(--color-grape) 80%, transparent 100%)' }} />
-            <div className="absolute inset-x-0 bottom-0 h-[42%]" style={{ background: 'linear-gradient(to top, var(--color-grape) 0%, var(--color-grape) 66%, transparent 100%)' }} />
-            <Heading.H3 className="absolute inset-x-0 top-0 z-10 p-bg">
-              An AI knowledge system that understands your brand.
-            </Heading.H3>
-            <Paragraph className="absolute inset-x-0 bottom-0 z-10 p-bg">
+          {/* AI knowledge */}
+          <PhotoCard
+            base="bg-grape"
+            img={PLACEHOLDER}
+            alt="AI knowledge system trained on your brand"
+            className="h-[21.25rem] tablet:h-[20rem]"
+          >
+            <Heading.H4>An AI knowledge system that understands your brand.</Heading.H4>
+            <Paragraph>
               Every brief, revision, and approved asset strengthens your brand knowledge, helping future projects move faster and with greater accuracy.
             </Paragraph>
-          </article>
+          </PhotoCard>
 
-          {/* AI automations — gradient + live HTML checklist */}
-          <article className="bg-flow relative flex h-[21.25rem] flex-col justify-between overflow-hidden rounded-card p-xbg text-white tablet:h-[20rem]">
-            <Heading.H3>
-              Smart automations. Less friction.
-            </Heading.H3>
-            <ul className="mt-bg space-y-xsm self-end rounded-2xl bg-white/15 p-sm backdrop-blur-sm">
-              {automationItems.map((item) => (
-                <li key={item} className="flex items-center gap-xsm rounded-full bg-white py-1.5 pl-2 pr-md text-xs font-medium text-ink">
-                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-lime text-[9px] font-bold text-black">✓</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </article>
+          {/* Smart automations — checklist artwork is baked into the image */}
+          <PhotoCard
+            base="bg-flow"
+            img={PLACEHOLDER}
+            alt="Automated workflow: sharpen brief, organise assets, route approvals"
+            className="h-[21.25rem] tablet:h-[20rem]"
+          >
+            <Heading.H4>Smart automations. Less friction.</Heading.H4>
+          </PhotoCard>
         </div>
       </div>
 
       <Button href="#contact" className="mt-xlg">Book a Demo</Button>
     </Section>
+  )
+}
+
+type PhotoCardProps = {
+  /** Brand background — the fallback tint behind the artwork. */
+  base: string
+  /** Copy colour over the scrim: light (default) for dark artwork, dark for light. */
+  text?: 'light' | 'dark'
+  img: string
+  /** Optional art-directed source served at ≤48rem. */
+  imgMobile?: string
+  alt?: string
+  className?: string
+  children: ReactNode
+}
+
+/**
+ * Full-bleed image card: the photo fills the card, the brand colour sits behind
+ * it, and top/bottom scrims in that same colour keep the overlaid copy legible
+ * while preserving the card's brand tint. Copy is the only live HTML; anything
+ * decorative belongs in the artwork. Generalises the AI-knowledge card so every
+ * card in the grid shares one treatment.
+ */
+function PhotoCard({ base, text = 'light', img, imgMobile, alt = '', className, children }: PhotoCardProps) {
+  return (
+    <article className={cn('relative overflow-hidden rounded-card', base, text === 'light' ? 'text-white' : 'text-ink', className)}>
+      <picture>
+        {imgMobile && <source media="(max-width: 48rem)" srcSet={imgMobile} />}
+        <img src={img} alt={alt} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+      </picture>
+      <div className="relative z-10 flex h-full flex-col gap-md p-xlg landscape:p-xbg max-w-[40rem]">
+        {children}
+      </div>
+    </article>
   )
 }
