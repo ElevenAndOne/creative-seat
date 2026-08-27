@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { motion, useAnimationFrame, useMotionValue, wrap, type MotionValue } from 'motion/react'
 import { cn } from '../../utils/cn'
+import ProjectMedia from '../project-media'
 import { TILE_ASPECT, type ColumnConfig, type Project } from './tiles'
 
 type Axis = 'y' | 'x'
@@ -150,8 +151,9 @@ function Copy({ ref, projects, vertical, onCardClick, duplicate }: {
             vertical ? 'w-full mb-bg' : 'h-full mr-md',
           )}
         >
-          <img
+          <ProjectMedia
             src={project.cover}
+            poster={project.poster}
             alt={duplicate ? '' : project.title}
             loading="eager"
             decoding="async"

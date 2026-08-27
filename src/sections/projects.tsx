@@ -3,6 +3,7 @@ import { Section } from '../components/base/section'
 import Em from '../components/em'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
+import ProjectMedia from '../components/project-media'
 import { showcasedProjects } from '../content'
 
 export default function WorkShowcase() {
@@ -20,7 +21,7 @@ export default function WorkShowcase() {
       <div className="mt-xxlg grid grid-cols-4 gap-x-bg gap-y-xlg tablet:grid-cols-2 portrait:grid-cols-1">
         {showcasedProjects.map((project) => (
           <article key={project.title} className={project.wide ? 'col-span-2 portrait:col-span-1' : ''}>
-            <img src={project.cover} alt={`${project.title} project`} className="h-[20rem] w-full rounded-lg object-cover tablet:h-72 portrait:h-60" />
+            <ProjectMedia src={project.cover} poster={project.poster} alt={`${project.title} project`} className="h-[20rem] w-full rounded-lg object-cover tablet:h-72 portrait:h-60" />
             <Heading.H6 as="h3" className="mt-bg">{project.title}</Heading.H6>
             <Paragraph.Small className="mt-xsm">{project.tags.join(', ')}</Paragraph.Small>
           </article>

@@ -4,6 +4,7 @@ import { cn } from '../../utils/cn'
 import { useMediaFlag } from '../../hooks/useMediaFlag'
 import { projects } from '../../content'
 import { COLUMN_CONFIG, TILE_ASPECT, columns, type Project } from './tiles'
+import ProjectMedia from '../project-media'
 import MarqueeColumn from './MarqueeColumn'
 import ExpandCursor from './ExpandCursor'
 import Lightbox from './Lightbox'
@@ -69,7 +70,7 @@ export default function ScrollMarquee({ className }: { className?: string }) {
               style={{ aspectRatio: TILE_ASPECT }}
               className="group block overflow-hidden rounded-card bg-white/5 shadow-2xl shadow-black/20 outline-none focus-visible:ring-2 focus-visible:ring-lime"
             >
-              <img src={project.cover} alt={project.title} draggable={false} className="h-full w-full select-none object-cover [-webkit-user-drag:none]" />
+              <ProjectMedia src={project.cover} poster={project.poster} alt={project.title} draggable={false} className="h-full w-full select-none object-cover [-webkit-user-drag:none]" />
             </button>
           ))}
         </div>

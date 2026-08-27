@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 import { cn } from '../../utils/cn'
 import { showcasedProjects, type Project } from '../../content'
+import ProjectMedia from '../project-media'
 import Lightbox from '../marquee/Lightbox'
 
 const EASE = [0.16, 1, 0.3, 1] as const
@@ -91,9 +92,10 @@ function Tile({
     'group block w-full overflow-hidden rounded-card bg-white/5 shadow-2xl shadow-black/25 outline-none',
     'focus-visible:ring-2 focus-visible:ring-lime focus-visible:ring-offset-2 focus-visible:ring-offset-grape',
   )
-  const image = (
-    <img
+  const media = (
+    <ProjectMedia
       src={project.cover}
+      poster={project.poster}
       alt={project.title}
       loading="eager"
       decoding="async"
@@ -105,7 +107,7 @@ function Tile({
   if (reduce) {
     return (
       <button type="button" onClick={(e) => onOpen(project, e.currentTarget)} style={{ aspectRatio: '4 / 5' }} className={className}>
-        {image}
+        {media}
       </button>
     )
   }
@@ -127,7 +129,7 @@ function Tile({
       style={{ aspectRatio: '4 / 5' }}
       className={className}
     >
-      {image}
+      {media}
     </motion.button>
   )
 }

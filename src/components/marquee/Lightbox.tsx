@@ -1,6 +1,7 @@
 import { Dialog } from '@base-ui/react/dialog'
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import ProjectMedia from '../project-media'
 import type { Project } from './tiles'
 
 type LightboxProps = {
@@ -64,7 +65,7 @@ export default function Lightbox({ project, onClose }: LightboxProps) {
                 className="h-full overflow-y-auto px-[var(--container-margin)] pt-24 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden landscape:pt-20"
                 style={{ paddingBottom: contentH }}
               >
-                <ProjectImages images={project.images} title={project.title} />
+                <ProjectGallery project={project} />
               </div>
 
               {/* Content bar — sits on top of the gallery with a purple, blurred,
@@ -98,12 +99,20 @@ export default function Lightbox({ project, onClose }: LightboxProps) {
   )
 }
 
-/** Adaptive layout: one image sits centred; multiples flow into a full-width grid. */
-function ProjectImages({ images, title }: { images: string[]; title: string }) {
+/**
+ * Adaptive layout: a single item sits centred at its own aspect ratio; multiples
+ * flow into a full-width grid, cropped to a common ratio. Entries may be images
+ * or videos — <ProjectMedia> picks the element.
+ */
+function ProjectGallery({ project: { images, title, cover, poster } }: { project: Project }) {
+  // `poster` is the cover's still, so it only applies to the entry that *is* the cover.
+  const posterFor = (src: string) => (src === cover ? poster : undefined)
+
   if (images.length <= 1) {
     return (
-      <img
+      <ProjectMedia
         src={images[0]}
+        poster={posterFor(images[0])}
         alt={title}
         draggable={false}
         className="mx-auto w-full max-w-[72rem] select-none rounded-card [-webkit-user-drag:none]"
@@ -113,9 +122,10 @@ function ProjectImages({ images, title }: { images: string[]; title: string }) {
   return (
     <div className="grid w-full grid-cols-2 gap-md landscape:grid-cols-1">
       {images.map((src, i) => (
-        <img
+        <ProjectMedia
           key={i}
           src={src}
+          poster={posterFor(src)}
           alt={`${title} - ${i + 1}`}
           draggable={false}
           className="aspect-[4/3] w-full select-none rounded-card bg-white/5 object-cover [-webkit-user-drag:none]"

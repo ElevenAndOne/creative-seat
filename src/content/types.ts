@@ -12,9 +12,11 @@ export interface Project {
   description: string
   /** Disciplines / services — rendered as pills in the modal, joined in the work grid. */
   tags: string[]
-  /** Card / grid thumbnail (link). */
+  /** Card / grid thumbnail (link) — an image, or a video (.mp4/.webm/.mov) played as ambient b-roll. */
   cover: string
-  /** Modal images (list of links) — adaptive grid: 1 = centered, multiple = grid. */
+  /** Still frame for a video `cover`: shown before it loads, and instead of it under reduced motion. */
+  poster?: string
+  /** Modal media (list of links, images or videos) — adaptive grid: 1 = centered, multiple = grid. */
   images: string[]
   /** Optional: span two columns in the work-showcase grid. */
   wide?: boolean
