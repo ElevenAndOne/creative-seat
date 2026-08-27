@@ -21,41 +21,62 @@ type AmbientOptions = {
 
 /**
  * The playback props an ambient (decorative b-roll) <video> needs, plus the ref
- * it must be given. Ambient means autoplaying, looping, muted and inline — the
- * only combination browsers allow to start on its own.
+ * it must be given. Ambient means looping, muted and inline, playing on its own
+ * — the only combination browsers allow to start unprompted.
  *
- * Two things a raw <video> gets wrong that this handles:
- *   1. React sets `muted` as an attribute, not the DOM *property*, so autoplay
+ * Three things a raw <video> gets wrong that this handles:
+ *   1. React sets `muted` as an attribute, not the DOM *property*, so playback
  *      is silently blocked — we set the property on a ref to make it stick.
- *   2. Reduced-motion users don't get motion forced on them: autoplay is
- *      dropped and controls are surfaced so they can start it themselves.
+ *   2. Reduced-motion users don't get motion forced on them: playback is held
+ *      and controls are surfaced so they can start it themselves.
+ *   3. The reduced-motion preference isn't known until hydration, and nothing
+ *      that depends on it can be rendered: the markup must not carry `autoplay`
+ *      (the browser acts on it before React can object, and dropping the
+ *      attribute afterwards can't un-start a playing video), and React does not
+ *      patch attribute mismatches when it hydrates, so a `controls` that only
+ *      appears in the client render never reaches the DOM at all. Both are
+ *      applied imperatively instead, leaving the rendered markup identical on
+ *      both sides.
  *
  * Shared by <Media.Video> and the project covers, which differ only in whether
  * the element fills a sized box or sizes itself.
  */
 export function useAmbientVideo({ autoPlay, loop, muted, playsInline, controls }: AmbientOptions) {
     const ref = useRef<HTMLVideoElement>(null)
-    const reduce = useReducedMotion()
+    const reduce = useReducedMotion() ?? false
 
-    // Ambient = autoplaying b-roll with no player chrome. For those, reduced
+    // Ambient = self-starting b-roll with no player chrome. For those, reduced
     // motion holds on the poster and reveals controls instead of playing.
     const ambient = autoPlay && !controls
-    const shouldAutoPlay = autoPlay && !reduce
+    const wantsPlayback = autoPlay && !reduce
+    const showControls = controls || (ambient && reduce)
 
-    // Reflect `muted` to the property, not just the attribute, or autoplay is
+    // Reflect `muted` to the property, not just the attribute, or playback is
     // blocked even though the markup says muted.
     useEffect(() => {
         if (ref.current) ref.current.muted = muted
     }, [muted])
 
+    useEffect(() => {
+        const el = ref.current
+        if (!el) return
+        el.controls = showControls
+        if (!wantsPlayback) return void el.pause()
+        el.preload = 'auto'
+        // The browser can still refuse (power saving, data saver); that's its
+        // call to make, so let the rejection go.
+        void el.play().catch(() => {})
+    }, [showControls, wantsPlayback])
+
     return {
         ref,
-        autoPlay: shouldAutoPlay,
         loop,
         muted,
         playsInline,
-        controls: controls || (ambient && !!reduce),
-        preload: shouldAutoPlay ? 'auto' : 'metadata',
+        // Rendered values must not depend on `reduce` — see (3) above. The
+        // effect upgrades both once the preference is known.
+        controls,
+        preload: 'metadata',
     } as const
 }
 
