@@ -29,3 +29,6 @@ output
 
 # ShipStudio metadata
 .shipstudio/
+
+# Video masters — compressed copies live in public/videos
+videos-src
