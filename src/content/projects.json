@@ -9,6 +9,15 @@
     "wide": true
   },
   {
+    "title": "Cherry Time",
+    "category": "Food & Beverage",
+    "description": "A glossy, sun-drenched social film that gives a seasonal fruit brand the polish and pace of a lifestyle label.",
+    "tags": ["Motion Design", "Social Media Creative", "Ad Creative"],
+    "cover": "/videos/cherry-time.mp4",
+    "poster": "/images/projects/cherry-time-poster.avif",
+    "images": ["/videos/cherry-time.mp4"]
+  },
+  {
     "title": "Holiday",
     "category": "Travel & Leisure",
     "description": "A bright, flexible campaign toolkit that scales from hero key visuals to dozens of localized social and display variants.",
@@ -28,9 +37,20 @@
     "title": "Sojern",
     "category": "Marketing Technology",
     "description": "A scalable presentation and content system that turns dense travel-marketing data into clear, persuasive stories.",
-    "tags": ["Presentation Design", "Illustration"],
-    "cover": "/images/projects/sojern.avif",
-    "images": ["/images/projects/sojern.avif"]
+    "tags": ["Motion Design", "Presentation Design", "Illustration"],
+    "cover": "/videos/sojern.mp4",
+    "poster": "/images/projects/sojern-poster.avif",
+    "images": ["/videos/sojern.mp4", "/images/projects/sojern.avif"]
+  },
+  {
+    "title": "DFSA",
+    "category": "Food & Beverage",
+    "description": "Bold typographic motion that turns a dried-fruit range into scroll-stopping social content, one colour-blocked product at a time.",
+    "tags": ["Motion Design", "Social Media Creative", "Art Direction"],
+    "cover": "/videos/dfsa.mp4",
+    "poster": "/images/projects/dfsa-poster.avif",
+    "images": ["/videos/dfsa.mp4"],
+    "wide": true
   },
   {
     "title": "Finmap",
