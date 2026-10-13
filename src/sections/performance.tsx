@@ -1,35 +1,34 @@
-import AnimatedGradient from '../components/animated-gradient'
 import Button from '../components/autton'
-import { Layout } from '../components/base/layout';
-import { Media } from '../components/base/media';
 import { Section } from '../components/base/section'
-import Em from '../components/em'
 import Eyebrow from '../components/eyebrow'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
 
 export default function HighImpact() {
   return (
-    <Section className="relative isolate overflow-hidden bg-brand-radial text-white" pad="md">
-      <AnimatedGradient />
-      <Layout.Grid className="grid-cols-2 landscape:grid-cols-1 gap-xhg">
+    <Section className="bg-night-low text-white" pad="md">
+      <div className="grid grid-cols-2 items-center gap-[70px] tablet:gap-xlg landscape:grid-cols-1">
         <div>
           <Eyebrow tone="light">Multi-platform performance</Eyebrow>
-          <Heading.H2 className="mt-xlg">
-            High impact creative across <Em className="text-lime">every channel.</Em>
+          <Heading.H2 className="mt-[14px]">
+            <span className="block">High impact creative</span> <span className="block">across <span className="text-lime">every channel.</span></span>
           </Heading.H2>
-          <Paragraph className="mt-xbg">
-            Deliver attention-grabbing campaigns across the channels your audience uses every day. Strengthen your brand with consistently strong creative designed to make an impact.
-          </Paragraph>
-          <Paragraph className="mt-xbg">Launch standout campaigns and content that perform on every platform.</Paragraph>
-          <Button href="#contact" className="mt-xlg">Book a Demo</Button>
+          <div className="mt-6 max-w-[28.75rem] text-whisper">
+            <Paragraph>
+              Deliver attention-grabbing campaigns across the channels your audience uses every day. Strengthen your brand with consistently strong creative designed to make an impact.
+            </Paragraph>
+            <Paragraph className="mt-5">Launch standout campaigns and content that perform on every platform.</Paragraph>
+          </div>
+          <Button href="#contact" className="mt-[34px]">Book a Demo</Button>
         </div>
-        <Media.Image
-          src="/images/placeholder.svg"
-          alt="Montage of creative across platforms"
-          className="w-full aspect-3/2"
+        <img
+          src="/images/sections/performance-montage.avif"
+          alt="Montage of Creative Seat work across social, print, outdoor and web"
+          loading="lazy"
+          decoding="async"
+          className="aspect-[505/285] w-full rounded-card object-cover"
         />
-      </Layout.Grid>
+      </div>
     </Section>
   )
 }

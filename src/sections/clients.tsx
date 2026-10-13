@@ -1,26 +1,15 @@
 import { Section } from '../components/base/section'
 import BrandLogo from '../components/brand-logo'
-import Container from '../components/container'
-import Heading from '../components/heading'
-import { logoMarqueeTrack } from '../content'
+import { logos } from '../content'
 
 export default function LogoMarquee() {
   return (
-    <Section bleed pad="sm" className="bg-mist text-center">
-      <Container>
-        <Heading.H4 as="h2">Creative partner to worldwide brands</Heading.H4>
-      </Container>
-      <div className="cs-marquee relative mt-xlg w-full overflow-hidden [--edge:10%] [-webkit-mask-image:linear-gradient(to_right,transparent,#000_var(--edge),#000_calc(100%-var(--edge)),transparent)] [mask-image:linear-gradient(to_right,transparent,#000_var(--edge),#000_calc(100%-var(--edge)),transparent)] landscape:[--edge:7%]">
-        <div className="cs-marquee-track">
-          {logoMarqueeTrack.map((logo, i) => (
-            <BrandLogo
-              key={i}
-              src={logo.src}
-              name={logo.name}
-              duplicate={logo.duplicate}
-            />
-          ))}
-        </div>
+    <Section pad="sm" className="text-center">
+      <h2 className="text-sm font-medium uppercase tracking-[0.1em] text-ink/50">Creative partner to worldwide brands</h2>
+      <div className="mt-[34px] flex flex-wrap items-center justify-between gap-x-8 gap-y-6 tablet:justify-center tablet:gap-x-12">
+        {logos.map((logo) => (
+          <BrandLogo key={logo.name} src={logo.src} name={logo.name} />
+        ))}
       </div>
     </Section>
   )

@@ -3,26 +3,25 @@ import BaseLayout from '../layouts/base.astro'
 
 // Static sections — server-rendered to HTML and shipped with no client JS.
 import LogoMarquee from '../sections/clients'
+import ModernMarketing from '../sections/pitch'
+import NoHiring from '../sections/team'
 import FasterOutput from '../sections/benefits'
 import Process from '../sections/process'
 import Testimonials from '../sections/testimonials'
+import Expertise from '../sections/expertise'
 import SiteFooter from '../sections/footer'
 
 // Interactive sections — hydrated as islands. Each one either holds scroll
-// state or reaches motion/Base UI through Button, Eyebrow, Media or Accordion.
+// state, plays an intro, drives video/Base UI, or springs its Button on hover.
 import SiteHeader from '../sections/header'
 import Hero from '../sections/hero'
-import ModernMarketing from '../sections/pitch'
-import NoHiring from '../sections/team'
 import HighImpact from '../sections/performance'
-import Intelligence from '../sections/tools'
-import Expertise from '../sections/expertise'
 import WorkShowcase from '../sections/projects'
 import Faq from '../sections/faq'
 import CtaBanner from '../sections/cta'
 
-// Hydrate a screen's-worth early so a section's `whileInView` entrance
-// animation still has a live island by the time it scrolls into view.
+// Hydrate a screen's-worth early so islands are live by the time they scroll
+// into view.
 const nearViewport = { rootMargin: '200px' }
 ---
 
@@ -31,15 +30,15 @@ const nearViewport = { rootMargin: '200px' }
   <main>
     <Hero client:load />
     <LogoMarquee />
-    <ModernMarketing client:visible={nearViewport} />
-    <NoHiring client:visible={nearViewport} />
+    <ModernMarketing />
+    <NoHiring />
     <HighImpact client:visible={nearViewport} />
     <FasterOutput />
     <Process />
-    <Intelligence client:visible={nearViewport} />
     <Testimonials />
-    <Expertise client:visible={nearViewport} />
-    <WorkShowcase client:visible={nearViewport} />
+    <Expertise />
+    <!-- Idle rather than visible: a #work-<slug> deep link has to open the project viewer on load. -->
+    <WorkShowcase client:idle />
     <Faq client:visible={nearViewport} />
     <CtaBanner client:visible={nearViewport} />
   </main>

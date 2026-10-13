@@ -1,31 +1,32 @@
-import Button from '../components/autton'
-import { Media } from '../components/base/media';
-import { Layout } from '../components/base/layout';
 import { Section } from '../components/base/section'
-import Em from '../components/em'
 import Eyebrow from '../components/eyebrow'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
 
 export default function ModernMarketing() {
   return (
-    <Section pad="md">
-      <Layout.Grid className="grid-cols-2 landscape:grid-cols-1 gap-xhg">
+    // The card spans the column plus its gutters, so its 40px padding lines the
+    // copy back up with every other section.
+    <Section pad="sm" width="wide">
+      <div className="grid grid-cols-2 items-center gap-[70px] rounded-frame bg-mist p-10 text-forest tablet:gap-xlg landscape:grid-cols-1 landscape:p-xbg">
         <div>
           <Eyebrow>Advertising has changed</Eyebrow>
-          <Heading.H2 className="mt-xlg">
-            Designed for <Em className="text-grape">modern marketing</Em> teams
-          </Heading.H2>
-          <Paragraph className="mt-xbg">
+          <Heading.H2 className="mt-[14px] max-w-[30rem]">Designed for modern marketing teams</Heading.H2>
+          <Paragraph className="mt-6">
             Teams are expected to deliver more content across more channels than ever before.
           </Paragraph>
-          <Paragraph className="mt-bg">
-            Freelancers create complexity and brand inconsistency. Traditional agencies are costly and lead to production drag. <strong>Creative Seat</strong> gives your team a faster, more effective way to produce high-end content within one simple subscription.
+          <Paragraph className="mt-5">
+            Freelancers create complexity and brand inconsistency. Traditional agencies are costly and lead to production drag. Creative Seat gives your team a faster, more effective way to produce high-end content within one simple subscription.
           </Paragraph>
-          <Button href="#contact" className="mt-xlg">Book a Demo</Button>
         </div>
-        <Media.Image src="/images/placeholder.svg" alt="Marketing professional working from a chair" className="w-full aspect-3/2"/>
-      </Layout.Grid>
+        <img
+          src="/images/sections/pitch-marketer.avif"
+          alt="Marketer working on a laptop in an armchair, surrounded by floating social posts and ad layouts"
+          loading="lazy"
+          decoding="async"
+          className="aspect-[505/498] w-full rounded-md object-cover object-[68%_center]"
+        />
+      </div>
     </Section>
   )
 }
