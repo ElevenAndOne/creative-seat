@@ -18,8 +18,27 @@ export interface Project {
   poster?: string
   /** Modal media (list of links, images or videos) — adaptive grid: 1 = centered, multiple = grid. */
   images: string[]
-  /** Optional: span two columns in the work-showcase grid. */
-  wide?: boolean
+  /** Optional curated case study for the project viewer; without one the viewer builds a simple wall from `images`. */
+  caseStudy?: CaseStudy
+}
+
+/**
+ * One tile on a case-study wall: an image path (or `"logo"` for the brand tile)
+ * and its box in Figma units, taken straight from the project's artboard.
+ */
+export type WallTile = [src: string, x: number, y: number, w: number, h: number]
+
+export interface CaseStudy {
+  industry: string
+  location: string
+  /** Brand logo, drawn centred on `logoBg` for the wall's `"logo"` tile. */
+  logo: string
+  logoBg: string
+  /** Client / project write-up, one entry per paragraph. */
+  blurb: string[]
+  services: string[]
+  /** The artboard: overall size plus every tile, in Figma units. It's scaled to the viewer's height. */
+  wall: { width: number; height: number; tiles: WallTile[] }
 }
 
 export interface Testimonial {

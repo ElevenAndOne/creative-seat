@@ -8,18 +8,18 @@ export const projects = projectsData as Project[]
 export const testimonials = testimonialsData as Testimonial[]
 export const logos = logosData as Logo[]
 export const showcasedProjects = projects.slice(0, 6)
-export const logoMarqueeTrack = [...logos, ...logos].map((logo, index) => ({
-  ...logo,
-  duplicate: index >= logos.length,
-}))
+
+/** URL-safe id for a project's deep link (`#work-<slug>`), e.g. "Cherry Time" → "cherry-time". */
+export const projectSlug = (project: Project) =>
+  project.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
 export {
-  automationItems,
   benefitCards,
   faqItems,
+  heroCards,
   processSteps,
   services,
   socials,
 } from './sections'
 
-export type { Logo, Project, Testimonial } from './types'
+export type { CaseStudy, Logo, Project, Testimonial, WallTile } from './types'
