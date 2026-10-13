@@ -1,10 +1,8 @@
 import { motion, useReducedMotion } from 'motion/react'
-import AnimatedGradient from '../components/animated-gradient'
 import Button from '../components/autton'
 import { Section } from '../components/base/section'
-import Em from '../components/em'
 import Heading from '../components/heading'
-import HeroGrid from '../components/hero-grid/HeroGrid'
+import HeroStack from '../components/hero-stack'
 import Paragraph from '../components/paragraph'
 
 const EASE = [0.16, 1, 0.3, 1] as const
@@ -12,36 +10,39 @@ const EASE = [0.16, 1, 0.3, 1] as const
 export default function Hero() {
   const reduce = useReducedMotion() ?? false
 
-  // Copy rises in just ahead of the cards; skipped entirely under reduced motion.
-  const rise = (delay: number) =>
-    reduce ? {} : { initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.7, ease: EASE, delay } }
+  // Copy rises in just ahead of the cards. The props must be the same on server
+  // and client (the reduced-motion preference is only known in the browser, and
+  // React won't patch a mismatched `style` on hydration, leaving the copy
+  // invisible), so reduced motion just makes the transition instant.
+  const rise = (delay: number) => ({
+    initial: { opacity: 0, y: 24 },
+    animate: { opacity: 1, y: 0 },
+    transition: reduce ? { duration: 0 } : { duration: 0.7, ease: EASE, delay },
+  })
 
   return (
     <Section
-      className="relative isolate flex min-h-svh flex-col justify-center overflow-hidden bg-brand-radial pt-[5.5rem] text-white"
+      className="isolate overflow-hidden bg-night text-snow"
       pad="none"
-      innerClassName="grid grid-cols-[0.9fr_1.1fr] items-center gap-xlg py-xlg tablet:grid-cols-1 tablet:gap-xxlg"
+      innerClassName="grid grid-cols-[minmax(0,0.92fr)_minmax(0,1fr)] items-center gap-5 pt-[clamp(7.5rem,6.43rem+5.36vw,10.5rem)] pb-[clamp(3.5rem,2.82rem+3.39vw,5.625rem)] tablet:grid-cols-1 tablet:gap-xxlg"
     >
-      {/* Living gradient: drifting brand-colour blobs over the static radial. */}
-      <AnimatedGradient />
-
-      <div className="flex flex-col">
+      <div className="flex flex-col items-start">
         <motion.div {...rise(0.05)}>
-          <Heading.H1>
-            Increase your brands creative <Em className="text-lime">capability.</Em>
+          <Heading.H1 className="max-w-[32rem]">
+            Increase your brands <span className="font-semibold text-mint">creative capability.</span>
           </Heading.H1>
         </motion.div>
-        <motion.div {...rise(0.18)} className="mt-xbg max-w-[30rem]">
-          <Paragraph className="leading-[1.7] text-white/85">
+        <motion.div {...rise(0.18)} className="mt-[14px] max-w-[27rem]">
+          <Paragraph.Big className="text-whisper">
             Scale your brands content production through a simple subscription to your very own specialised creative team.
-          </Paragraph>
+          </Paragraph.Big>
         </motion.div>
-        <motion.div {...rise(0.31)} className="mt-xlg self-start">
+        <motion.div {...rise(0.31)} className="mt-[38px] landscape:w-full">
           <Button href="#contact">Book a Demo</Button>
         </motion.div>
       </div>
 
-      <HeroGrid />
+      <HeroStack className="mx-auto max-w-[34.66rem]" />
     </Section>
   )
 }
