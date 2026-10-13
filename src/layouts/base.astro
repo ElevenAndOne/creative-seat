@@ -21,6 +21,14 @@ const { title, description } = Astro.props
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Google tag (gtag.js) — `is:inline` keeps Astro from bundling these as modules -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-BE7L1P1E4Z"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || []
+      function gtag() { dataLayer.push(arguments) }
+      gtag('js', new Date())
+      gtag('config', 'G-BE7L1P1E4Z')
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
     <meta name="description" content={description} />
