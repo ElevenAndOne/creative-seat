@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
 import { cn } from '../utils/cn'
 
-type Width = 'max' | 'mid' | 'full'
+type Width = 'max' | 'wide' | 'mid' | 'full'
 
 const MAX_WIDTH: Record<Width, string> = {
-  max: 'max-w-[var(--container-width)]', // 90rem
+  max: 'max-w-[var(--container-width)]', // 67.5rem — the content column
+  wide: 'max-w-[var(--container-wide)]', // 72.5rem — column + its 40px gutters
   mid: 'max-w-[var(--container-mid-width)]', // 64rem
   full: 'max-w-full',
 }

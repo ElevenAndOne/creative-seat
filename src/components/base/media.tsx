@@ -24,7 +24,7 @@ type AmbientOptions = {
  * it must be given. Ambient means looping, muted and inline, playing on its own
  * — the only combination browsers allow to start unprompted.
  *
- * Three things a raw <video> gets wrong that this handles:
+ * Four things a raw <video> gets wrong that this handles:
  *   1. React sets `muted` as an attribute, not the DOM *property*, so playback
  *      is silently blocked — we set the property on a ref to make it stick.
  *   2. Reduced-motion users don't get motion forced on them: playback is held
@@ -37,6 +37,10 @@ type AmbientOptions = {
  *      appears in the client render never reaches the DOM at all. Both are
  *      applied imperatively instead, leaving the rendered markup identical on
  *      both sides.
+ *   4. Chrome pauses muted b-roll that starts playing out of view and never
+ *      resumes it, so a video hydrated below the fold would sit frozen on its
+ *      first frame. Playback follows visibility instead: it plays while on
+ *      screen and pauses when it leaves (no wasted decoding off screen either).
  *
  * Shared by <Media.Video> and the project covers, which differ only in whether
  * the element fills a sized box or sizes itself.
@@ -63,9 +67,15 @@ export function useAmbientVideo({ autoPlay, loop, muted, playsInline, controls }
         el.controls = showControls
         if (!wantsPlayback) return void el.pause()
         el.preload = 'auto'
-        // The browser can still refuse (power saving, data saver); that's its
-        // call to make, so let the rejection go.
-        void el.play().catch(() => {})
+        // Play only while on screen — see (4) above. The browser can still
+        // refuse (power saving, data saver); that's its call to make, so let
+        // the rejection go.
+        const io = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) void el.play().catch(() => {})
+            else el.pause()
+        })
+        io.observe(el)
+        return () => io.disconnect()
     }, [showControls, wantsPlayback])
 
     return {

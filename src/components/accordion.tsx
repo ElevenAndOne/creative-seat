@@ -1,5 +1,4 @@
 import { Accordion as BaseAccordion } from '@base-ui/react/accordion'
-import { useReducedMotion } from 'motion/react'
 
 export interface AccordionItem {
   question: string
@@ -7,9 +6,9 @@ export interface AccordionItem {
 }
 
 /**
- * FAQ disclosure list — heading row with a "+" toggle and a hairline rule
- * between items, per the Figma FAQ section. The answer slides open (height +
- * fade) and the icon rotates into an "×".
+ * FAQ disclosure list — question row with a "+" toggle and a hairline rule
+ * under every item, per the Figma FAQ section. The answer slides open (height +
+ * fade) and the "+" swaps for the violet "×".
  */
 export default function Accordion({
   items,
@@ -18,32 +17,30 @@ export default function Accordion({
   items: AccordionItem[]
   defaultOpen?: number | null
 }) {
-  const reduce = useReducedMotion()
   const defaultValue = defaultOpen === null ? [] : [`item-${defaultOpen}`]
 
   return (
-    <BaseAccordion.Root defaultValue={defaultValue} className="group/accordion">
+    <BaseAccordion.Root defaultValue={defaultValue} className="font-inter">
       {items.map((item, i) => {
         const value = `item-${i}`
         return (
-          <BaseAccordion.Item key={item.question} value={value} className="border-t border-black/40 first:border-t-0">
+          <BaseAccordion.Item key={item.question} value={value} className="border-b border-black/18">
             <BaseAccordion.Header>
-              <BaseAccordion.Trigger className="group flex w-full items-start justify-between gap-6 py-6 text-left outline-none focus-visible:ring-2 focus-visible:ring-black/60 focus-visible:ring-offset-4 focus-visible:ring-offset-mist">
-                <span className="text-2xl font-medium leading-snug">{item.question}</span>
-                <span
-                  aria-hidden
-                  className="mt-0.5 shrink-0 text-4xl leading-none transition-transform duration-300 group-data-[panel-open]:rotate-45"
-                >
-                  +
+              {/* An open item tightens the gap under its question to the design's 15px. */}
+              <BaseAccordion.Trigger className="group flex w-full items-center justify-between gap-6 py-[26px] text-left outline-none transition-[padding] duration-300 focus-visible:ring-2 focus-visible:ring-black/60 focus-visible:ring-offset-4 focus-visible:ring-offset-mist data-[panel-open]:pb-[15px]">
+                <span className="text-h4 font-semibold text-ink">{item.question}</span>
+                <span aria-hidden className="relative size-5 shrink-0">
+                  <img src="/images/icons/plus.svg" alt="" className="absolute inset-0 size-full transition-opacity duration-200 group-data-[panel-open]:opacity-0" />
+                  <img src="/images/icons/close.svg" alt="" className="absolute inset-0 size-full opacity-0 transition-opacity duration-200 group-data-[panel-open]:opacity-100" />
                 </span>
               </BaseAccordion.Trigger>
             </BaseAccordion.Header>
             {item.answer && (
               <BaseAccordion.Panel
                 keepMounted
-                className={`h-[var(--accordion-panel-height)] overflow-hidden opacity-100 transition-[height,opacity] ease-[cubic-bezier(0.16,1,0.3,1)] data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0 ${reduce ? 'duration-0' : 'duration-300'}`}
+                className="h-[var(--accordion-panel-height)] overflow-hidden opacity-100 transition-[height,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0 motion-reduce:duration-0"
               >
-                <p className="-mt-2 max-w-[510px] pb-7 text-base leading-relaxed text-ink">
+                <p className="max-w-[40rem] pb-[26px] text-[15px] leading-[1.65] text-graphite">
                   {item.answer}
                 </p>
               </BaseAccordion.Panel>

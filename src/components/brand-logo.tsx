@@ -1,17 +1,15 @@
 interface BrandLogoProps {
   src: string
   name: string
-  duplicate: boolean
 }
 
-export default function BrandLogo({ src, name, duplicate }: BrandLogoProps) {
+/** One client wordmark in the partners row — the black SVGs, softened to 85%. */
+export default function BrandLogo({ src, name }: BrandLogoProps) {
   return (
-    <div className="flex shrink-0 items-center mx-11 landscape:mx-7" aria-hidden={duplicate || undefined}>
-      <img
-        src={src}
-        alt={duplicate ? '' : name}
-        className="h-10 w-auto object-contain opacity-60 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0 landscape:h-6"
-      />
-    </div>
+    <img
+      src={src}
+      alt={name}
+      className="h-7 w-auto shrink-0 object-contain opacity-85 transition-opacity duration-300 hover:opacity-100 landscape:h-6"
+    />
   )
 }

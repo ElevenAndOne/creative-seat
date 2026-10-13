@@ -12,8 +12,8 @@ const spacing = [
     "lg", "xlg", "xxlg", "xxxlg",
     "hg", "xhg", "xxhg", "xxxhg",
 ]; // --spacing-* : drives p-*, m-*, gap-*, w-*, h-*, inset-*, …
-const text = ["display", "h1", "h2", "h3", "h4", "h5", "h6", "lead"]; // --text-* font sizes
-const radius = ["sm", "md", "bg", "card", "round"]; // --radius-* (sm/md overlap built-ins)
+const text = ["h1", "h2", "h3", "h4", "p-lg", "p-md", "p-sm", "p-xs", "eyebrow"]; // --text-* font sizes
+const radius = ["sm", "md", "card", "panel", "frame", "round"]; // --radius-* (sm/md overlap built-ins)
 
 const twMerge = extendTailwindMerge({
     extend: {

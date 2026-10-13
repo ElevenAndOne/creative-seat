@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react'
 
 /**
- * Italic emphasis used inside headings throughout the design
- * (e.g. "modern marketing", "every channel", "get creative").
+ * Italic emphasis inside headings (e.g. "teams choose", "on demand", "get
+ * creative"). Keeps the heading's own weight, so Poppins Medium headings pick
+ * up Poppins Medium Italic.
  */
 export default function Em({
   children,
@@ -11,5 +12,5 @@ export default function Em({
   children: ReactNode
   className?: string
 }) {
-  return <em className={`font-medium italic ${className}`}>{children}</em>
+  return <em className={`italic ${className}`}>{children}</em>
 }

@@ -3,7 +3,7 @@ import { cn } from '../../utils/cn'
 import Container from '../container'
 
 type Pad = 'none' | 'sm' | 'md' | 'bg'
-type Width = 'max' | 'mid' | 'full'
+type Width = 'max' | 'wide' | 'mid' | 'full'
 
 const PAD: Record<Pad, string> = {
   none: '0rem',
@@ -22,7 +22,7 @@ type SectionProps = {
   pad?: Pad
   padTop?: Pad
   padBottom?: Pad
-  /** Inner container width: max (90rem) · mid (64rem) · full. */
+  /** Inner container width: max (67.5rem) · wide (72.5rem) · mid (64rem) · full. */
   width?: Width
   /** Skip the inner container for edge-to-edge layouts. */
   bleed?: boolean
