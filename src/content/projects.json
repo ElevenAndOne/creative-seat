@@ -1,37 +1,69 @@
 [
   {
-    "title": "Daniel Wellington",
-    "category": "Fashion & Lifestyle",
-    "description": "Always-on motion and social creative that keeps a global lifestyle brand consistent across every market and campaign moment.",
-    "tags": ["Motion Design", "Social Media Creative", "Ad Creative"],
-    "cover": "/images/projects/daniel-wellington.avif",
-    "images": ["/images/projects/daniel-wellington.avif"],
-    "wide": true
-  },
-  {
-    "title": "Cherry Time",
+    "title": "Dried Fruit South Africa",
     "category": "Food & Beverage",
-    "description": "A glossy, sun-drenched social film that gives a seasonal fruit brand the polish and pace of a lifestyle label.",
-    "tags": ["Motion Design", "Social Media Creative", "Ad Creative"],
-    "cover": "/videos/cherry-time.mp4",
-    "poster": "/images/projects/cherry-time-poster.avif",
-    "images": ["/videos/cherry-time.mp4"]
+    "description": "Bold typographic motion that turns a dried-fruit range into scroll-stopping social content, one colour-blocked product at a time.",
+    "tags": ["Motion Design", "Social Media Creative", "Art Direction"],
+    "cover": "/videos/dfsa.mp4",
+    "poster": "/images/projects/dfsa-poster.avif",
+    "images": ["/videos/dfsa.mp4"],
+    "caseStudy": {
+      "industry": "Food & Beverage",
+      "location": "South Africa",
+      "logo": "/images/work/dfsa-logo.png",
+      "logoBg": "#ff9033",
+      "blurb": ["Dried Fruit South Africa is the industry body behind the country’s dried-fruit range, taking it to consumers as an everyday, on-the-go snack.", "We run the always-on social programme: bold typographic motion, lifestyle and studio photography, recipe content, a web competition campaign and a Day-in-the-life editorial series."],
+      "services": ["Motion Design", "Social Media Creative", "Art Direction", "Campaign Creative", "Web Design"],
+      "wall": {
+        "width": 3787,
+        "height": 1168,
+        "tiles": [
+          ["logo", 0, 0, 505, 575],
+          ["/images/work/dfsa-02.avif", 521, 0, 1027, 1166],
+          ["/images/work/dfsa-03.avif", 1564, 0, 920, 575],
+          ["/images/work/dfsa-04.avif", 2500, 0, 460, 575],
+          ["/images/work/dfsa-05.avif", 2976, 0, 811, 575],
+          ["/images/work/dfsa-06.avif", 0, 591, 505, 575],
+          ["/images/work/dfsa-07.avif", 1564, 591, 505, 575],
+          ["/images/work/dfsa-08.avif", 2085, 591, 460, 575],
+          ["/images/work/dfsa-09.avif", 2561, 591, 705, 575],
+          ["/images/work/dfsa-10.avif", 3282, 591, 505, 577]
+        ]
+      }
+    }
   },
   {
-    "title": "Holiday",
+    "title": "True Africa Safaris",
     "category": "Travel & Leisure",
-    "description": "A bright, flexible campaign toolkit that scales from hero key visuals to dozens of localized social and display variants.",
-    "tags": ["Campaign", "Social Media Creative", "Key Visuals"],
-    "cover": "/images/projects/holiday.avif",
-    "images": ["/images/projects/holiday.avif", "/images/projects/holiday-cranberry.avif"]
-  },
-  {
-    "title": "DuToit Agri",
-    "category": "Agriculture",
-    "description": "A refreshed brand identity and packaging language that brings a century-old agribusiness into a modern, premium shelf presence.",
-    "tags": ["Brand Identity", "Packaging Design"],
-    "cover": "/images/projects/dutoit.avif",
-    "images": ["/images/projects/dutoit.avif", "/images/projects/dutoit-2.avif"]
+    "description": "Motion, social and ad creative for a safari operator, built around the landscapes and journeys it sells.",
+    "tags": ["Motion Design", "Social Media Creative", "Ad Creative"],
+    "cover": "/images/projects/true-africa-safaris.avif",
+    "images": ["/images/projects/true-africa-safaris.avif"],
+    "caseStudy": {
+      "industry": "Luxury Travel",
+      "location": "Southern & East Africa",
+      "logo": "/images/work/trueafrica-logo.png",
+      "logoBg": "#ece7e5",
+      "blurb": ["TrueAfrica is a safari company that has been crafting private journeys to Africa’s quieter corners since 2002.", "We built destination campaigns for Botswana, Tanzania and Namibia across monthly emailers, social carousels and web, pairing editorial typography with the continent’s wild places."],
+      "services": ["Campaign Creative", "Email Marketing", "Social Media Creative", "Web Design", "Copywriting"],
+      "wall": {
+        "width": 7313,
+        "height": 1172,
+        "tiles": [
+          ["logo", 0, 0, 505, 575],
+          ["/images/work/trueafrica-02.avif", 0, 591, 505, 574],
+          ["/images/work/trueafrica-03.avif", 521, 0, 999, 1165],
+          ["/images/work/trueafrica-04.avif", 1536, 0, 600, 575],
+          ["/images/work/trueafrica-05.avif", 1536, 591, 600, 574],
+          ["/images/work/trueafrica-06.avif", 2152, 0, 1553, 1165],
+          ["/images/work/trueafrica-07.avif", 3721, 0, 626, 601],
+          ["/images/work/trueafrica-08.avif", 3721, 618, 626, 547],
+          ["/images/work/trueafrica-09.avif", 4363, 0, 1074, 1172],
+          ["/images/work/trueafrica-10.avif", 5453, 0, 1244, 1172],
+          ["/images/work/trueafrica-11.avif", 6713, 0, 600, 1172]
+        ]
+      }
+    }
   },
   {
     "title": "Sojern",
@@ -43,14 +75,127 @@
     "images": ["/videos/sojern.mp4", "/images/projects/sojern.avif"]
   },
   {
-    "title": "DFSA",
+    "title": "Holiday Beverages",
     "category": "Food & Beverage",
-    "description": "Bold typographic motion that turns a dried-fruit range into scroll-stopping social content, one colour-blocked product at a time.",
-    "tags": ["Motion Design", "Social Media Creative", "Art Direction"],
-    "cover": "/videos/dfsa.mp4",
-    "poster": "/images/projects/dfsa-poster.avif",
-    "images": ["/videos/dfsa.mp4"],
-    "wide": true
+    "description": "A bright, flexible campaign toolkit that scales from hero key visuals to dozens of localized social and display variants.",
+    "tags": ["Campaign", "Social Media Creative", "Key Visuals"],
+    "cover": "/images/projects/holiday.avif",
+    "images": ["/images/projects/holiday.avif", "/images/projects/holiday-cranberry.avif"],
+    "caseStudy": {
+      "industry": "Beverages",
+      "location": "South Africa",
+      "logo": "/images/work/holiday-logo.png",
+      "logoBg": "#fcde2f",
+      "blurb": ["Holiday is a range of premium spirit coolers built around bright flavour and sunny, social moments.", "We created the brand world end to end: identity and colour system, can design for three flavours, lifestyle and flavour-led art direction, and an always-on social content library."],
+      "services": ["Brand Identity", "Packaging Design", "Art Direction", "Social Media Creative", "Campaign Imagery"],
+      "wall": {
+        "width": 7588,
+        "height": 1166,
+        "tiles": [
+          ["logo", 0, 0, 505, 575],
+          ["/images/work/holiday-02.avif", 521, 0, 982, 575],
+          ["/images/work/holiday-03.avif", 0, 591, 982, 575],
+          ["/images/work/holiday-04.avif", 998, 590, 505, 575],
+          ["/images/work/holiday-05.avif", 1519, 0, 666, 1165],
+          ["/images/work/holiday-06.avif", 2201, 0, 1022, 575],
+          ["/images/work/holiday-07.avif", 2201, 590, 1022, 575],
+          ["/images/work/holiday-08.avif", 3239, 0, 1055, 1165],
+          ["/images/work/holiday-09.avif", 4310, 0, 1512, 378],
+          ["/images/work/holiday-10.avif", 4310, 394, 1512, 378],
+          ["/images/work/holiday-11.avif", 4310, 788, 1512, 378],
+          ["/images/work/holiday-12.avif", 5839, 0, 1749, 1166]
+        ]
+      }
+    }
+  },
+  {
+    "title": "Cherry Time",
+    "category": "Food & Beverage",
+    "description": "A glossy, sun-drenched social film that gives a seasonal fruit brand the polish and pace of a lifestyle label.",
+    "tags": ["Motion Design", "Social Media Creative", "Ad Creative"],
+    "cover": "/videos/cherry-time.mp4",
+    "poster": "/images/projects/cherry-time-poster.avif",
+    "images": ["/videos/cherry-time.mp4"],
+    "caseStudy": {
+      "industry": "Fresh Produce",
+      "location": "Western Cape",
+      "logo": "/images/work/cherry-logo.png",
+      "logoBg": "#ed1747",
+      "blurb": ["Cherry Time is a seasonal fresh-cherry brand grown in the Koue Bokkeveld and sold online and in national retailers.", "For the season launch we produced the full campaign: countdown and launch social, recipe content, an email series and the online ordering experience."],
+      "services": ["Campaign Creative", "Social Media Creative", "Motion Design", "Email Design", "Web Design"],
+      "wall": {
+        "width": 7295,
+        "height": 1167,
+        "tiles": [
+          ["logo", 0, 0, 505, 575],
+          ["/images/work/cherry-02.avif", 521, 0, 1052, 575],
+          ["/images/work/cherry-03.avif", 0, 591, 982, 575],
+          ["/images/work/cherry-04.avif", 998, 592, 575, 575],
+          ["/images/work/cherry-05.avif", 1589, 0, 655, 1165],
+          ["/images/work/cherry-06.avif", 2260, 0, 655, 1165],
+          ["/images/work/cherry-07.avif", 2931, 0, 460, 575],
+          ["/images/work/cherry-08.avif", 2931, 592, 460, 575],
+          ["/images/work/cherry-09.avif", 3407, 0, 460, 575],
+          ["/images/work/cherry-10.avif", 3407, 592, 460, 575],
+          ["/images/work/cherry-11.avif", 3884, 0, 460, 575],
+          ["/images/work/cherry-12.avif", 3884, 592, 460, 575],
+          ["/images/work/cherry-13.avif", 4360, 0, 1052, 575],
+          ["/images/work/cherry-14.avif", 4360, 592, 520, 575],
+          ["/images/work/cherry-15.avif", 4896, 592, 516, 575],
+          ["/images/work/cherry-16.avif", 5428, 0, 480, 1167],
+          ["/images/work/cherry-17.avif", 5924, 0, 1371, 1167]
+        ]
+      }
+    }
+  },
+  {
+    "title": "Onvlee Engineering",
+    "category": "Engineering & Manufacturing",
+    "description": "Motion, social and ad creative that turns an engineering manufacturer's technical product ranges into clear, confident brand content.",
+    "tags": ["Motion Design", "Social Media Creative", "Ad Creative"],
+    "cover": "/images/projects/onvlee-engineering.avif",
+    "images": ["/images/projects/onvlee-engineering.avif"],
+    "caseStudy": {
+      "industry": "Engineering & Manufacturing",
+      "location": "Cape Town",
+      "logo": "/images/work/onvlee-logo.png",
+      "logoBg": "#192437",
+      "blurb": ["Onvlee Engineering has manufactured cable management, walkway and precision-engineered products for the automotive, catalytic and renewable industries for over 60 years.", "We refreshed the brand and carried it across the website, social content, product brochures, a 60-year anniversary mark and an exhibition stand."],
+      "services": ["Brand Identity", "Web Design", "Social Media Creative", "Print Design", "Exhibition Design"],
+      "wall": {
+        "width": 3632,
+        "height": 1166,
+        "tiles": [
+          ["logo", 0, 0, 505, 575],
+          ["/images/work/onvlee-02.avif", 521, 0, 506, 1166],
+          ["/images/work/onvlee-03.avif", 1043, 0, 505, 575],
+          ["/images/work/onvlee-04.avif", 1564, 0, 836, 575],
+          ["/images/work/onvlee-05.avif", 2416, 1, 505, 574],
+          ["/images/work/onvlee-06.avif", 2937, 1, 695, 574],
+          ["/images/work/onvlee-07.avif", 0, 591, 505, 575],
+          ["/images/work/onvlee-08.avif", 1043, 591, 594, 575],
+          ["/images/work/onvlee-09.avif", 1653, 591, 416, 574],
+          ["/images/work/onvlee-10.avif", 2085, 591, 505, 574],
+          ["/images/work/onvlee-11.avif", 2606, 591, 1026, 575]
+        ]
+      }
+    }
+  },
+  {
+    "title": "Daniel Wellington",
+    "category": "Fashion & Lifestyle",
+    "description": "Always-on motion and social creative that keeps a global lifestyle brand consistent across every market and campaign moment.",
+    "tags": ["Motion Design", "Social Media Creative", "Ad Creative"],
+    "cover": "/images/projects/daniel-wellington.avif",
+    "images": ["/images/projects/daniel-wellington.avif"]
+  },
+  {
+    "title": "DuToit Agri",
+    "category": "Agriculture",
+    "description": "A refreshed brand identity and packaging language that brings a century-old agribusiness into a modern, premium shelf presence.",
+    "tags": ["Brand Identity", "Packaging Design"],
+    "cover": "/images/projects/dutoit.avif",
+    "images": ["/images/projects/dutoit.avif", "/images/projects/dutoit-2.avif"]
   },
   {
     "title": "Finmap",
@@ -66,8 +211,7 @@
     "description": "A calm, sun-drenched brand world and site for a coastal living development — built to feel as warm as the place itself.",
     "tags": ["Brand Identity", "Web Design"],
     "cover": "/images/projects/zonnehaven.avif",
-    "images": ["/images/projects/zonnehaven.avif", "/images/projects/zonnehaven-2.avif"],
-    "wide": true
+    "images": ["/images/projects/zonnehaven.avif", "/images/projects/zonnehaven-2.avif"]
   },
   {
     "title": "Voss Allan",
