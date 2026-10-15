@@ -234,6 +234,17 @@ body {
   }
 }
 
+/* The demo agenda's minute ruler (sections/demo-agenda.tsx) fills with Volt as
+   it scrolls through the viewport, where scroll-driven animations exist; it
+   simply sits full everywhere else. */
+@supports (animation-timeline: view()) {
+  .cs-ruler-fill {
+    animation: cs-progress linear both;
+    animation-timeline: view();
+    animation-range: entry 40% cover 55%;
+  }
+}
+
 /* The process slider's progress bar (sections/process.tsx) — fills once per
    step; the slider moves on when it ends. */
 @keyframes cs-progress {
@@ -302,7 +313,8 @@ body {
   }
 
   .cs-hint,
-  .cs-marquee-track {
+  .cs-marquee-track,
+  .cs-ruler-fill {
     animation: none;
   }
 

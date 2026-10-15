@@ -178,3 +178,33 @@ export const socials = [
   { name: 'Instagram', icon: '/images/icons/instagram.svg', size: 'size-4' },
   { name: 'YouTube', icon: '/images/icons/youtube.svg', size: 'size-[18px]' },
 ]
+
+/**
+ * The book-a-demo call, in the order it runs. `from` / `to` are minutes in —
+ * the agenda draws them on a 30-minute ruler.
+ */
+export const demoAgenda = [
+  {
+    from: 0,
+    to: 10,
+    title: 'Your queue',
+    body: 'Tell us what’s waiting: the campaigns, channels and brands you’re juggling, and where work tends to get stuck.',
+  },
+  {
+    from: 10,
+    to: 20,
+    title: 'A seat, live',
+    body: 'We walk through how a seat runs day to day — briefing in ClickUp, feedback in the tools you already use, and what 60 or 120 credits a month gets done.',
+  },
+  {
+    from: 20,
+    to: 30,
+    title: 'Your first month',
+    body: 'We suggest a half or full seat and what we’d take on first, so you leave with a plan rather than a pitch deck.',
+  },
+]
+
+/** Where every "Book a demo" and "Get in touch" goes: an email to the studio. */
+export const contact = {
+  email: 'trystin@11and1.com',
+}

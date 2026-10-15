@@ -89,3 +89,24 @@ export function homeStructuredData(site: URL, title: string, description: string
     ],
   }
 }
+
+/**
+ * The book-a-demo page's JSON-LD: a ContactPage within the site, pointing at
+ * the organisation and the service the demo is for (both defined in full on
+ * the home page's graph, linked here by @id).
+ */
+export function demoStructuredData(site: URL, url: string, title: string, description: string) {
+  const home = site.href
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    '@id': `${url}#webpage`,
+    url,
+    name: title,
+    description,
+    isPartOf: { '@id': `${home}#website` },
+    about: { '@id': `${home}#service` },
+    publisher: { '@id': `${home}#organization` },
+    inLanguage: 'en-GB',
+  }
+}

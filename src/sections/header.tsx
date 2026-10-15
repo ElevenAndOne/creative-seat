@@ -2,15 +2,18 @@ import { useEffect, useRef, useState } from 'react'
 import Button from '../components/autton'
 import Wordmark from '../components/wordmark'
 import { cn } from '../utils/cn'
+import { contactMail } from '../utils/contact'
 
+// Root-relative, so they work from every page (on the home page they just scroll).
 const NAV = [
-  { id: 'services', label: 'Services', href: '#services' },
-  { id: 'work', label: 'Our work', href: '#work' },
-  { id: 'resources', label: 'Resources', href: '#resources' },
-  { id: 'pricing', label: 'Pricing', href: '#pricing' },
+  { id: 'services', label: 'Services', href: '/#services' },
+  { id: 'work', label: 'Our work', href: '/#work' },
+  { id: 'resources', label: 'Resources', href: '/#resources' },
+  { id: 'pricing', label: 'Pricing', href: '/#pricing' },
 ]
 
-export default function SiteHeader() {
+/** `cta`: where "Get in touch" goes — an email to the studio, unless a page says otherwise. */
+export default function SiteHeader({ cta = contactMail }: { cta?: string }) {
   const ref = useRef<HTMLElement>(null)
   const [scrolled, setScrolled] = useState(false)
 
@@ -53,7 +56,7 @@ export default function SiteHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-6 landscape:hidden">
-          <Button href="#contact" id="header-get-in-touch" data-track="get_in_touch_click" data-track-location="header" variant={scrolled ? 'primary' : 'inverse'}>
+          <Button href={cta} id="header-get-in-touch" data-track="get_in_touch_click" data-track-location="header" variant={scrolled ? 'primary' : 'inverse'}>
             Get in touch
           </Button>
         </div>

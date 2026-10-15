@@ -4,6 +4,7 @@ import Em from '../components/em'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
 import SketchCanvas from '../components/sketch-canvas'
+import { demoMail } from '../utils/contact'
 
 /**
  * Closing campaign band: Volt, with Ink type and the Ink pill, over a live
@@ -24,7 +25,7 @@ export default function CtaBanner() {
       <Paragraph.Big className="mt-7 max-w-[28rem]">
         Design, illustration and animation for marketing teams that need more capacity.
       </Paragraph.Big>
-      <Button href="mailto:hello@creativeseat.example" id="cta-book-demo" data-track="book_demo_click" data-track-location="cta" className="mt-9">
+      <Button href={demoMail} id="cta-book-demo" data-track="book_demo_click" data-track-location="cta" className="mt-9">
         Book a demo
       </Button>
     </Section>

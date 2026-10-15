@@ -11,6 +11,7 @@ Marketing site for Creative Seat — "Increase your brand's creative capability.
 - **Motion** — hero intro and card carousel, cookie banner, project viewer
 - **Base UI** (`@base-ui/react`) — unstyled primitives (accordion, etc.)
 - **Fontsource** — self-hosted Golos Text and Instrument Serif
+- **[@astrojs/vercel](https://docs.astro.build/en/guides/integrations-guide/vercel/)** — pages stay prerendered; only the booking API runs as a Vercel function
 
 ## Getting started
 
@@ -34,7 +35,8 @@ The dev server runs at `http://localhost:3000`. The port is pinned in `astro.con
 
 ```
 creative-seat/
-├── astro.config.mjs      # @astrojs/react, Tailwind v4 vite plugin, dev port 3000
+├── astro.config.mjs      # @astrojs/react, Vercel adapter, Tailwind v4 vite plugin, booking env schema, dev port 3000
+├── .env.example          # the Google Calendar settings the booking API needs
 ├── tsconfig.json         # extends astro/tsconfigs/base
 ├── eslint.config.js
 ├── package.json
@@ -43,7 +45,10 @@ creative-seat/
 │   └── videos/           # the team canvas character loop (portfolio videos are hosted on Cloudflare R2)
 └── src/
     ├── pages/
-    │   └── index.astro   # the only route (/) — composes the sections
+    │   ├── index.astro         # the home page (/) — composes the sections
+    │   ├── book-a-demo.astro   # /book-a-demo — booking screen + the call's agenda
+    │   └── api/                # slots.ts (GET availability), book.ts (POST a booking) — on-demand
+    ├── server/           # server-only: Google Calendar client, slot generation
     ├── layouts/
     │   └── base.astro    # <html>/<head>: title, description, favicon, fonts, index.css
     ├── sections/         # one React component per page section
@@ -59,7 +64,7 @@ creative-seat/
     │   ├── testimonials.json
     │   └── logos.json
     ├── hooks/            # useMediaFlag
-    ├── utils/            # cn (class merge), cv (variant) helpers
+    ├── utils/            # cn (class merge), cv (variant), analytics, structured data, booking contract
     └── index.css         # Tailwind v4 entry, design tokens, breakpoints
 ```
 
@@ -70,7 +75,7 @@ Build output goes to `dist/`, as before.
 `src/pages/index.astro` renders every section, but each one hydrates differently:
 
 - **Static, zero JS** — `pitch`, `benefits`, `testimonials`, `expertise`, `footer` are rendered to plain HTML with no client directive. Buttons are pure CSS, and so is the benefit cards' Superside-style hover (the card lifts, its caption band grows up into the photo and the description opens).
-- **`client:load`** — `header` and `hero` hydrate immediately, since they're visible on first paint. The hero is one viewport tall (`100dvh`): copy, a 3D card fan of project imagery (`components/hero-stack.tsx` — real perspective and depth-sorting, draggable with a capped throw, advancing by itself every few seconds), and an endless, edge-faded marquee of client logos along the bottom.
+- **`client:load`** — `header` and `hero` hydrate immediately, since they're visible on first paint (on `/book-a-demo`, the header and the booking screen). The hero is one viewport tall (`100dvh`): copy, a 3D card fan of project imagery (`components/hero-stack.tsx` — real perspective and depth-sorting, draggable with a capped throw, advancing by itself every few seconds), and an endless, edge-faded marquee of client logos along the bottom.
 - **`client:idle`** — `projects` hydrates once the page is idle rather than on scroll, so a `#work-<slug>` deep link can open its project viewer straight away. `pricing` too, so the visitor's currency is known before they reach it. The cookie banner (in the layout) also loads on idle.
 - **`client:visible={{ rootMargin: '200px' }}`** — these hydrate slightly before they scroll into view:
   - `team`: a multiplayer canvas where four collaborator cursors drag a client's landing page together, piece by piece, then undo and rebuild. Hovering adds your own "You" cursor, and you can tug the pieces. The page's model is a transparent character loop (`public/videos/character-craig.webm`, with an HEVC-alpha `.mov` for Safari) that only plays while on screen.
@@ -78,6 +83,21 @@ Build output goes to `dist/`, as before.
   - `process`: the cascading slider.
   - `faq`: the Base UI accordion.
   - `cta`: the Volt band with a live WebGL pencil sketch of a photo (`components/sketch-canvas.tsx`), after Codrops' [Sketchy Pencil Effect](https://tympanus.net/codrops/2022/11/29/sketchy-pencil-effect-with-three-js-post-processing/). Sobel edges are read through cloud noise, so lines squiggle off true, and noise-scaled gradients from a softened copy add grainy shading. Even-width pencil scribbles darken the shadows. It boils through three drawings and shades harder under the pointer.
+
+## Book a demo
+
+Every "Book a demo" and "Get in touch" button leads to `/book-a-demo`. The page is one `client:load` island, `sections/book-demo.tsx`, on the night gradient. The pitch sits on the left and the form on the right: first and last name, email, phone, company and job role two to a row, then a date and a time, each picked from a small popover (Base UI). Below the form, `sections/demo-agenda.tsx` (static) lays the 30 minutes along a minute ruler that fills with Volt as it scrolls past.
+
+Requests are kept in **Vercel Blob** (`server/request-store.ts`): one private JSON file per booked slot, at `demo-requests/<date>/<HH-MM>Z.json` (UTC), holding the visitor's details and the time in both zones. The fixed name is the slot's lock — a second request for the same half hour gets 409 — and the picker treats every slot with a file as taken. Browse or download them in Vercel → Storage → the Blob store; deleting a file frees its slot. Until Google Calendar is connected, every weekday slot in `BOOKING_HOURS` (09:00–16:30 starts by default) is otherwise open.
+
+Once Google Calendar is connected, availability also comes from it, after the [mia calendar API](https://github.com/ElevenAndOne/mia-calendar-api), and it books:
+
+- **`GET /api/slots`** offers half-hour slots across `BOOKING_HOURS` in `BOOKING_TIME_ZONE`, on the next 10 weekdays from tomorrow. It marks each one free or busy from a FreeBusy query over the booking calendar plus any `GOOGLE_BUSY_CALENDAR_IDS`. A calendar it can't read is treated as an error, never as an empty diary. Visitors see the times in their own time zone, and busy ones are struck through.
+- **`POST /api/book`** checks that the slot is still on offer and **still free at that moment**. If someone took it in the meantime, it answers 409 and the page sends the visitor back to the picker with fresh times. Otherwise it creates the event. With `GOOGLE_IMPERSONATE` (Workspace domain-wide delegation), the visitor is added as a guest, and Google emails them the invite with a Meet link. Without it, the event carries their details in the description, because service accounts can't invite guests. A hidden honeypot field turns bots away.
+
+The Google client (`server/google-calendar.ts`) signs its own service-account JWT with Web Crypto and calls the REST API, so it needs no SDK.
+
+**Setup:** create a Blob store in the Vercel project (Storage → Create → Blob, private) and connect it, which adds `BLOB_READ_WRITE_TOKEN`. For Google Calendar, copy `.env.example` to `.env` (gitignored) and add the same variables in Vercel. In short: create a service account, enable the Google Calendar API, and then either grant it domain-wide delegation with the `calendar.events` and `calendar.freebusy` scopes (recommended) or share the calendar with it ("Make changes to events"). With neither the Blob token nor Google set, `npm run dev` labels bookings as samples and saves nothing, and production answers 503 so no request is silently lost.
 
 ## Project viewer
 
@@ -109,10 +129,10 @@ Design tokens in `src/index.css` mirror the guide: colours, a fluid type scale (
 
 - **Consent** — `components/cookie-banner.tsx` asks once (Accept / Decline, equal weight) and drives Google Consent Mode v2: everything is denied by default in `base.astro`, and a stored "granted" is restored before the tag configures. The footer's "Cookie settings" reopens it.
 - **Ids** — every key element has a stable `<section>-<element>` id (`hero-book-demo`, `header-nav-pricing`, `pricing-full-seat-book-demo`, `faq-question-3`, `work-card-cherry-time`, …) for GTM triggers.
-- **Events** — any element with `data-track="<event>"` (plus optional `data-track-location`) sends that GA4 event through one delegated listener in `base.astro`: `book_demo_click`, `get_in_touch_click`, `see_work_click`, `download_portfolio_click`, `nav_click`, `social_click`. Stateful moments call `track()` from `utils/analytics.ts`: `view_project`, `faq_open`, `process_slide`, `cookie_consent`.
+- **Events** — any element with `data-track="<event>"` (plus optional `data-track-location`) sends that GA4 event through one delegated listener in `base.astro`: `book_demo_click`, `get_in_touch_click`, `see_work_click`, `download_portfolio_click`, `nav_click`, `social_click`. Stateful moments call `track()` from `utils/analytics.ts`: `view_project`, `faq_open`, `process_slide`, `cookie_consent`, and `generate_lead` (a demo booked — no personal details are sent).
 
 ## SEO & AEO
 
-`site` in `astro.config.mjs` (**currently a placeholder — confirm the domain before launch**) drives the canonical URL, Open Graph / Twitter cards (`public/og-image.jpg`), `robots.txt`, `sitemap.xml` and `llms.txt` (all generated in `src/pages/`), plus the JSON-LD graph from `utils/structured-data.ts`: Organization, WebSite, WebPage, Service with its plans, HowTo for the process, and FAQPage. Structured data and `llms.txt` are built from the same content the page renders and leave prices out (visitors only see their own currency). Icons and `site.webmanifest` live in `public/`.
+`site` in `astro.config.mjs` (**currently a placeholder — confirm the domain before launch**) drives the canonical URL, Open Graph / Twitter cards (`public/og-image.jpg`), `robots.txt`, `sitemap.xml` and `llms.txt` (all generated in `src/pages/`), plus the JSON-LD graph from `utils/structured-data.ts`: Organization, WebSite, WebPage, Service with its plans, HowTo for the process, and FAQPage. `/book-a-demo` is a ContactPage linked into that graph. Structured data and `llms.txt` are built from the same content the page renders and leave prices out (visitors only see their own currency). Icons and `site.webmanifest` live in `public/`.
 
 Breakpoints are desktop-first custom variants — `tablet:` (≤992px), `landscape:` (≤768px), `portrait:` (≤480px). Tailwind doesn't emit custom variants in declaration order, so each narrower variant carries a little extra specificity to make sure it wins; see the comment in `index.css`.

@@ -1,11 +1,12 @@
 import { Dialog } from '@base-ui/react/dialog'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { useEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode, type RefObject } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react'
 import type { Project } from '../content'
 import { cn } from '../utils/cn'
 import Button from './autton'
 import ProjectMedia from './project-media'
 import Wordmark from './wordmark'
+import { demoMail } from '../utils/contact'
 
 /** The viewer's soft deceleration — same curve as the `ease-glide` token. */
 const EASE = [0.22, 0.8, 0.18, 1] as const
@@ -93,7 +94,6 @@ export default function ProjectViewer({ projects, index, origin, onNavigate, onC
                 reduce={reduce}
                 trackRef={trackRef}
                 onNext={() => goTo((index + 1) % projects.length)}
-                onClose={onClose}
               />
             </Dialog.Popup>
           </Dialog.Portal>
@@ -112,14 +112,13 @@ type ViewerBodyProps = {
   reduce: boolean
   trackRef: RefObject<HTMLDivElement | null>
   onNext: () => void
-  onClose: () => void
 }
 
 /**
  * One project's worth of viewer. Keyed by project, so switching projects
  * remounts it: scroll starts at zero and the tiles stagger in afresh.
  */
-function ViewerBody({ project, next, position, total, swapping, reduce, trackRef, onNext, onClose }: ViewerBodyProps) {
+function ViewerBody({ project, next, position, total, swapping, reduce, trackRef, onNext }: ViewerBodyProps) {
   const railRef = useRef<HTMLDivElement>(null)
   const fillRef = useRef<HTMLDivElement>(null)
   const cursorRef = useRef<HTMLDivElement>(null)
@@ -257,13 +256,6 @@ function ViewerBody({ project, next, position, total, swapping, reduce, trackRef
     trackRef.current?.focus({ preventScroll: true })
   }, [trackRef])
 
-  const bookDemo = (e: MouseEvent) => {
-    e.preventDefault()
-    onClose()
-    // Wait for the viewer to shrink away (and the scroll lock to lift) first.
-    window.setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }), 700)
-  }
-
   const meta = study ? [study.industry, study.location] : [project.category]
   const blurb = study?.blurb ?? [project.description]
   const services = study?.services ?? project.tags
@@ -399,7 +391,7 @@ function ViewerBody({ project, next, position, total, swapping, reduce, trackRef
         <div aria-hidden className="h-0.5 flex-1 overflow-hidden rounded-full bg-paper/15">
           <div ref={fillRef} className="h-full w-full origin-left scale-x-0 bg-volt" />
         </div>
-        <Button href="#contact" id="viewer-book-demo" data-track="book_demo_click" data-track-location="project_viewer" variant="inverse" onClick={bookDemo}>Book a demo</Button>
+        <Button href={demoMail} id="viewer-book-demo" data-track="book_demo_click" data-track-location="project_viewer" variant="inverse">Book a demo</Button>
       </footer>
 
       <div
