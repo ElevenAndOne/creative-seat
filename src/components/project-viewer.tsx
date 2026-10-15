@@ -81,7 +81,7 @@ export default function ProjectViewer({ projects, index, origin, onNavigate, onC
               }
               initialFocus={trackRef}
               finalFocus={() => returnFocus() ?? true}
-              className="fixed inset-0 z-[100] flex flex-col bg-night text-snow outline-none"
+              className="fixed inset-0 z-[100] flex flex-col bg-night text-paper outline-none"
             >
               <ViewerBody
                 key={index}
@@ -272,11 +272,11 @@ function ViewerBody({ project, next, position, total, swapping, reduce, trackRef
   return (
     <>
       <header className="grid h-[76px] shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 px-[var(--container-margin)] landscape:h-16 landscape:grid-cols-[1fr_auto]">
-        <p className="whitespace-nowrap text-lg">
-          <Wordmark /> <span className="font-display text-snow/60">/ Work</span>
+        <p className="flex items-center gap-3 whitespace-nowrap text-lg">
+          <Wordmark className="w-[124px]" /> <span className="text-paper/60">/ Work</span>
         </p>
-        <p className="font-inter text-[13px] font-medium tracking-[0.08em] text-snow/60 tabular-nums landscape:hidden" aria-live="polite">
-          <b className="font-semibold text-snow">{pad(position)}</b> / {pad(total)}
+        <p className="text-[13px] font-medium tracking-[0.08em] text-paper/60 tabular-nums landscape:hidden" aria-live="polite">
+          <b className="font-semibold text-paper">{pad(position)}</b> / {pad(total)}
         </p>
         <div className="flex justify-end gap-2">
           <IconButton label="Scroll back" disabled={edges.atStart} onClick={() => trackRef.current && page(trackRef.current, -1, reduce)} className="landscape:hidden">
@@ -285,7 +285,7 @@ function ViewerBody({ project, next, position, total, swapping, reduce, trackRef
           <IconButton label="Scroll forward" disabled={edges.atEnd} onClick={() => trackRef.current && page(trackRef.current, 1, reduce)} className="landscape:hidden">
             <path d="M9 18l6-6-6-6" />
           </IconButton>
-          <Dialog.Close aria-label="Close project" className="ml-2 grid size-11 place-items-center rounded-full border-[1.5px] border-snow bg-snow text-ink transition-colors duration-200 hover:border-lime hover:bg-lime focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-mint">
+          <Dialog.Close aria-label="Close project" className="ml-2 grid size-11 place-items-center rounded-full border-[1.5px] border-paper bg-paper text-ink transition-colors duration-200 hover:border-volt hover:bg-volt focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-paper">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden><path d="M6 6l12 12M18 6L6 18" /></svg>
           </Dialog.Close>
         </div>
@@ -309,25 +309,25 @@ function ViewerBody({ project, next, position, total, swapping, reduce, trackRef
             {/* Intro column */}
             <div className="flex h-[var(--th)] w-[min(420px,80vw)] shrink-0 flex-col justify-between pr-[clamp(8px,2vw,32px)] landscape:h-auto landscape:w-auto landscape:gap-7 landscape:p-0 landscape:pb-7">
               <div>
-                <p className="mb-[18px] font-inter text-xs font-bold uppercase tracking-[0.14em] text-mint">Client</p>
-                <Dialog.Title className="mb-3.5 font-display text-[clamp(34px,4.2vw,56px)] font-medium leading-[1.04] tracking-[-0.03em] [text-wrap:balance]">
+                <p className="mb-[18px] text-xs font-bold uppercase tracking-[0.14em] text-volt">Client</p>
+                <Dialog.Title className="mb-3.5 font-serif text-[clamp(34px,4.2vw,56px)] font-normal leading-[1.04] tracking-[-0.01em] [text-wrap:balance]">
                   {project.title}
                 </Dialog.Title>
-                <p className="mb-[22px] flex flex-wrap gap-x-[18px] gap-y-1.5 font-inter text-[13px] font-medium leading-[1.4] text-snow/60">
+                <p className="mb-[22px] flex flex-wrap gap-x-[18px] gap-y-1.5 text-[13px] font-medium leading-[1.4] text-paper/60">
                   {meta.map((m) => <span key={m}>{m}</span>)}
                 </p>
-                <div className="max-w-[44ch] font-inter text-[15px] leading-[1.65] text-snow/80">
+                <div className="max-w-[44ch] text-[15px] leading-[1.65] text-paper/80">
                   {blurb.map((p) => <p key={p} className="mb-3">{p}</p>)}
                 </div>
                 <ul className="mt-[22px] flex flex-wrap gap-2">
                   {services.map((s) => (
-                    <li key={s} className="rounded-full border border-snow/15 px-[13px] py-[9px] font-inter text-[12.5px] font-medium leading-none">{s}</li>
+                    <li key={s} className="rounded-full border border-paper/15 px-[13px] py-[9px] text-[12.5px] font-medium leading-none">{s}</li>
                   ))}
                 </ul>
               </div>
-              <p className="flex items-center gap-2.5 font-inter text-xs font-medium tracking-[0.04em] text-snow/60">
+              <p className="flex items-center gap-2.5 text-xs font-medium tracking-[0.04em] text-paper/60">
                 <span aria-hidden className="relative block h-px w-[34px] overflow-hidden bg-current">
-                  <span className="cs-hint absolute inset-0 bg-mint" />
+                  <span className="cs-hint absolute inset-0 bg-volt" />
                 </span>
                 <span className="landscape:hidden">Scroll or drag to explore</span>
                 <span className="hidden landscape:inline">Scroll to explore</span>
@@ -376,16 +376,17 @@ function ViewerBody({ project, next, position, total, swapping, reduce, trackRef
             {/* Next project */}
             <button
               type="button"
+              id="viewer-next-project"
               data-next
               onClick={() => { if (!draggedRef.current) onNext() }}
-              className="group/next relative isolate flex h-[var(--th)] w-[calc(var(--th)*0.62)] shrink-0 flex-col justify-end overflow-hidden rounded-[10px] p-7 text-left text-snow outline-none focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-mint landscape:mt-2.5 landscape:aspect-[4/3] landscape:h-auto landscape:w-full"
+              className="group/next relative isolate flex h-[var(--th)] w-[calc(var(--th)*0.62)] shrink-0 flex-col justify-end overflow-hidden rounded-[10px] p-7 text-left text-paper outline-none focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-paper landscape:mt-2.5 landscape:aspect-[4/3] landscape:h-auto landscape:w-full"
             >
               <img src={nextImage} alt="" loading="lazy" className="absolute inset-0 -z-20 h-full w-full object-cover transition-transform duration-1000 ease-glide group-hover/next:scale-105" />
-              <span aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-[#16161c]/15 from-20% to-[#16161c]/90" />
-              <small className="font-inter text-xs font-bold uppercase tracking-[0.14em] text-mint">Next project</small>
-              <strong className="mt-3 flex items-center justify-between gap-3 font-display text-[clamp(24px,2.4vw,34px)] font-medium leading-[1.1] tracking-[-0.02em]">
+              <span aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/15 from-20% to-ink/90" />
+              <small className="text-xs font-bold uppercase tracking-[0.14em] text-volt">Next project</small>
+              <strong className="mt-3 flex items-center justify-between gap-3 text-[clamp(24px,2.4vw,34px)] font-bold leading-[1.1] tracking-[-0.02em]">
                 {next.title}
-                <span className="grid size-12 shrink-0 place-items-center rounded-full bg-lime text-ink transition-transform duration-[350ms] ease-glide group-hover/next:translate-x-1">
+                <span className="grid size-12 shrink-0 place-items-center rounded-full bg-volt text-ink transition-transform duration-[350ms] ease-glide group-hover/next:translate-x-1">
                   <Arrow />
                 </span>
               </strong>
@@ -395,16 +396,16 @@ function ViewerBody({ project, next, position, total, swapping, reduce, trackRef
       </div>
 
       <footer className="flex h-16 shrink-0 items-center gap-5 px-[var(--container-margin)] landscape:hidden">
-        <div aria-hidden className="h-0.5 flex-1 overflow-hidden rounded-full bg-snow/15">
-          <div ref={fillRef} className="h-full w-full origin-left scale-x-0 bg-mint" />
+        <div aria-hidden className="h-0.5 flex-1 overflow-hidden rounded-full bg-paper/15">
+          <div ref={fillRef} className="h-full w-full origin-left scale-x-0 bg-volt" />
         </div>
-        <Button href="#contact" size="sm" onClick={bookDemo}>Book a Demo</Button>
+        <Button href="#contact" id="viewer-book-demo" data-track="book_demo_click" data-track-location="project_viewer" variant="inverse" onClick={bookDemo}>Book a demo</Button>
       </footer>
 
       <div
         ref={cursorRef}
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[101] -ml-[42px] -mt-[42px] grid size-[84px] place-items-center rounded-full bg-mint font-inter text-[11px] font-bold uppercase tracking-[0.14em] text-ink transition-transform duration-[250ms] ease-glide [transform:translate3d(var(--cx,-200px),var(--cy,-200px),0)_scale(var(--cs,0))] data-[down]:[transform:translate3d(var(--cx,-200px),var(--cy,-200px),0)_scale(0.8)] landscape:hidden [@media(hover:none)]:hidden"
+        className="pointer-events-none fixed left-0 top-0 z-[101] -ml-[42px] -mt-[42px] grid size-[84px] place-items-center rounded-full bg-volt text-[11px] font-bold uppercase tracking-[0.14em] text-ink transition-transform duration-[250ms] ease-glide [transform:translate3d(var(--cx,-200px),var(--cy,-200px),0)_scale(var(--cs,0))] data-[down]:[transform:translate3d(var(--cx,-200px),var(--cy,-200px),0)_scale(0.8)] landscape:hidden [@media(hover:none)]:hidden"
       >
         Drag
       </div>
@@ -417,7 +418,7 @@ function Tile({ revealed, delay, className, style, children }: { revealed: boole
   return (
     <figure
       className={cn(
-        'm-0 overflow-hidden rounded-[10px] bg-white/5 transition-[opacity,translate,scale] duration-[700ms,900ms,900ms] ease-glide motion-reduce:transition-none',
+        'm-0 overflow-hidden rounded-[10px] bg-paper/5 transition-[opacity,translate,scale] duration-[700ms,900ms,900ms] ease-glide motion-reduce:transition-none',
         revealed ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-7 scale-[0.985] opacity-0',
         className,
       )}
@@ -451,7 +452,7 @@ function IconButton({ label, disabled, onClick, className, children }: { label: 
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className={cn('grid size-11 place-items-center rounded-full border-[1.5px] border-snow/15 transition-colors duration-200 hover:border-snow hover:bg-snow hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-mint disabled:pointer-events-none disabled:opacity-35', className)}
+      className={cn('grid size-11 place-items-center rounded-full border-[1.5px] border-paper/15 transition-colors duration-200 hover:border-paper hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-paper disabled:pointer-events-none disabled:opacity-35', className)}
     >
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>{children}</svg>
     </button>
