@@ -2,43 +2,53 @@
 import BaseLayout from '../layouts/base.astro'
 
 // Static sections — server-rendered to HTML and shipped with no client JS.
-import LogoMarquee from '../sections/clients'
+// (Buttons are pure CSS, so a CTA alone no longer makes a section an island.)
 import ModernMarketing from '../sections/pitch'
-import NoHiring from '../sections/team'
 import FasterOutput from '../sections/benefits'
-import Process from '../sections/process'
 import Testimonials from '../sections/testimonials'
 import Expertise from '../sections/expertise'
 import SiteFooter from '../sections/footer'
 
 // Interactive sections — hydrated as islands. Each one either holds scroll
-// state, plays an intro, drives video/Base UI, or springs its Button on hover.
+// state, plays an intro or animation, runs a slider, drives video/Base UI, or
+// prices in the visitor's currency.
 import SiteHeader from '../sections/header'
 import Hero from '../sections/hero'
+import NoHiring from '../sections/team'
 import HighImpact from '../sections/performance'
+import Process from '../sections/process'
 import WorkShowcase from '../sections/projects'
+import Pricing from '../sections/pricing'
 import Faq from '../sections/faq'
 import CtaBanner from '../sections/cta'
+
+import { homeStructuredData } from '../utils/structured-data'
 
 // Hydrate a screen's-worth early so islands are live by the time they scroll
 // into view.
 const nearViewport = { rootMargin: '200px' }
+
+const title = 'Creative Seat — Increase your brand’s creative capability'
+const description = 'Scale your brand’s content production through a simple subscription to your very own specialised creative team.'
+const structuredData = homeStructuredData(Astro.site!, title, description)
 ---
 
-<BaseLayout title="Creative Seat — Increase your brand's creative capability" description="Scale your brand's content production through a simple subscription to your very own specialised creative team.">
+<BaseLayout title={title} description={description}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   <SiteHeader client:load />
   <main>
     <Hero client:load />
-    <LogoMarquee />
     <ModernMarketing />
-    <NoHiring />
+    <NoHiring client:visible={nearViewport} />
     <HighImpact client:visible={nearViewport} />
     <FasterOutput />
-    <Process />
+    <Process client:visible={nearViewport} />
     <Testimonials />
     <Expertise />
     <!-- Idle rather than visible: a #work-<slug> deep link has to open the project viewer on load. -->
     <WorkShowcase client:idle />
+    <!-- Idle too: the visitor's currency should be known well before they scroll down to it. -->
+    <Pricing client:idle />
     <Faq client:visible={nearViewport} />
     <CtaBanner client:visible={nearViewport} />
   </main>
