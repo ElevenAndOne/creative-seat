@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import Button from '../components/autton'
 import Wordmark from '../components/wordmark'
 import { cn } from '../utils/cn'
+import { contactMail } from '../utils/contact'
 
 const NAV = [
   { id: 'services', label: 'Services', href: '#services' },
@@ -53,7 +54,7 @@ export default function SiteHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-6 landscape:hidden">
-          <Button href="#contact" id="header-get-in-touch" data-track="get_in_touch_click" data-track-location="header" variant={scrolled ? 'primary' : 'inverse'}>
+          <Button href={contactMail} id="header-get-in-touch" data-track="get_in_touch_click" data-track-location="header" variant={scrolled ? 'primary' : 'inverse'}>
             Get in touch
           </Button>
         </div>

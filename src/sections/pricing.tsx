@@ -7,6 +7,7 @@ import Paragraph from '../components/paragraph'
 import { pricingPlans } from '../content'
 import { useCurrency, type Currency } from '../hooks/useCurrency'
 import { cn } from '../utils/cn'
+import { demoMail } from '../utils/contact'
 
 // A fixed locale, so the prerendered and hydrated prices match character for character.
 const formatPrice = (amount: number, currency: Currency) =>
@@ -83,7 +84,7 @@ export default function Pricing() {
 
               <div className="mt-auto pt-9">
                 <Button
-                  href="#contact"
+                  href={demoMail}
                   id={`pricing-${plan.id}-book-demo`}
                   data-track="book_demo_click"
                   data-track-location={`pricing_${plan.id.replace('-', '_')}`}

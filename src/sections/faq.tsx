@@ -4,6 +4,7 @@ import { Section } from '../components/base/section'
 import Heading from '../components/heading'
 import { faqItems } from '../content'
 import { track } from '../utils/analytics'
+import { contactMail } from '../utils/contact'
 
 export default function Faq() {
   return (
@@ -11,7 +12,7 @@ export default function Faq() {
       <div className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] gap-20 border-t border-ink pt-xlg tablet:grid-cols-1 tablet:gap-xlg">
         <div>
           <Heading.H2 className="max-w-[12ch]">Frequently asked questions</Heading.H2>
-          <Button href="#contact" id="faq-get-in-touch" data-track="get_in_touch_click" data-track-location="faq" className="mt-9">
+          <Button href={contactMail} id="faq-get-in-touch" data-track="get_in_touch_click" data-track-location="faq" className="mt-9">
             Get in touch
           </Button>
         </div>

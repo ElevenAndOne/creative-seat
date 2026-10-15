@@ -32,3 +32,9 @@ output
 
 # Video masters — compressed copies live in public/videos
 videos-src
+
+# Environment — the booking calendar's service-account key lives here. Never commit it.
+.env
+.env.*
+!.env.example
+.vercel

@@ -178,3 +178,8 @@ export const socials = [
   { name: 'Instagram', icon: '/images/icons/instagram.svg', size: 'size-4' },
   { name: 'YouTube', icon: '/images/icons/youtube.svg', size: 'size-[18px]' },
 ]
+
+/** Where every "Book a demo" and "Get in touch" goes: an email to the studio. */
+export const contact = {
+  email: 'trystin@11and1.com',
+}

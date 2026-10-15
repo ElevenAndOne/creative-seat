@@ -6,6 +6,7 @@ import Heading from '../components/heading'
 import HeroStack from '../components/hero-stack'
 import Paragraph from '../components/paragraph'
 import { logos } from '../content'
+import { demoMail } from '../utils/contact'
 
 const EASE = [0.16, 1, 0.3, 1] as const
 
@@ -58,7 +59,7 @@ export default function Hero() {
             </Paragraph.Big>
           </motion.div>
           <motion.div {...rise(0.31)} className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-5">
-            <Button href="#contact" id="hero-book-demo" data-track="book_demo_click" data-track-location="hero" variant="inverse">
+            <Button href={demoMail} id="hero-book-demo" data-track="book_demo_click" data-track-location="hero" variant="inverse">
               Book a demo
             </Button>
             <Button href="#work" id="hero-see-work" data-track="see_work_click" data-track-location="hero" variant="outline-inverse">
