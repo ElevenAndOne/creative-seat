@@ -246,6 +246,55 @@ body {
   }
 }
 
+/* Player scrubbers (components/video-player.tsx) — one <input type="range">
+   painted as a Volt fill over a Paper track, with the buffered stretch in
+   between. `--p` is the played fraction, `--b` how much has loaded; the thumb
+   grows under the pointer. Pseudo-elements, so they can't be Tailwind classes. */
+.cs-scrub {
+  appearance: none;
+  background: linear-gradient(
+    to right,
+    var(--color-volt) 0 var(--p, 0%),
+    color-mix(in oklab, var(--color-paper) 45%, transparent) var(--p, 0%) var(--b, 0%),
+    color-mix(in oklab, var(--color-paper) 20%, transparent) var(--b, 0%) 100%
+  );
+  border-radius: var(--radius-round);
+  cursor: pointer;
+}
+
+.cs-scrub::-webkit-slider-thumb {
+  appearance: none;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 50%;
+  background: var(--color-volt);
+  transition: transform 0.2s var(--ease-glide);
+}
+
+.cs-scrub::-moz-range-thumb {
+  width: 0.875rem;
+  height: 0.875rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-volt);
+  transition: transform 0.2s var(--ease-glide);
+}
+
+.cs-scrub:hover::-webkit-slider-thumb,
+.cs-scrub:active::-webkit-slider-thumb {
+  transform: scale(1.25);
+}
+
+.cs-scrub:hover::-moz-range-thumb,
+.cs-scrub:active::-moz-range-thumb {
+  transform: scale(1.25);
+}
+
+.cs-scrub:focus-visible {
+  outline: 2px solid var(--color-volt);
+  outline-offset: 4px;
+}
+
 /* Respect users who ask for less motion: hold every animation still. */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -255,6 +304,11 @@ body {
   .cs-hint,
   .cs-marquee-track {
     animation: none;
+  }
+
+  .cs-scrub::-webkit-slider-thumb,
+  .cs-scrub::-moz-range-thumb {
+    transition: none;
   }
 }
 

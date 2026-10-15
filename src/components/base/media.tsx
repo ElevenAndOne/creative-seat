@@ -17,6 +17,12 @@ type AmbientOptions = {
     muted: boolean
     playsInline: boolean
     controls: boolean
+    /**
+     * Reduced motion normally swaps autoplay for controls (see 2 below). Set
+     * this when something else already gives the user a way to play the video
+     * — a lightbox, say — and it should simply hold on its poster instead.
+     */
+    posterOnReduce?: boolean
 }
 
 /**
@@ -45,7 +51,7 @@ type AmbientOptions = {
  * Shared by <Media.Video> and the project covers, which differ only in whether
  * the element fills a sized box or sizes itself.
  */
-export function useAmbientVideo({ autoPlay, loop, muted, playsInline, controls }: AmbientOptions) {
+export function useAmbientVideo({ autoPlay, loop, muted, playsInline, controls, posterOnReduce = false }: AmbientOptions) {
     const ref = useRef<HTMLVideoElement>(null)
     const reduce = useReducedMotion() ?? false
 
@@ -53,7 +59,7 @@ export function useAmbientVideo({ autoPlay, loop, muted, playsInline, controls }
     // motion holds on the poster and reveals controls instead of playing.
     const ambient = autoPlay && !controls
     const wantsPlayback = autoPlay && !reduce
-    const showControls = controls || (ambient && reduce)
+    const showControls = controls || (ambient && reduce && !posterOnReduce)
 
     // Reflect `muted` to the property, not just the attribute, or playback is
     // blocked even though the markup says muted.
