@@ -15,8 +15,10 @@ export const projectSlug = (project: Project) =>
 
 export {
   benefitCards,
+  currencies,
   faqItems,
   heroCards,
+  pricingPlans,
   processSteps,
   services,
   socials,

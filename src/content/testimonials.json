@@ -1,23 +1,20 @@
 [
   {
-    "name": "Anja Niewoudt",
-    "subscript": "Senior Designer, Onvlee Engineering",
-    "testimony": "Creative Seat has fundamentally changed how we approach creative production. Instead of managing freelancers and juggling timelines, we have immediate access to the specialist expertise we need through one simple workflow.",
-    "logo": "/images/brands/onvlee-engineering.svg",
-    "avatar": "/images/avatars/avatar-1.avif"
+    "name": "Brendon Barendse",
+    "subscript": "National Sales Manager, Onvlee Engineering",
+    "testimony": "Our job is R&D. Building great products for large-scale national projects. Marketing was never going to get our attention, but we still need a sales pipeline to show for it. Creative Seat lets us build that pipeline in the background while we stay heads-down on the product. We don’t manage a creative process, we just get the leads.",
+    "logo": "/images/brands/onvlee-engineering.svg"
   },
   {
-    "name": "Michael Reddy",
-    "subscript": "Marketing Lead, Sojern",
-    "testimony": "The output is consistently on-brand and the turnaround is unreal. It feels less like outsourcing and more like an extension of our own team that just happens to scale on demand.",
-    "logo": "/images/brands/sojern.svg",
-    "avatar": "/images/avatars/avatar-2.avif"
+    "name": "Ryan Le Roux",
+    "subscript": "Founder and CEO, Leva Foundation / Tangible",
+    "testimony": "We operate across 32 countries, which means every campaign has to speak to a different audience without starting from scratch each time. Creative Seat is the only way we’ve found to do that at scale: consistent brand, content that actually lands locally, without us needing a production team in every country we work in.",
+    "logo": "/images/brands/leva-foundation.svg"
   },
   {
-    "name": "Tara Naidoo",
-    "subscript": "Growth Manager, Finmap",
-    "testimony": "We went from a constant production bottleneck to shipping campaigns faster than we ever could in-house. The quality bar never drops, no matter the volume.",
-    "logo": "/images/brands/finmap.svg",
-    "avatar": "/images/avatars/avatar-3.avif"
+    "name": "Runei Kotze",
+    "subscript": "Marketing Manager, DuToit",
+    "testimony": "We’re not running one campaign, we’re running many. Multiple products, multiple channels, national and international, B2C and B2B, often at the same time. Creative Seat is the only model we’ve found that keeps all of that moving without quality dropping or timelines slipping, whichever audience or market we’re speaking to that week.",
+    "logo": "/images/brands/dutoit.svg"
   }
 ]

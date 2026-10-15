@@ -49,8 +49,6 @@ export interface Testimonial {
   testimony: string
   /** Brand logo (link). */
   logo: string
-  /** Optional avatar image (link). */
-  avatar?: string
 }
 
 export interface Logo {
