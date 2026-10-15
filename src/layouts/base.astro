@@ -1,23 +1,32 @@
 ---
 import '@fontsource-variable/golos-text/index.css'
-import '@fontsource-variable/inter/index.css'
-import '@fontsource/poppins/400.css'
-import '@fontsource/poppins/500.css'
-import '@fontsource/poppins/500-italic.css'
-import '@fontsource/poppins/600.css'
-import '@fontsource/poppins/700.css'
+import '@fontsource/instrument-serif/400.css'
+import '@fontsource/instrument-serif/400-italic.css'
 import '../index.css'
+import CookieBanner from '../components/cookie-banner'
 
 interface Props {
   title: string
   description: string
+  /** Social share image, relative to the site root. */
+  image?: string
+  imageAlt?: string
 }
 
-const { title, description } = Astro.props
+const {
+  title,
+  description,
+  image = '/og-image.jpg',
+  imageAlt = 'Creative Seat — Increase your brand’s creative capability, beside a fan of client work',
+} = Astro.props
+
+// Absolute URLs from `site` in astro.config.mjs.
+const canonical = new URL(Astro.url.pathname, Astro.site).href
+const imageUrl = new URL(image, Astro.site).href
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -25,15 +34,68 @@ const { title, description } = Astro.props
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-BE7L1P1E4Z"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || []
+      // eslint-disable-next-line prefer-rest-params -- gtag.js reads the Arguments object; an array breaks it
       function gtag() { dataLayer.push(arguments) }
+      // Consent Mode v2: no analytics or ad cookies until the visitor accepts in
+      // the cookie banner (components/cookie-banner.tsx) — or already did.
+      gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 })
+      try {
+        if (localStorage.getItem('cs-consent') === 'granted') gtag('consent', 'update', { analytics_storage: 'granted' })
+      } catch {
+        // Storage blocked — stay denied.
+      }
       gtag('js', new Date())
       gtag('config', 'G-BE7L1P1E4Z')
+
+      // Click tracking: any element with data-track="<event>" sends that GA4
+      // event, tagged with its id and an optional data-track-location. One
+      // delegated listener covers the static sections as well as the islands.
+      document.addEventListener('click', (e) => {
+        const el = e.target instanceof Element ? e.target.closest('[data-track]') : null
+        if (!el) return
+        gtag('event', el.getAttribute('data-track'), {
+          element_id: el.id || undefined,
+          location: el.getAttribute('data-track-location') || undefined,
+          link_url: el.getAttribute('href') || undefined,
+          link_text: (el.textContent || '').trim().slice(0, 100) || el.getAttribute('aria-label') || undefined,
+        })
+      })
     </script>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href="/sitemap.xml" />
+
+    <!-- Icons: the brand's chair logomark, Ink on Volt. -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#14121a" />
+
+    <!-- Social cards -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Creative Seat" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+
+    <!-- Page-specific additions, e.g. structured data. -->
+    <slot name="head" />
   </head>
   <body>
     <slot />
+    <CookieBanner client:idle />
   </body>
 </html>
