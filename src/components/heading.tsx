@@ -1,28 +1,33 @@
 import { styledText } from './base/polymorphic'
 
 /**
- * Typographic heading. The dot-notation members carry the *size* from the
- * design system's type scale (`--text-h1` … `--text-h4`) plus the weight the
- * Figma design pairs with it, and each renders its matching semantic tag by
- * default. Override the element with `as` when the visual level and the
- * document outline need to differ:
+ * Typographic heading, one member per level of the brand type scale. Each
+ * carries its size, weight and family, and renders a sensible semantic tag
+ * that `as` can override when the outline needs something else:
  *
- *   <Heading.H2>Section title</Heading.H2>              // <h2>, styled h2
- *   <Heading.H4 as="h3">Card title</Heading.H4>         // <h3>, styled h4
- *   <Heading.H2 className="font-display">…</Heading.H2> // Poppins instead of Golos
+ *   <Heading.Display>Increase your brand’s <b>creative capability.</b></Heading.Display>
+ *   <Heading.H1>Trusted by market leaders <Em>to deliver their vision.</Em></Heading.H1>
+ *   <Heading.H3 as="h4">Card title</Heading.H3>
  *
- * Family: headings inherit Golos Text; the sections the design sets in Poppins
- * add `font-display`. Weights: h1 regular (its emphasis is semibold), h2
- * medium, h3/h4 semibold — `className` wins on conflicts via tailwind-merge.
- * Plain <Heading> renders an <h2>.
+ * - Display — the Golos duet (72/72): Regular carries the context, a <b>
+ *   carries the point. For posters and campaign moments; not used on the page.
+ * - H1 — Headline 1 (56/59), Instrument Serif: every section title, so it
+ *   renders an <h2>; the hero sets it larger as the page's <h1>. End it on one
+ *   italic phrase of two or more words with <Em>; serif is for this level only,
+ *   never the brand name.
+ * - H2 / H3 — Headline 2 (32/35) and 3 (24/29), Golos Bold.
+ * - H4 — small card titles, Golos Bold.
+ *
+ * Plain <Heading> is H2.
  */
 const Heading = Object.assign(
-  styledText('text-h2 font-medium', 'h2', 'Heading'),
+  styledText('text-h2 font-bold', 'h2', 'Heading'),
   {
-    H1: styledText('text-h1 font-normal', 'h1', 'Heading.H1'),
-    H2: styledText('text-h2 font-medium', 'h2', 'Heading.H2'),
-    H3: styledText('text-h3 font-semibold', 'h3', 'Heading.H3'),
-    H4: styledText('text-h4 font-semibold', 'h4', 'Heading.H4'),
+    Display: styledText('text-display font-normal [&_b]:font-bold', 'h1', 'Heading.Display'),
+    H1: styledText('font-serif text-h1 font-normal', 'h2', 'Heading.H1'),
+    H2: styledText('text-h2 font-bold', 'h2', 'Heading.H2'),
+    H3: styledText('text-h3 font-bold', 'h3', 'Heading.H3'),
+    H4: styledText('text-h4 font-bold', 'h4', 'Heading.H4'),
   },
 )
 

@@ -1,45 +1,38 @@
 @import 'tailwindcss';
 
 /* Typefaces are self-hosted through Fontsource and imported in
-   layouts/base.astro: Golos Text (body + most headings), Poppins (display
-   headings, chips, the wordmark) and Inter (cards, captions, buttons) — the
-   three families the Figma design uses. */
+   layouts/base.astro, per the Creative Seat brand guide (v1.0, Sept 2026):
+   Golos Text for almost everything and Instrument Serif for Headline 1 only.
+   (The guide's Caveat margin notes are left out — they didn't suit the site.) */
 
 /* =============================================================================
-   Design tokens — mirrored from the Creative Seat Figma file (Frame 131).
-   Everything downstream (components + sections) should consume these, never
-   raw hex / magic numbers.
+   Design tokens — from the Creative Seat brand guide. Everything downstream
+   (components + sections) should consume these, never raw hex / magic numbers.
    ========================================================================== */
 @theme {
-  --font-sans: 'Golos Text Variable', 'Golos Text', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Poppins', ui-sans-serif, system-ui, sans-serif;
-  --font-inter: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Golos Text Variable', 'Golos Text', Arial, sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
 
-  /* ---- Brand ---- */
-  --color-lime: #bce42d;      /* Volt — primary CTA, emphasis on dark */
-  --color-lime-soft: #d7ef81; /* Soft Volt — service chips */
-  --color-mint: #7fe0c6;      /* Spring green — hero emphasis */
-  --color-violet: #8b3dff;    /* Electric violet — eyebrows */
-  --color-lavender: #c9c6ec;  /* Prelude — process panel, swatches */
-  --color-plum: #3b1667;      /* Scarlet gum */
-  --color-grape: #5a1b72;     /* Honey flower — open FAQ icon */
-  --color-magenta: #f71350;
-  --color-rose: #f06ca0;      /* Froly */
-  --color-orange: #ff5316;
-  --color-teal: #2aae91;
+  /* ---- Brand palette — the only colours. No new tints: a lighter lime is
+     Soft Volt. Text uses the guide's approved pairings only: Ink on Paper,
+     Volt on Ink, Paper on Forest, Ink on Volt, Soft Volt on Forest, Forest on
+     Soft Volt. Volt is never text on a light background. Ink and Forest never
+     touch — Paper goes between them — except in the bg-night gradients below,
+     kept from the original design. ---- */
+  --color-volt: #bce42d;      /* primary accent — highlights, CTAs on dark, campaign bands */
+  --color-soft-volt: #d7ef81; /* supporting accent — panels, tags */
+  --color-ink: #14121a;       /* our black — logo, text, dark backgrounds */
+  --color-paper: #f9f9f9;     /* our white — the default background */
+  --color-forest: #212c26;    /* depth — the occasional reversed section */
+  --color-chalk: #e6e6e6;     /* structure — dividers, fills, placeholders */
+  /* Support tones the guide's own pages use: secondary copy (5.2:1 on Paper)
+     and hairlines. */
+  --color-muted: #6a6972;
+  --color-line: #dedede;
 
-  /* ---- Neutrals ---- */
-  --color-ink: #14121a;      /* Cinder — headings + dark surfaces */
-  --color-forest: #212c26;   /* body copy on light; dark-gradient highlight */
-  --color-palm: #14210a;     /* Palm leaf — text on lime, step icon tiles */
-  --color-coal: #0a0a0a;     /* Cod gray — footer, expertise panel, black CTA */
-  --color-snow: #fafafa;     /* Alabaster — copy + light CTA on dark */
-  --color-whisper: #efe9f2;  /* body copy on dark */
-  --color-mist: #edf2f4;     /* pale panels — pitch card, FAQ */
-  --color-graphite: #333333; /* FAQ answers, partner-logo outline */
-  --color-charcoal: #222222; /* testimonial quotes */
-  --color-smoke: #555555;    /* testimonial roles */
-  --color-slate: #666666;    /* portfolio tags */
+  /* Drop Tailwind's default palette so off-brand colours can't creep back in. */
+  --color-white: initial;
+  --color-black: initial;
 
   /* ---- Fluid spacing scale (drives p-*, m-*, gap-*, w-*, …) ---- */
   --spacing-xxxsm: 0.125rem;
@@ -60,34 +53,39 @@
   --spacing-xxhg: clamp(8rem, 5.3208rem + 7.5472vi, 10rem);
   --spacing-xxxhg: clamp(9.25rem, 5.2311rem + 11.3208vi, 12.25rem);
 
-  /* ---- Fluid type scale, interpolated 320px → 1440px (root 16px) from the
-     Figma desktop sizes: h1 56 / h2 42 / h3 22 / h4 19. The design's section
-     headings vary between 40 and 44px; they share the 42px h2 here. Weight and
-     family are set per heading in heading.tsx / at the call site. ---- */
-  --text-h1: clamp(2.375rem, 2.0536rem + 1.6071vw, 3.5rem);    /* 38 → 56 */
-  --text-h1--line-height: 1.08;
+  /* ---- Type scale — the guide's px sizes at 1440px, easing down to 320px.
+     Display duet 72/72 (Golos 700 + 400), Headline 1 56/59 (Instrument Serif),
+     Headline 2 32/35 and Headline 3 24/29 (Golos 700), Body 17/27, Small 13/20,
+     Eyebrow 10px SemiBold with 8% tracking. ---- */
+  --text-display: clamp(2.75rem, 2.25rem + 2.5vw, 4.5rem);       /* 44 → 72 */
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.025em;
+  --text-h1: clamp(2.25rem, 1.8929rem + 1.7857vw, 3.5rem);      /* 36 → 56 */
+  --text-h1--line-height: 1.05;
   --text-h1--letter-spacing: -0.01em;
-  --text-h2: clamp(1.875rem, 1.6607rem + 1.0714vw, 2.625rem);  /* 30 → 42 */
-  --text-h2--line-height: 1.18;
-  --text-h2--letter-spacing: -0.01em;
-  --text-h3: clamp(1.1875rem, 1.1339rem + 0.2679vw, 1.375rem); /* 19 → 22 */
+  --text-h2: clamp(1.625rem, 1.5179rem + 0.5357vw, 2rem);       /* 26 → 32 */
+  --text-h2--line-height: 1.1;
+  --text-h2--letter-spacing: -0.02em;
+  --text-h3: clamp(1.25rem, 1.1786rem + 0.3571vw, 1.5rem);      /* 20 → 24 */
   --text-h3--line-height: 1.2;
-  --text-h4: clamp(1.0625rem, 1.0268rem + 0.1786vw, 1.1875rem); /* 17 → 19 */
-  --text-h4--line-height: 1.25;
+  --text-h3--letter-spacing: -0.015em;
+  --text-h4: 1.125rem;                                          /* 18 — small card titles */
+  --text-h4--line-height: 1.3;
+  --text-h4--letter-spacing: -0.01em;
 
-  /* Paragraph ramp — lg (hero lead) / md (default body) / sm (cards) / xs (captions) */
-  --text-p-lg: clamp(1rem, 0.9821rem + 0.0893vw, 1.0625rem);  /* 16 → 17 */
+  /* Paragraph ramp — lg/md are the guide's Body, sm is card copy, xs its Small. */
+  --text-p-lg: clamp(1rem, 0.9821rem + 0.0893vw, 1.0625rem);    /* 16 → 17 */
   --text-p-lg--line-height: 1.6;
-  --text-p-md: clamp(0.9375rem, 0.9196rem + 0.0893vw, 1rem);  /* 15 → 16 */
+  --text-p-md: clamp(1rem, 0.9821rem + 0.0893vw, 1.0625rem);    /* 16 → 17 */
   --text-p-md--line-height: 1.6;
-  --text-p-sm: 0.90625rem; /* 14.5 */
-  --text-p-sm--line-height: 1.65;
-  --text-p-xs: 0.78125rem; /* 12.5 */
-  --text-p-xs--line-height: 1.4;
-  /* Uppercase section label */
-  --text-eyebrow: 0.8125rem; /* 13 */
+  --text-p-sm: 0.9375rem; /* 15 */
+  --text-p-sm--line-height: 1.6;
+  --text-p-xs: 0.8125rem; /* 13 */
+  --text-p-xs--line-height: 1.54;
+  /* Small-caps eyebrow — the only all-caps text the brand allows. */
+  --text-eyebrow: 0.625rem; /* 10 */
   --text-eyebrow--line-height: 1.3;
-  --text-eyebrow--letter-spacing: 0.1em;
+  --text-eyebrow--letter-spacing: 0.08em;
 
   /* ---- Radii ---- */
   --radius-sm: 0.5rem;     /* 8px  — outlined logos */
@@ -141,13 +139,13 @@
 
 /* Layout tokens — consumed by <Container> / <Section>. Kept out of @theme so
    they don't collide with Tailwind's container/max-w namespaces. The design is
-   a 1160px frame with 40px gutters, so content runs 1080px wide; the `wide`
-   width (1160px) is for panels whose inner padding lines their copy back up
+   a 1520px frame with 40px gutters, so content runs 1440px wide; the `wide`
+   width (1520px) is for panels whose inner padding lines their copy back up
    with that column. */
 :root {
   --container-margin: clamp(1.25rem, 0.8929rem + 1.7857vw, 2.5rem); /* 20 → 40 */
-  --container-max-width: 67.5rem; /* 1080px */
-  --container-wide-width: 72.5rem; /* 1160px */
+  --container-max-width: 90rem; /* 1440px */
+  --container-wide-width: 95rem; /* 1520px */
   --container-mid-width: 64rem; /* 1024px */
   --paragraph-max-width: 48rem;
 
@@ -159,20 +157,16 @@
   --section-pad-bg: clamp(5rem, 3.75rem + 6.25vw, 9.375rem);    /* 80 → 150 */
 }
 
-/* Dark radial backdrops — a forest-green glow bleeding out of one corner into
-   Cinder, as on the hero, the benefit cards and multi-platform performance. */
+/* Dark radial backdrops — a Forest glow bleeding out of one corner into Ink,
+   on the hero, benefits and multi-platform performance sections (and the
+   project viewer). Kept from the original design by request: the one place
+   Ink and Forest meet. */
 @utility bg-night {
-  background: radial-gradient(150% 150% at 0% 0%, #212c26 0%, #14121a 100%);
+  background: radial-gradient(150% 150% at 0% 0%, var(--color-forest) 0%, var(--color-ink) 100%);
 }
 
 @utility bg-night-low {
-  background: radial-gradient(150% 150% at 0% 100%, #212c26 0%, #14121a 100%);
-}
-
-/* Violet-to-ink wash over the final CTA photo. */
-@utility bg-cta-wash {
-  background: linear-gradient(200deg,
-      rgb(60 15 90 / 0.35) 0%, rgb(150 15 80 / 0.55) 45%, rgb(10 5 30 / 0.85) 100%);
+  background: radial-gradient(150% 150% at 0% 100%, var(--color-forest) 0%, var(--color-ink) 100%);
 }
 
 html {
@@ -185,28 +179,10 @@ section[id] {
 }
 
 body {
-  @apply bg-white font-sans font-normal text-ink antialiased;
+  @apply bg-paper font-sans font-normal text-ink antialiased;
 }
 
-/* Collaborator cursors on the "no hiring" collage drift gently, each on its own
-   delay (set inline) so they never move in step. Held still for reduced motion
-   below. */
-@keyframes cs-float {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  50% {
-    transform: translate3d(0, -6px, 0);
-  }
-}
-
-.cs-float {
-  animation: cs-float 5s ease-in-out infinite;
-}
-
-/* "Scroll to explore" hint in the project viewer — a mint dash sweeps along a
+/* "Scroll to explore" hint in the project viewer — a Volt dash sweeps along a
    hairline, on repeat. */
 @keyframes cs-hint {
   0% {
@@ -223,14 +199,61 @@ body {
   animation: cs-hint 2.2s var(--ease-glide) infinite;
 }
 
+/* Endless logo marquee (hero client strip): the track holds two identical
+   runs and slides one run's width, so the loop is seamless. The edges fade
+   out through a mask, and the strip pauses while hovered. */
+@keyframes cs-marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.cs-marquee {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+
+.cs-marquee-track {
+  animation: cs-marquee 45s linear infinite;
+}
+
+.cs-marquee:hover .cs-marquee-track {
+  animation-play-state: paused;
+}
+
+/* Ink sketches pressed into their card: plus-darker where supported (Safari),
+   multiply elsewhere. Written as @supports rather than two declarations so a
+   minifier can't merge the fallback away. */
+.cs-blend-darker {
+  mix-blend-mode: multiply;
+}
+
+@supports (mix-blend-mode: plus-darker) {
+  .cs-blend-darker {
+    mix-blend-mode: plus-darker;
+  }
+}
+
+/* The process slider's progress bar (sections/process.tsx) — fills once per
+   step; the slider moves on when it ends. */
+@keyframes cs-progress {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
 /* Respect users who ask for less motion: hold every animation still. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
-  .cs-float,
-  .cs-hint {
+  .cs-hint,
+  .cs-marquee-track {
     animation: none;
   }
 }

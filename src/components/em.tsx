@@ -1,9 +1,8 @@
 import type { ReactNode } from 'react'
 
 /**
- * Italic emphasis inside headings (e.g. "teams choose", "on demand", "get
- * creative"). Keeps the heading's own weight, so Poppins Medium headings pick
- * up Poppins Medium Italic.
+ * The italic closing phrase of a Headline 1 — Instrument Serif Italic. One per
+ * headline, at the end, and never a single word.
  */
 export default function Em({
   children,

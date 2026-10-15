@@ -1,32 +1,56 @@
 import { cn } from '../utils/cn'
-import Heading from './heading'
-import Paragraph from './paragraph'
 
 interface BenefitCardProps {
   src: string
   title: string
+  /** The part of `title` set in serif italic. */
+  em: string
   body: string
-  /** Footer bar treatment: frosted dark glass, or solid lime for the highlighted card. */
-  tone: 'glass' | 'lime'
+  /** Caption band: Soft Volt (the accent), Forest, or Paper. */
+  tone: 'accent' | 'deep' | 'light'
   /** `object-position` for the photo, so each card keeps its subject in frame. */
   focus?: string
 }
 
-/**
- * Photo card with a caption bar pinned to the bottom. The bar holds the title;
- * on hover/focus it grows to reveal the description (always open on phones —
- * there's no hover there).
- */
-export default function BenefitCard({ src, title, body, tone, focus }: BenefitCardProps) {
-  return (
-    <article tabIndex={0} className="group relative flex h-[310px] flex-col justify-end overflow-clip rounded-card bg-white outline-none focus-visible:ring-2 focus-visible:ring-lime focus-visible:ring-offset-2 focus-visible:ring-offset-ink landscape:h-[22rem]">
-      <img src={src} alt="" loading="lazy" decoding="async" style={{ objectPosition: focus }} className="absolute inset-0 h-full w-full object-cover" />
+const TONE = {
+  accent: 'bg-soft-volt text-forest',
+  deep: 'bg-forest text-soft-volt',
+  light: 'bg-paper text-ink',
+}
 
-      <div className={cn('relative px-[22px] py-[21px]', tone === 'lime' ? 'bg-lime text-ink' : 'bg-[#1b1f20]/75 text-white backdrop-blur-[10px]')}>
-        <Heading.H4 as="h3">{title}</Heading.H4>
-        <div className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out group-hover:grid-rows-[1fr] group-focus-visible:grid-rows-[1fr] landscape:grid-rows-[1fr]">
+/**
+ * Tall photo card over a solid caption band, its title ending (or starting) on
+ * a serif italic phrase — after Superside's benefit cards, motion included. The
+ * card is a fixed height, so on hover/focus, as it lifts 10px, the band grows
+ * upward into the photo (which re-crops to fit) and the description opens and
+ * fades in underneath the title. Touch screens have no hover, so there the
+ * description is simply always open.
+ */
+export default function BenefitCard({ src, title, em, body, tone, focus }: BenefitCardProps) {
+  const [before, after] = title.split(em)
+
+  return (
+    <article
+      tabIndex={0}
+      className="group flex h-[36.75rem] flex-col overflow-hidden rounded-[10px] outline-none transition-[translate] duration-500 ease-glide hover:-translate-y-2.5 focus-visible:-translate-y-2.5 focus-visible:ring-2 focus-visible:ring-soft-volt focus-visible:ring-offset-4 focus-visible:ring-offset-ink tablet:h-[32rem] landscape:h-auto"
+    >
+      <div className="relative min-h-0 grow bg-chalk landscape:aspect-[4/3] landscape:grow-0">
+        <img src={src} alt="" loading="lazy" decoding="async" style={{ objectPosition: focus }} className="absolute inset-0 h-full w-full object-cover" />
+      </div>
+      <div
+        className={cn(
+          'shrink-0 px-[clamp(1.25rem,0.5rem+2vw,2.5rem)] pb-4 pt-[clamp(1.5rem,1rem+1.4vw,2.5rem)] transition-[padding] duration-500 ease-glide group-hover:pb-10 group-focus-visible:pb-10 [@media(hover:none)]:pb-8',
+          TONE[tone],
+        )}
+      >
+        <h3 className="mb-4 text-[clamp(1.5rem,1.1rem+1.1vw,2.25rem)] leading-[1.1] tracking-[-0.02em]">
+          {before}
+          <em className="font-serif italic tracking-[-0.01em]">{em}</em>
+          {after}
+        </h3>
+        <div className="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-300 ease-in-out group-hover:grid-rows-[1fr] group-hover:opacity-100 group-focus-visible:grid-rows-[1fr] group-focus-visible:opacity-100 [@media(hover:none)]:grid-rows-[1fr] [@media(hover:none)]:opacity-100">
           <div className="overflow-hidden">
-            <Paragraph.Small className="pt-sm opacity-90">{body}</Paragraph.Small>
+            <p className="max-w-[36ch] text-p-md">{body}</p>
           </div>
         </div>
       </div>

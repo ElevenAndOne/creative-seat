@@ -22,7 +22,7 @@ type SectionProps = {
   pad?: Pad
   padTop?: Pad
   padBottom?: Pad
-  /** Inner container width: max (67.5rem) · wide (72.5rem) · mid (64rem) · full. */
+  /** Inner container width: max (90rem) · wide (95rem) · mid (64rem) · full. */
   width?: Width
   /** Skip the inner container for edge-to-edge layouts. */
   bleed?: boolean
