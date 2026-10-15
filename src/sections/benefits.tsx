@@ -1,14 +1,18 @@
 import { Section } from '../components/base/section'
 import BenefitCard from '../components/benefit-card'
+import Em from '../components/em'
 import Heading from '../components/heading'
 import { benefitCards } from '../content'
 
+/** On the dark Forest-to-Ink gradient: three tall photo cards with Soft Volt, Forest and Paper caption bands. */
 export default function FasterOutput() {
   return (
-    <Section className="bg-night text-white" pad="md">
-      <Heading.H2 className="text-center font-display">Faster output. Better execution.</Heading.H2>
+    <Section id="benefits" className="bg-night text-paper" pad="md" width="wide">
+      <Heading.H1 className="mx-auto text-center">
+        More ideas made. <Em>Less waiting.</Em>
+      </Heading.H1>
 
-      <div className="mt-xxlg grid grid-cols-3 gap-[18px] tablet:grid-cols-2 landscape:grid-cols-1">
+      <div className="mt-xxlg grid grid-cols-3 gap-4 landscape:mx-auto landscape:max-w-[28rem] landscape:grid-cols-1">
         {benefitCards.map((card) => (
           <BenefitCard key={card.title} {...card} />
         ))}

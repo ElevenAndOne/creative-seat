@@ -4,18 +4,18 @@ import Wordmark from '../components/wordmark'
 import { cn } from '../utils/cn'
 
 const NAV = [
-  { label: 'Services', href: '#services', menu: true },
-  { label: 'Our Work', href: '#work' },
-  { label: 'Resources', href: '#resources' },
-  { label: 'Pricing', href: '#contact', menu: true },
+  { id: 'services', label: 'Services', href: '#services' },
+  { id: 'work', label: 'Our work', href: '#work' },
+  { id: 'resources', label: 'Resources', href: '#resources' },
+  { id: 'pricing', label: 'Pricing', href: '#pricing' },
 ]
 
 export default function SiteHeader() {
   const ref = useRef<HTMLElement>(null)
   const [scrolled, setScrolled] = useState(false)
 
-  // Once the page scrolls past the header's own height, give it a solid Cinder
-  // background (it sits transparent over the hero gradient until then).
+  // Over the dark hero the header is Paper on nothing; once the page scrolls
+  // past its own height it turns Ink on a frosted Paper backing with a hairline.
   useEffect(() => {
     const onScroll = () => {
       const height = ref.current?.offsetHeight ?? 0
@@ -27,22 +27,35 @@ export default function SiteHeader() {
   }, [])
 
   return (
-    <header ref={ref} className={cn('fixed inset-x-0 top-0 z-50 text-snow transition-colors duration-300', scrolled && 'bg-ink/95 backdrop-blur-md')}>
-      <div className="flex items-center justify-between gap-6 px-[var(--container-margin)] py-5">
-        <a href="/" aria-label="Creative Seat home">
-          <Wordmark className="text-2xl landscape:text-xl" />
+    <header
+      ref={ref}
+      className={cn(
+        'fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300',
+        scrolled ? 'border-line bg-paper/90 text-ink backdrop-blur-md' : 'border-transparent text-paper',
+      )}
+    >
+      <div className="mx-auto flex w-full max-w-[var(--container-width)] items-center justify-between gap-6 py-4">
+        <a href="/" id="header-logo" data-track="nav_click" data-track-location="header" className="py-1.5">
+          <Wordmark className="w-[150px] landscape:w-[124px]" />
         </a>
-        <nav className="flex items-center gap-11 text-sm font-medium tablet:hidden" aria-label="Primary navigation">
-          {NAV.map(({ label, href, menu }) => (
-            <a key={label} href={href} className="flex items-center gap-1.5 transition hover:text-lime">
+        <nav className="flex items-center gap-10 text-[0.9375rem] font-medium tablet:hidden" aria-label="Primary navigation">
+          {NAV.map(({ id, label, href }) => (
+            <a
+              key={label}
+              href={href}
+              id={`header-nav-${id}`}
+              data-track="nav_click"
+              data-track-location="header"
+              className="flex items-center gap-1.5 underline-offset-4 transition hover:underline"
+            >
               {label}
-              {menu && <img src="/images/icons/chevron-down.svg" alt="" className="h-1.5 w-2.5" />}
             </a>
           ))}
         </nav>
-        <div className="flex items-center gap-3.5 landscape:hidden">
-          <Button href="#contact" variant="outline-white" size="sm">Sign Up</Button>
-          <Button href="#contact" variant="white" size="sm">Get In Touch</Button>
+        <div className="flex items-center gap-6 landscape:hidden">
+          <Button href="#contact" id="header-get-in-touch" data-track="get_in_touch_click" data-track-location="header" variant={scrolled ? 'primary' : 'inverse'}>
+            Get in touch
+          </Button>
         </div>
       </div>
     </header>
