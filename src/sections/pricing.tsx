@@ -23,9 +23,10 @@ function Check() {
 
 /**
  * Seat plans, priced in the visitor's own currency only (see hooks/useCurrency).
- * The featured plan sits on Soft Volt — the layout's accent — with the filled
- * pill; the others carry the same full-width pill in outline, so the three
- * cards read as one set.
+ * Three cards on Chalk, each plan named in Instrument Serif: the featured plan
+ * sits on Soft Volt — the layout's accent — with the filled pill; the others
+ * are Paper and carry the same full-width pill in outline, so the three read
+ * as one set.
  */
 export default function Pricing() {
   // Null until the visitor's region is known: the price keeps its space but
@@ -33,7 +34,7 @@ export default function Pricing() {
   const currency = useCurrency()
 
   return (
-    <Section id="pricing" pad="md">
+    <Section id="pricing" className="bg-chalk" pad="md">
       <div className="border-t border-ink pt-xlg">
         <Eyebrow>Pricing</Eyebrow>
         <Heading.H1 className="mt-4">
@@ -51,10 +52,10 @@ export default function Pricing() {
             <article
               key={plan.id}
               id={`pricing-${plan.id}`}
-              className={cn('relative flex flex-col rounded-card p-8', featured ? 'bg-soft-volt text-forest' : 'border border-line text-ink')}
+              className={cn('relative flex flex-col rounded-card p-8', featured ? 'bg-soft-volt text-forest' : 'border border-line bg-paper text-ink')}
             >
               <div className="flex items-center justify-between gap-3">
-                <Heading.H3>{plan.name}</Heading.H3>
+                <Heading.H3 className="font-serif font-normal">{plan.name}</Heading.H3>
                 {featured && <span className="rounded-full bg-ink px-3 py-1.5 text-p-xs font-medium leading-none text-paper">Most popular</span>}
               </div>
 
@@ -69,11 +70,9 @@ export default function Pricing() {
                 {plan.credits ?? 0} credits
               </p>
 
-              <Paragraph.Small className={cn('mt-6 border-y py-5 font-medium', featured ? 'border-forest/20' : 'border-line')}>
-                {plan.report}
-              </Paragraph.Small>
+              <Paragraph.Small className="mt-6 font-medium">{plan.report}</Paragraph.Small>
 
-              <ul className="mt-6 space-y-2.5 text-p-sm">
+              <ul className="mt-6 space-y-1 text-p-sm">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex gap-2.5">
                     <Check />
