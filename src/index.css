@@ -234,18 +234,6 @@ body {
   }
 }
 
-/* The process slider's progress bar (sections/process.tsx) — fills once per
-   step; the slider moves on when it ends. */
-@keyframes cs-progress {
-  from {
-    transform: scaleX(0);
-  }
-
-  to {
-    transform: scaleX(1);
-  }
-}
-
 /* Player scrubbers (components/video-player.tsx) — one <input type="range">
    painted as a Volt fill over a Paper track, with the buffered stretch in
    between. `--p` is the played fraction, `--b` how much has loaded; the thumb
