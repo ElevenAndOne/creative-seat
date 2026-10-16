@@ -15,7 +15,7 @@ const HEADER = '4.75rem'
 
 /**
  * The first screen, on the dark Forest-to-Ink gradient and one viewport tall
- * (`100dvh`, so mobile browser bars don't crop it): the display duet and CTAs
+ * (`100dvh`, so mobile browser bars don't crop it): the display duet and CTA
  * on the left, the card fan on the right, the client logos along the bottom.
  *
  * Everything shares the page's content column, so the copy lines up with the
@@ -44,8 +44,8 @@ export default function Hero() {
       >
         <div className="flex flex-col items-start">
           {/* The brand's campaign pattern: an Instrument Serif headline
-              finishing on its italic phrase, a line of support, the primary
-              button with a secondary outline one beside it. */}
+              finishing on its italic phrase, a line of support, then the one
+              call to action. */}
           <motion.div {...rise(0.05)}>
             {/* Headline 1 at hero scale. Three set lines — "Increase your /
                 brand's creative / capability." — held by the em-based measure. */}
@@ -58,12 +58,9 @@ export default function Hero() {
               Scale your brand’s content production through a simple subscription to your very own specialised creative team.
             </Paragraph.Big>
           </motion.div>
-          <motion.div {...rise(0.31)} className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-5">
+          <motion.div {...rise(0.31)} className="mt-10">
             <Button href={demoMail} id="hero-book-demo" data-track="book_demo_click" data-track-location="hero" variant="inverse">
               Book a demo
-            </Button>
-            <Button href="#work" id="hero-see-work" data-track="see_work_click" data-track-location="hero" variant="outline-inverse">
-              See our work
             </Button>
           </motion.div>
         </div>
