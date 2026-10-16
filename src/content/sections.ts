@@ -173,10 +173,10 @@ export const pricingPlans = [
   features: string[]
 }[]
 
+/** The footer's social buttons — 11&1's own accounts, as linked from 11and1.com. */
 export const socials = [
-  { name: 'Facebook', icon: '/images/icons/facebook.svg', size: 'size-4' },
-  { name: 'Instagram', icon: '/images/icons/instagram.svg', size: 'size-4' },
-  { name: 'YouTube', icon: '/images/icons/youtube.svg', size: 'size-[18px]' },
+  { name: 'Facebook', href: 'https://www.facebook.com/11and1/', icon: '/images/icons/facebook.svg', size: 'size-4' },
+  { name: 'Instagram', href: 'https://www.instagram.com/11and1agency/', icon: '/images/icons/instagram.svg', size: 'size-4' },
 ]
 
 /** Where every "Book a demo" and "Get in touch" goes: an email to the studio. */

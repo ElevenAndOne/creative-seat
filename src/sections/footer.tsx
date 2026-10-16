@@ -38,7 +38,9 @@ export default function SiteFooter() {
             {socials.map((social) => (
               <a
                 key={social.name}
-                href="#contact"
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 id={`footer-social-${social.name.toLowerCase()}`}
                 data-track="social_click"
                 data-track-location="footer"
