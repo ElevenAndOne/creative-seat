@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import Button from '../components/autton'
 import { Section } from '../components/base/section'
 import Em from '../components/em'
 import Eyebrow from '../components/eyebrow'
@@ -86,14 +85,9 @@ export default function WorkShowcase() {
     <Section id="work" pad="md">
       <div className="border-t border-ink pt-xlg">
         <Eyebrow>Take a look at our work</Eyebrow>
-        <div className="mt-4 flex items-end justify-between gap-bg landscape:flex-col landscape:items-start">
-          <Heading.H1 className="max-w-[24ch]">
-            Trusted by market leaders <Em>to deliver their vision.</Em>
-          </Heading.H1>
-          <Button href="#contact" id="work-download-portfolio" data-track="download_portfolio_click" data-track-location="work" variant="outline" className="shrink-0">
-            Download our portfolio
-          </Button>
-        </div>
+        <Heading.H1 className="mt-4 max-w-[24ch]">
+          Trusted by market leaders <Em>to deliver their vision.</Em>
+        </Heading.H1>
       </div>
 
       <div className="mt-[56px] grid grid-cols-3 gap-x-[30px] gap-y-[34px] tablet:grid-cols-2 portrait:grid-cols-1">
