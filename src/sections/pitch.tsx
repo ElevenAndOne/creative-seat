@@ -7,10 +7,11 @@ import Paragraph from '../components/paragraph'
 export default function ModernMarketing() {
   return (
     // The panel spans the column plus its gutters, so its 40px padding lines the
-    // copy back up with every other section. Soft Volt is the layout's accent.
+    // copy back up with every other section. Soft Volt is the layout's accent;
+    // the photo fills the other half to the panel's edges, cut by its corners.
     <Section id="pitch" pad="sm" width="wide">
-      <div className="grid grid-cols-2 items-center gap-[70px] rounded-frame bg-soft-volt p-10 text-forest tablet:gap-xlg landscape:grid-cols-1 landscape:p-xbg">
-        <div>
+      <div className="grid min-h-[35rem] grid-cols-2 overflow-hidden rounded-frame bg-soft-volt text-forest landscape:min-h-0 landscape:grid-cols-1">
+        <div className="self-center p-10 landscape:p-xbg">
           <Eyebrow className="text-forest">Advertising has changed</Eyebrow>
           <Heading.H1 className="mt-4 max-w-[16ch]">
             Designed for <Em>modern marketing teams.</Em>
@@ -22,13 +23,15 @@ export default function ModernMarketing() {
             Freelancers create complexity and brand inconsistency. Traditional agencies are costly and lead to production drag. Creative Seat gives your team a faster, more effective way to produce high-end content within one simple subscription.
           </Paragraph>
         </div>
-        <img
-          src="/images/sections/pitch-marketer.avif"
-          alt="Marketer working on a laptop in an armchair, surrounded by floating social posts and ad layouts"
-          loading="lazy"
-          decoding="async"
-          className="aspect-[505/498] w-full rounded-md object-cover object-[68%_center]"
-        />
+        <div className="relative landscape:aspect-[4/3]">
+          <img
+            src="/images/sections/pitch-marketer.avif"
+            alt="Marketer working on a laptop in an armchair, surrounded by floating social posts and ad layouts"
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 size-full object-cover object-[68%_center]"
+          />
+        </div>
       </div>
     </Section>
   )
