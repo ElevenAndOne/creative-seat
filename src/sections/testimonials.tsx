@@ -6,7 +6,7 @@ import { testimonials } from '../content'
 
 export default function Testimonials() {
   return (
-    <Section id="testimonials" pad="md">
+    <Section id="testimonials" className="bg-chalk" pad="md">
       <div className="border-t border-ink pt-xlg">
         <Eyebrow>Redefining success. Together.</Eyebrow>
         <Heading.H1 className="mt-4">
@@ -14,18 +14,18 @@ export default function Testimonials() {
         </Heading.H1>
       </div>
 
-      {/* Desktop: static 3-up grid. Tablet & below: an edge-to-edge horizontal
-          snap carousel — it breaks out of the container margin so cards can
-          scroll all the way to the screen edges (no container clipping). Each
-          card is a Soft Volt quote bubble on Paper, as the brand draws a
-          client's voice. */}
-      <div className="mt-[56px] grid grid-cols-3 gap-[24px] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden tablet:-mx-[var(--container-margin)] tablet:flex tablet:snap-x tablet:snap-mandatory tablet:overflow-x-auto tablet:px-[var(--container-margin)] tablet:pb-md">
+      {/* Two quotes side by side on Chalk, stacking on phones. Each is a Paper
+          card that turns Soft Volt — the brand's quote bubble — under the
+          pointer. */}
+      <div className="mt-[56px] grid grid-cols-2 gap-[24px] landscape:grid-cols-1">
         {testimonials.map((t) => (
-          <article key={t.name} className="flex min-h-[28rem] shrink-0 snap-start flex-col gap-8 rounded-[18px] bg-soft-volt p-10 text-forest tablet:w-[60%] landscape:min-h-[26rem] landscape:w-[85%] landscape:p-8">
+          <article
+            key={t.name}
+            className="flex min-h-[23.75rem] flex-col gap-8 rounded-[18px] bg-paper p-10 text-ink transition-colors duration-300 ease-out hover:bg-soft-volt hover:text-forest landscape:min-h-0 landscape:p-8"
+          >
             <p className="text-p-md">“{t.testimony}”</p>
-            {/* Every footer is the same height and pinned to the bottom, so the
-                rules, names and logos line up across the cards. */}
-            <div className="mt-auto flex min-h-[5.75rem] items-start justify-between gap-4 border-t border-forest/20 pt-6">
+            {/* Pinned to the bottom, so the names and logos line up across the cards. */}
+            <div className="mt-auto flex items-start justify-between gap-4">
               <div>
                 <h3 className="font-bold">{t.name}</h3>
                 <p className="mt-1 text-p-xs">{t.subscript}</p>
