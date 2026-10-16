@@ -24,10 +24,8 @@ const mod = (n: number, m: number) => ((n % m) + m) % m
 
 /**
  * A card's place in the fan from its signed distance `d` to the front (0 is
- * the front, ±1 the inner pair, ±2 the outer pair; fractions mid-move). The
- * stage is a real 3D scene: cards step back in depth, turn to face the centre
- * like cover flow, and shrink — so as one slides past another the browser
- * sorts them by depth instead of swapping their stacking order mid-move.
+ * the front, ±1 the inner pair, ±2 the outer pair; fractions mid-move). Cards
+ * step back in depth, turn to face the centre like cover flow, and shrink.
  * Sideways spread is in container units, so the fan scales with its column.
  * `spread` (0 → 1) fans the cards out from a single stack on load.
  */
@@ -122,9 +120,14 @@ export default function HeroStack({ className }: { className?: string }) {
       onPanEnd={onPanEnd}
       className={cn('@container relative aspect-[554.6/391] w-full cursor-grab touch-pan-y select-none active:cursor-grabbing', className)}
     >
-      {/* The 3D stage: perspective for the depth, preserve-3d so the cards
-          share one scene and are sorted by depth as they pass each other. */}
-      <div className="absolute inset-0 [perspective:1500px] [transform-style:preserve-3d]">
+      {/* The 3D stage: one perspective for every card, but deliberately not
+          preserve-3d. In a shared 3D scene two cards trading places — turned
+          towards each other at the same depth — have planes that cross, so
+          one visibly cuts through the other. Here each card is drawn whole in
+          its own pose and they're layered by distance from the front instead
+          (see `zIndex` in Card), so the nearer card always covers the
+          further one. */}
+      <div className="absolute inset-0 [perspective:1500px]">
         {heroCards.map((src, i) => (
           <Card key={src} src={src} index={i} pos={pos} spread={spread} />
         ))}
@@ -141,8 +144,9 @@ function Card({ src, index, pos, spread }: { src: string; index: number; pos: Mo
   const opacity = useTransform([d, spread], ([d, s]: number[]) => visibility(Math.abs(d)) * (Math.abs(d) < 0.5 ? 1 : s))
   // Cards further back sit a little in shadow.
   const shade = useTransform(d, (d) => Math.min(Math.abs(d), 2) * 0.13)
-  // A tie-break for the moment they're all stacked at the same depth.
-  const zIndex = useTransform(d, (d) => 100 - Math.round(Math.abs(d) * 10))
+  // Layering: nearer the front draws on top. Fine-grained, so two cards
+  // trading places swap layers exactly as they pass the halfway mark.
+  const zIndex = useTransform(d, (d) => 1000 - Math.round(Math.abs(d) * 100))
 
   const first = Math.abs(mod(index + N / 2, N) - N / 2)
 
