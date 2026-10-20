@@ -5,7 +5,7 @@ import Eyebrow from '../components/eyebrow'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
 import VideoLightbox from '../components/video-lightbox'
-import { demoMail } from '../utils/contact'
+import { demoPage } from '../utils/contact'
 
 /** The 2026 showreel, hosted on Cloudflare R2 alongside the portfolio videos. */
 const SHOWREEL = 'https://pub-1cc862ca275241f289d614f4081c03c1.r2.dev/11%261_Creative%20Showreel_2026_il_Final_2.mp4'
@@ -28,7 +28,7 @@ export default function HighImpact() {
             </Paragraph>
             <Paragraph className="mt-5">Launch standout campaigns and content that perform on every platform.</Paragraph>
           </div>
-          <Button href={demoMail} id="performance-book-demo" data-track="book_demo_click" data-track-location="performance" variant="inverse" className="mt-9">
+          <Button href={demoPage} id="performance-book-demo" data-track="book_demo_click" data-track-location="performance" variant="inverse" className="mt-9">
             Book a demo
           </Button>
         </div>

@@ -6,7 +6,7 @@ import { cn } from '../utils/cn'
 import Button from './autton'
 import ProjectMedia from './project-media'
 import Wordmark from './wordmark'
-import { demoMail } from '../utils/contact'
+import { demoPage } from '../utils/contact'
 
 /** The viewer's soft deceleration — same curve as the `ease-glide` token. */
 const EASE = [0.22, 0.8, 0.18, 1] as const
@@ -391,7 +391,7 @@ function ViewerBody({ project, next, position, total, swapping, reduce, trackRef
         <div aria-hidden className="h-0.5 flex-1 overflow-hidden rounded-full bg-paper/15">
           <div ref={fillRef} className="h-full w-full origin-left scale-x-0 bg-volt" />
         </div>
-        <Button href={demoMail} id="viewer-book-demo" data-track="book_demo_click" data-track-location="project_viewer" variant="inverse">Book a demo</Button>
+        <Button href={demoPage} id="viewer-book-demo" data-track="book_demo_click" data-track-location="project_viewer" variant="inverse">Book a demo</Button>
       </footer>
 
       <div
