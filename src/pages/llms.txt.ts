@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro'
-import { faqItems, pricingPlans, processSteps, services } from '../content'
-import { demoMail } from '../utils/contact'
+import { contact, faqItems, pricingPlans, processSteps, services } from '../content'
+import { demoPage } from '../utils/contact'
 
 /**
  * llms.txt — a plain-Markdown brief of the site for AI assistants and answer
@@ -42,7 +42,7 @@ ${faqItems.map(({ question, answer }) => `### ${question}\n\n${answer}`).join('\
 - [Our work](${url('#work')})
 - [Pricing](${url('#pricing')})
 - [FAQ](${url('#resources')})
-- [Book a demo](${demoMail}) — email the studio
+- [Book a demo](${new URL(demoPage, site).href}) — pick a 30-minute video call with the studio, or email ${contact.email}
 `
   return new Response(body, { headers: { 'Content-Type': 'text/markdown; charset=utf-8' } })
 }

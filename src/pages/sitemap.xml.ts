@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
 
-/** Every page on the site — just the home page for now. Add new routes here. */
-const PAGES = ['/']
+/** Every page on the site. Add new routes here. */
+const PAGES = ['/', '/book-a-demo']
 
 export const GET: APIRoute = ({ site }) => {
   const lastmod = new Date().toISOString().slice(0, 10)

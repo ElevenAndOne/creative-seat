@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/base.astro'
+import SiteHeader from '../sections/header'
+import BookDemo from '../sections/book-demo'
+import DemoAgenda from '../sections/demo-agenda'
+import SiteFooter from '../sections/footer'
+import { demoStructuredData } from '../utils/structured-data'
+
+const title = 'Book a demo — Creative Seat'
+const description = 'Pick a 30-minute slot with the Creative Seat studio and see how a dedicated creative team would take on your brand’s backlog.'
+const structuredData = demoStructuredData(Astro.site!, new URL(Astro.url.pathname, Astro.site).href, title, description)
+---
+
+<BaseLayout title={title} description={description}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <!-- The header's "Get in touch" stays on this page: it jumps to the booking card. -->
+  <SiteHeader client:load cta="#book" />
+  <main>
+    <!-- Loads straight away: it's the first screen, and it fetches availability as soon as it's up. -->
+    <BookDemo client:load />
+    <DemoAgenda />
+  </main>
+  <SiteFooter />
+</BaseLayout>

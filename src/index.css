@@ -234,6 +234,27 @@ body {
   }
 }
 
+/* The demo agenda's minute ruler (sections/demo-agenda.tsx) fills with Volt as
+   it scrolls through the viewport, where scroll-driven animations exist; it
+   simply sits full everywhere else. */
+@supports (animation-timeline: view()) {
+  .cs-ruler-fill {
+    animation: cs-ruler linear both;
+    animation-timeline: view();
+    animation-range: entry 40% cover 55%;
+  }
+}
+
+@keyframes cs-ruler {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
 /* Player scrubbers (components/video-player.tsx) — one <input type="range">
    painted as a Volt fill over a Paper track, with the buffered stretch in
    between. `--p` is the played fraction, `--b` how much has loaded; the thumb
@@ -290,7 +311,8 @@ body {
   }
 
   .cs-hint,
-  .cs-marquee-track {
+  .cs-marquee-track,
+  .cs-ruler-fill {
     animation: none;
   }
 

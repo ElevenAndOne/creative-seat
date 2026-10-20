@@ -61,6 +61,15 @@ const imageUrl = new URL(image, Astro.site).href
         })
       })
     </script>
+    <!-- Book a demo: keep the campaign a visitor landed with (utm_* in the URL) for the booking form to send on (utils/booking.ts). -->
+    <script is:inline>
+      try {
+        const utm = [...new URLSearchParams(location.search)].filter(([key]) => key.startsWith('utm_'))
+        if (utm.length) sessionStorage.setItem('cs-utm', JSON.stringify(Object.fromEntries(utm)))
+      } catch {
+        // Storage blocked: the form still reads the booking page's own URL.
+      }
+    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
