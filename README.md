@@ -127,9 +127,9 @@ Design tokens in `src/index.css` mirror the guide: colours, a fluid type scale (
 
 ## Analytics, consent & tracking
 
-- **Consent** — `components/cookie-banner.tsx` asks once (Accept / Decline, equal weight) and drives Google Consent Mode v2: everything is denied by default in `base.astro`, and a stored "granted" is restored before the tag configures. The footer's "Cookie settings" reopens it.
+- **Consent** — `components/cookie-banner.tsx` asks once (Accept / Decline, equal weight) and drives Google Consent Mode v2: everything is denied by default in `base.astro`, and a stored "granted" is restored before Google Tag Manager (`GTM-MQZ5TSC5`) loads. GA4 and any other tags are set up in the GTM container, not in code. The footer's "Cookie settings" reopens it.
 - **Ids** — every key element has a stable `<section>-<element>` id (`hero-book-demo`, `header-nav-pricing`, `pricing-full-seat-book-demo`, `faq-question-3`, `work-card-cherry-time`, …) for GTM triggers.
-- **Events** — any element with `data-track="<event>"` (plus optional `data-track-location`) sends that GA4 event through one delegated listener in `base.astro`: `book_demo_click`, `get_in_touch_click`, `see_work_click`, `nav_click`, `social_click`. Stateful moments call `track()` from `utils/analytics.ts`: `view_project`, `faq_open`, `process_slide`, `cookie_consent`, and `generate_lead` (a demo booked — no personal details are sent).
+- **Events** — any element with `data-track="<event>"` (plus optional `data-track-location`) pushes that event to the data layer (for GTM custom-event triggers) through one delegated listener in `base.astro`: `book_demo_click`, `get_in_touch_click`, `see_work_click`, `nav_click`, `social_click`. Stateful moments call `track()` from `utils/analytics.ts`: `view_project`, `faq_open`, `process_slide`, `cookie_consent`, and `generate_lead` (a demo booked — no personal details are sent).
 
 ## SEO & AEO
 

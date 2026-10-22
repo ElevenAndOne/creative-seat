@@ -30,7 +30,7 @@ type VideoLightboxProps = {
   cta?: string
   /** Classes for the trigger — it sizes itself to them (the preview fills it 16:9). */
   className?: string
-  /** `id` + `data-track-location` for the GA4 click tracking in layouts/base.astro. */
+  /** `id` + `data-track-location` for the GTM click tracking in layouts/base.astro. */
   id?: string
   trackLocation?: string
 }

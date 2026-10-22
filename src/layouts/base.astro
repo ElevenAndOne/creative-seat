@@ -30,11 +30,11 @@ const imageUrl = new URL(image, Astro.site).href
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Google tag (gtag.js) — `is:inline` keeps Astro from bundling these as modules -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-BE7L1P1E4Z"></script>
+    <!-- Consent + click tracking for Google Tag Manager — `is:inline` keeps Astro from bundling these as modules -->
     <script is:inline>
       window.dataLayer = window.dataLayer || []
-      // eslint-disable-next-line prefer-rest-params -- gtag.js reads the Arguments object; an array breaks it
+      // Consent commands only: GTM reads these in the gtag() form.
+      // eslint-disable-next-line prefer-rest-params -- GTM reads the Arguments object; an array breaks it
       function gtag() { dataLayer.push(arguments) }
       // Consent Mode v2: no analytics or ad cookies until the visitor accepts in
       // the cookie banner (components/cookie-banner.tsx) — or already did.
@@ -44,16 +44,16 @@ const imageUrl = new URL(image, Astro.site).href
       } catch {
         // Storage blocked — stay denied.
       }
-      gtag('js', new Date())
-      gtag('config', 'G-BE7L1P1E4Z')
 
-      // Click tracking: any element with data-track="<event>" sends that GA4
-      // event, tagged with its id and an optional data-track-location. One
-      // delegated listener covers the static sections as well as the islands.
+      // Click tracking: any element with data-track="<event>" pushes that event
+      // to the data layer for GTM, tagged with its id and an optional
+      // data-track-location. One delegated listener covers the static sections
+      // as well as the islands.
       document.addEventListener('click', (e) => {
         const el = e.target instanceof Element ? e.target.closest('[data-track]') : null
         if (!el) return
-        gtag('event', el.getAttribute('data-track'), {
+        dataLayer.push({
+          event: el.getAttribute('data-track'),
           element_id: el.id || undefined,
           location: el.getAttribute('data-track-location') || undefined,
           link_url: el.getAttribute('href') || undefined,
@@ -61,6 +61,12 @@ const imageUrl = new URL(image, Astro.site).href
         })
       })
     </script>
+    <!-- Google Tag Manager — after the consent defaults above, so its tags start denied too. -->
+    <script is:inline>/* eslint-disable no-var -- Google's snippet, kept verbatim */(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MQZ5TSC5');</script>
     <!-- Book a demo: keep the campaign a visitor landed with (utm_* in the URL) for the booking form to send on (utils/booking.ts). -->
     <script is:inline>
       try {
@@ -104,6 +110,8 @@ const imageUrl = new URL(image, Astro.site).href
     <slot name="head" />
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MQZ5TSC5" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <slot />
     <CookieBanner client:idle />
   </body>
