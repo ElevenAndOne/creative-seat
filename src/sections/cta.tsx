@@ -19,7 +19,7 @@ export default function CtaBanner() {
         <SketchCanvas src="/images/sections/pitch-marketer.avif" paper="#bce42d" ink="#212c26" focusX={0.62} />
       </div>
       {/* Hero scale, set in two lines so the italic phrase stays whole. */}
-      <Heading.H1 className="max-w-[9em] text-[clamp(3rem,1.9rem+4.1vw,5.25rem)] leading-[0.95] tracking-[-0.015em]">
+      <Heading.H1 className="max-w-[9em] text-[clamp(3rem,2.7143rem+1.4286vw,4rem)] leading-[0.95] tracking-[-0.015em]">
         <span className="block">The simple way</span> <Em>to get creative.</Em>
       </Heading.H1>
       <Paragraph.Big className="mt-7 max-w-[28rem]">

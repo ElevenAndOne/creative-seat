@@ -49,7 +49,7 @@ export default function Hero() {
           <motion.div {...rise(0.05)}>
             {/* Headline 1 at hero scale. Three set lines — "Increase your /
                 brand's creative / capability." — held by the em-based measure. */}
-            <Heading.H1 as="h1" className="max-w-[7.4em] text-[clamp(3rem,1.9rem+4.1vw,5.25rem)] leading-[0.95] tracking-[-0.015em] tablet:max-w-[9em]">
+            <Heading.H1 as="h1" className="max-w-[7.4em] text-[clamp(3rem,2.7143rem+1.4286vw,4rem)] leading-[0.95] tracking-[-0.015em] tablet:max-w-[9em]">
               <span className="block">Increase your</span> brand’s <Em>creative capability.</Em>
             </Heading.H1>
           </motion.div>

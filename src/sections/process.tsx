@@ -51,7 +51,7 @@ export default function Process() {
 
   return (
     <Section id="process" pad="md">
-      <div className="border-t border-ink pt-xlg">
+      <div className="border-t border-ink pt-8">
         <Eyebrow>A simpler way to work</Eyebrow>
         <Heading.H1 className="mt-4">
           Effortless from <Em>brief to launch.</Em>
@@ -68,7 +68,7 @@ export default function Process() {
         onPointerLeave={() => setHeld(false)}
         onFocus={() => setHeld(true)}
         onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && setHeld(false)}
-        className="@container mt-12 flex h-[27rem] gap-2.5 landscape:h-auto landscape:flex-col"
+        className="@container mt-8 flex h-[clamp(25rem,calc(100svh-24rem),26rem)] gap-2.5 landscape:h-auto landscape:flex-col"
       >
         {processSteps.map((step, i) => {
           const isOpen = i === active

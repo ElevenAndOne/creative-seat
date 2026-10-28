@@ -11,12 +11,12 @@ import { benefitCards } from '../content'
  */
 export default function FasterOutput() {
   return (
-    <Section id="benefits" className="bg-night text-paper" pad="md" width="wide">
+    <Section id="benefits" className="bg-night text-paper" pad="md" padTop="sm" width="wide">
       <Heading.H1 className="mx-auto text-center">
         More ideas made. <Em>Less waiting.</Em>
       </Heading.H1>
 
-      <div className="mt-xxlg grid grid-cols-3 gap-4 landscape:mx-auto landscape:max-w-[28rem] landscape:grid-cols-1">
+      <div className="mt-8 grid grid-cols-3 gap-4 landscape:mx-auto landscape:max-w-[28rem] landscape:grid-cols-1">
         {benefitCards.map((card) => (
           <BenefitCard key={card.title} {...card} />
         ))}

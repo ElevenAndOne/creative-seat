@@ -11,7 +11,7 @@ export default function NoHiring() {
   return (
     // The cursor labels deliberately spill past the artwork; clip (not scroll) any
     // that reach the screen edge on the narrowest phones.
-    <Section id="team" pad="md" className="overflow-x-clip">
+    <Section id="team" pad="md" padTop="sm" className="overflow-x-clip">
       <div className="grid grid-cols-2 items-center gap-[70px] tablet:gap-xlg landscape:grid-cols-1">
         <Canvas />
         <div className="landscape:order-first">
@@ -192,7 +192,7 @@ function Canvas() {
       onPointerLeave={() => youOpacity.set(0)}
       onPointerDown={() => youScale.set(0.85)}
       onPointerUp={() => youScale.set(1)}
-      className="@container relative aspect-[505/596] w-full select-none [@media(hover:hover)]:cursor-none [@media(hover:hover)]:[&_*]:cursor-none"
+      className="@container relative mx-auto aspect-[505/596] w-full max-w-[calc((100svh-8rem)*505/596)] select-none [@media(hover:hover)]:cursor-none [@media(hover:hover)]:[&_*]:cursor-none"
     >
       {/* The artboard. */}
       <div aria-hidden className="absolute left-[5%] top-[9%] h-[80%] w-[90%] rounded-[2.8cqw]" style={{ background: `linear-gradient(160deg, #f1effc 0%, ${CLIENT.lilac} 100%)` }} />

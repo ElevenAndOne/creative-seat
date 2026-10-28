@@ -34,45 +34,47 @@ export default function Pricing() {
   const currency = useCurrency()
 
   return (
-    <Section id="pricing" className="bg-chalk" pad="md">
-      <div className="border-t border-ink pt-xlg">
-        <Eyebrow>Pricing</Eyebrow>
-        <Heading.H1 className="mt-4">
-          Simple pricing, <Em>no surprises.</Em>
-        </Heading.H1>
-        <Paragraph className="mt-5 max-w-[31rem]">
+    <Section id="pricing" className="bg-chalk" pad="md" padTop="sm">
+      <div className="flex items-end justify-between gap-x-12 gap-y-5 border-t border-ink pt-8 tablet:flex-col tablet:items-start">
+        <div>
+          <Eyebrow>Pricing</Eyebrow>
+          <Heading.H1 className="mt-4">
+            Simple pricing, <Em>no surprises.</Em>
+          </Heading.H1>
+        </div>
+        <Paragraph className="max-w-[31rem]">
           One monthly fee for your own specialised creative team — no per-project quotes, retainers or surprise invoices.
         </Paragraph>
       </div>
 
-      <div className="mt-[50px] grid grid-cols-3 gap-[24px] tablet:mx-auto tablet:max-w-[28rem] tablet:grid-cols-1">
+      <div className="mt-8 grid grid-cols-3 gap-[24px] tablet:mx-auto tablet:max-w-[28rem] tablet:grid-cols-1">
         {pricingPlans.map((plan) => {
           const featured = plan.featured ?? false
           return (
             <article
               key={plan.id}
               id={`pricing-${plan.id}`}
-              className={cn('relative flex flex-col rounded-card p-8', featured ? 'bg-soft-volt text-forest' : 'border border-line bg-paper text-ink')}
+              className={cn('relative flex flex-col rounded-card p-7', featured ? 'bg-soft-volt text-forest' : 'border border-line bg-paper text-ink')}
             >
               <div className="flex items-center justify-between gap-3">
                 <Heading.H3 className="font-serif font-normal">{plan.name}</Heading.H3>
                 {featured && <span className="rounded-full bg-ink px-3 py-1.5 text-p-xs font-medium leading-none text-paper">Most popular</span>}
               </div>
 
-              <p className="mt-6 flex items-baseline gap-1.5">
+              <p className="mt-4 flex items-baseline gap-1.5">
                 <span className={cn('text-[2.75rem] font-bold leading-none tracking-[-0.03em] transition-opacity duration-300', plan.price && !currency && 'opacity-0')}>
                   {plan.price ? formatPrice(plan.price[currency ?? 'USD'], currency ?? 'USD') : 'Custom'}
                 </span>
                 {plan.price && <span className="text-p-sm">/ month</span>}
               </p>
               {/* Enterprise has no credit line, but keeps its height so the cards' rules line up. */}
-              <p aria-hidden={!plan.credits} className={cn('mt-3 text-p-sm font-semibold', !plan.credits && 'invisible')}>
+              <p aria-hidden={!plan.credits} className={cn('mt-2 text-p-sm font-semibold', !plan.credits && 'invisible')}>
                 {plan.credits ?? 0} credits
               </p>
 
-              <Paragraph.Small className="mt-6 font-medium">{plan.report}</Paragraph.Small>
+              <Paragraph.Small className="mt-4 font-medium">{plan.report}</Paragraph.Small>
 
-              <ul className="mt-6 space-y-1 text-p-sm">
+              <ul className="mt-4 space-y-0.5 text-p-sm leading-[1.45]">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex gap-2.5">
                     <Check />
@@ -81,7 +83,7 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              <div className="mt-auto pt-9">
+              <div className="mt-auto pt-5">
                 <Button
                   href={demoPage}
                   id={`pricing-${plan.id}-book-demo`}

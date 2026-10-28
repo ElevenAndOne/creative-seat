@@ -196,7 +196,7 @@ export default function BookDemo() {
       >
         <div className="flex flex-col items-start">
           <motion.div {...rise(0.05)}>
-            <Heading.H1 as="h1" className="max-w-[8em] text-[clamp(3rem,1.9rem+4.1vw,5.25rem)] leading-[0.95] tracking-[-0.015em] tablet:max-w-[10em]">
+            <Heading.H1 as="h1" className="max-w-[8em] text-[clamp(3rem,2.7143rem+1.4286vw,4rem)] leading-[0.95] tracking-[-0.015em] tablet:max-w-[10em]">
               <span className="block">Pull up a seat.</span> <Em>We’ll show you around.</Em>
             </Heading.H1>
           </motion.div>

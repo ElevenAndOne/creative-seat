@@ -9,9 +9,9 @@ import { styledText } from './base/polymorphic'
  *   <Heading.H1>Trusted by market leaders <Em>to deliver their vision.</Em></Heading.H1>
  *   <Heading.H3 as="h4">Card title</Heading.H3>
  *
- * - Display — the Golos duet (72/72): Regular carries the context, a <b>
+ * - Display — the Golos duet (64/64): Regular carries the context, a <b>
  *   carries the point. For posters and campaign moments; not used on the page.
- * - H1 — Headline 1 (56/59), Instrument Serif: every section title, so it
+ * - H1 — Headline 1 (44/46), Instrument Serif: every section title, so it
  *   renders an <h2>; the hero sets it larger as the page's <h1>. End it on one
  *   italic phrase of two or more words with <Em>; serif is for this level only,
  *   never the brand name.

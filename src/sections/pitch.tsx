@@ -10,7 +10,7 @@ export default function ModernMarketing() {
     // copy back up with every other section. Soft Volt is the layout's accent;
     // the photo fills the other half to the panel's edges, cut by its corners.
     <Section id="pitch" pad="sm" width="wide">
-      <div className="grid min-h-[35rem] grid-cols-2 overflow-hidden rounded-frame bg-soft-volt text-forest landscape:min-h-0 landscape:grid-cols-1">
+      <div className="grid min-h-[clamp(24rem,calc(100svh-12rem),30rem)] grid-cols-2 overflow-hidden rounded-frame bg-soft-volt text-forest landscape:min-h-0 landscape:grid-cols-1">
         <div className="self-center p-10 landscape:p-xbg">
           <Eyebrow className="text-forest">Advertising has changed</Eyebrow>
           <Heading.H1 className="mt-4 max-w-[16ch]">

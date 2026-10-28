@@ -54,13 +54,14 @@
   --spacing-xxxhg: clamp(9.25rem, 5.2311rem + 11.3208vi, 12.25rem);
 
   /* ---- Type scale — the guide's px sizes at 1440px, easing down to 320px.
-     Display duet 72/72 (Golos 700 + 400), Headline 1 56/59 (Instrument Serif),
-     Headline 2 32/35 and Headline 3 24/29 (Golos 700), Body 17/27, Small 13/20,
+     Display duet (Golos 700 + 400) and Headline 1 (Instrument Serif) run a
+     step under the guide's 72 and 56, at 64 and 44, to keep the page compact.
+     Headline 2 32/35 and Headline 3 24/29 (Golos 700), Body 16/26, Small 13/20,
      Eyebrow 10px SemiBold with 8% tracking. ---- */
-  --text-display: clamp(2.75rem, 2.25rem + 2.5vw, 4.5rem);       /* 44 → 72 */
+  --text-display: clamp(2.75rem, 2.3929rem + 1.7857vw, 4rem);    /* 44 → 64 */
   --text-display--line-height: 1;
   --text-display--letter-spacing: -0.025em;
-  --text-h1: clamp(2.25rem, 1.8929rem + 1.7857vw, 3.5rem);      /* 36 → 56 */
+  --text-h1: clamp(2.25rem, 2.1071rem + 0.7143vw, 2.75rem);     /* 36 → 44 */
   --text-h1--line-height: 1.05;
   --text-h1--letter-spacing: -0.01em;
   --text-h2: clamp(1.625rem, 1.5179rem + 0.5357vw, 2rem);       /* 26 → 32 */
@@ -74,9 +75,9 @@
   --text-h4--letter-spacing: -0.01em;
 
   /* Paragraph ramp — lg/md are the guide's Body, sm is card copy, xs its Small. */
-  --text-p-lg: clamp(1rem, 0.9821rem + 0.0893vw, 1.0625rem);    /* 16 → 17 */
+  --text-p-lg: 1rem;                                            /* 16 */
   --text-p-lg--line-height: 1.6;
-  --text-p-md: clamp(1rem, 0.9821rem + 0.0893vw, 1.0625rem);    /* 16 → 17 */
+  --text-p-md: 1rem;                                            /* 16 */
   --text-p-md--line-height: 1.6;
   --text-p-sm: 0.9375rem; /* 15 */
   --text-p-sm--line-height: 1.6;
@@ -152,9 +153,10 @@
   --container-width: min(100% - var(--container-margin) * 2, var(--container-max-width));
   --container-wide: min(100% - var(--container-margin) * 2, var(--container-wide-width));
 
-  --section-pad-sm: clamp(2.5rem, 2.2143rem + 1.4286vw, 3.5rem); /* 40 → 56 */
-  --section-pad-md: clamp(4rem, 3.3571rem + 3.2143vw, 6.25rem); /* 64 → 100 */
-  --section-pad-bg: clamp(5rem, 3.75rem + 6.25vw, 9.375rem);    /* 80 → 150 */
+  /* Sized so a section, padding included, fits a 1440 × 800 viewport. */
+  --section-pad-sm: 2.5rem;                                    /* 40 */
+  --section-pad-md: 4rem;                                      /* 64 */
+  --section-pad-bg: clamp(5rem, 4.6429rem + 1.7857vw, 6rem);   /* 80 → 96 */
 }
 
 /* Dark radial backdrops — a Forest glow bleeding out of one corner into Ink,

@@ -132,7 +132,7 @@ export default function Expertise() {
   return (
     <Section id="services" pad="bg" bleed className="overflow-hidden bg-ink text-paper">
       <div ref={root}>
-        <Heading.H1 data-reveal className="px-[var(--container-margin)] text-center text-[clamp(2.75rem,1.99rem+3.24vw,5.89rem)] leading-[1.05] tracking-[-0.01em]">
+        <Heading.H1 data-reveal className="px-[var(--container-margin)] text-center text-[clamp(2.75rem,2.487rem+1.127vw,3.75rem)] leading-[1.05] tracking-[-0.01em]">
           Expertise, <Em>on demand.</Em>
         </Heading.H1>
 
@@ -143,7 +143,7 @@ export default function Expertise() {
         <div
           data-reveal
           aria-hidden="true"
-          className="mt-[clamp(2.5rem,1.6rem+3vw,4.75rem)] flex flex-col text-[clamp(0.9375rem,0.796rem+0.604vw,1.52rem)] font-medium leading-none"
+          className="mt-[clamp(2rem,1.25rem+2vw,3.5rem)] flex flex-col text-[clamp(0.9375rem,0.796rem+0.604vw,1.52rem)] font-medium leading-none"
         >
           {ROWS.map((items, r) => (
             <div key={r} className="flex h-[3.45em] items-center">

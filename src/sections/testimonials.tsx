@@ -7,7 +7,7 @@ import { testimonials } from '../content'
 export default function Testimonials() {
   return (
     <Section id="testimonials" className="bg-chalk" pad="md">
-      <div className="border-t border-ink pt-xlg">
+      <div className="border-t border-ink pt-8">
         <Eyebrow>Redefining success. Together.</Eyebrow>
         <Heading.H1 className="mt-4">
           Why marketing teams <Em>take a seat.</Em>
@@ -17,11 +17,11 @@ export default function Testimonials() {
       {/* Two quotes side by side on Chalk, stacking on phones. Each is a Paper
           card that turns Soft Volt — the brand's quote bubble — under the
           pointer. */}
-      <div className="mt-[56px] grid grid-cols-2 gap-[24px] landscape:grid-cols-1">
+      <div className="mt-8 grid grid-cols-2 gap-[24px] landscape:grid-cols-1">
         {testimonials.map((t) => (
           <article
             key={t.name}
-            className="flex min-h-[23.75rem] flex-col gap-8 rounded-[18px] bg-paper p-10 text-ink transition-colors duration-300 ease-out hover:bg-soft-volt hover:text-forest landscape:min-h-0 landscape:p-8"
+            className="flex min-h-[17rem] flex-col gap-8 rounded-[18px] bg-paper p-8 text-ink transition-colors duration-300 ease-out hover:bg-soft-volt hover:text-forest landscape:min-h-0 landscape:p-8"
           >
             <p className="text-p-md">“{t.testimony}”</p>
             {/* Pinned to the bottom, so the names and logos line up across the cards. */}

@@ -82,15 +82,15 @@ export default function WorkShowcase() {
   }, [])
 
   return (
-    <Section id="work" pad="md">
-      <div className="border-t border-ink pt-xlg">
+    <Section id="work" pad="md" padTop="sm">
+      <div className="border-t border-ink pt-8">
         <Eyebrow>Take a look at our work</Eyebrow>
-        <Heading.H1 className="mt-4 max-w-[24ch]">
+        <Heading.H1 className="mt-4">
           Trusted by market leaders <Em>to deliver their vision.</Em>
         </Heading.H1>
       </div>
 
-      <div className="mt-[56px] grid grid-cols-3 gap-x-[30px] gap-y-[34px] tablet:grid-cols-2 portrait:grid-cols-1">
+      <div className="mt-8 grid grid-cols-3 gap-x-[30px] gap-y-6 tablet:grid-cols-2 portrait:grid-cols-1">
         {showcasedProjects.map((project, i) => (
           <button
             key={project.title}
@@ -101,7 +101,7 @@ export default function WorkShowcase() {
             aria-label={`View ${project.title} project`}
             className="group block w-full text-left outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
           >
-            <div data-media className="relative isolate aspect-[340/230] overflow-hidden rounded-md bg-chalk">
+            <div data-media className="relative isolate h-[clamp(11rem,calc((100svh-25rem)/2),15.25rem)] overflow-hidden tablet:aspect-[340/230] tablet:h-auto rounded-md bg-chalk">
               <ProjectMedia
                 src={project.cover}
                 poster={project.poster}
@@ -114,7 +114,7 @@ export default function WorkShowcase() {
                 <span className="transition-transform duration-[350ms] ease-glide group-hover:translate-x-[3px]"><Arrow /></span>
               </span>
             </div>
-            <Heading.H4 as="h3" className="mt-[19px]">{project.title}</Heading.H4>
+            <Heading.H4 as="h3" className="mt-3">{project.title}</Heading.H4>
             <p className="mt-1.5 text-p-xs text-muted">{project.tags.join(', ')}</p>
           </button>
         ))}

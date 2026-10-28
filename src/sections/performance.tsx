@@ -19,7 +19,7 @@ export default function HighImpact() {
       <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] items-center gap-14 tablet:gap-xlg landscape:grid-cols-1">
         <div className="@container">
           <Eyebrow tone="paper">Multi-platform performance</Eyebrow>
-          <Heading.H1 className="mt-4 text-[min(6rem,13.5cqi)] leading-[1.05] tracking-[-0.01em] landscape:text-[min(3.75rem,13.5cqi)]">
+          <Heading.H1 className="mt-4 text-[min(4rem,9.45cqi)] leading-[1.05] tracking-[-0.01em] landscape:text-[min(3.75rem,13.5cqi)]">
             High impact creative <Em>across every channel.</Em>
           </Heading.H1>
           <div className="mt-6 max-w-[28.75rem]">

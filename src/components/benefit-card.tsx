@@ -39,7 +39,7 @@ export default function BenefitCard({ src, video, title, em, body, tone, focus }
   return (
     <article
       tabIndex={0}
-      className="group flex h-[36.75rem] flex-col overflow-hidden rounded-[10px] outline-none transition-[translate] duration-500 ease-glide hover:-translate-y-2.5 focus-visible:-translate-y-2.5 focus-visible:ring-2 focus-visible:ring-soft-volt focus-visible:ring-offset-4 focus-visible:ring-offset-ink tablet:h-[32rem] landscape:h-auto"
+      className="group flex h-[clamp(24rem,calc(100svh-17rem),32rem)] flex-col overflow-hidden rounded-[10px] outline-none transition-[translate] duration-500 ease-glide hover:-translate-y-2.5 focus-visible:-translate-y-2.5 focus-visible:ring-2 focus-visible:ring-soft-volt focus-visible:ring-offset-4 focus-visible:ring-offset-ink tablet:h-[28rem] landscape:h-auto"
     >
       <div className="relative min-h-0 grow bg-chalk landscape:aspect-[4/3] landscape:grow-0">
         {video ? (
