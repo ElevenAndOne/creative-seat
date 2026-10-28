@@ -44,7 +44,7 @@ const structuredData = homeStructuredData(Astro.site!, title, description)
     <FasterOutput />
     <Process client:visible={nearViewport} />
     <Testimonials />
-    <Expertise />
+    <Expertise client:visible={nearViewport} />
     <!-- Idle rather than visible: a #work-<slug> deep link has to open the project viewer on load. -->
     <WorkShowcase client:idle />
     <!-- Idle too: the visitor's currency should be known well before they scroll down to it. -->

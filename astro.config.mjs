@@ -33,6 +33,11 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    // Pre-bundle GSAP with React up front. Found lazily, it gets optimised in a
+    // later pass against a second React copy and its hooks throw on hydration.
+    optimizeDeps: {
+      include: ['gsap', 'gsap/ScrollTrigger', '@gsap/react'],
+    },
     server: {
       strictPort: true,
     },
