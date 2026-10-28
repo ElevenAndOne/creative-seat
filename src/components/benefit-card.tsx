@@ -1,7 +1,11 @@
 import { cn } from '../utils/cn'
+import { useAmbientVideo } from './base/media'
 
 interface BenefitCardProps {
+  /** The photo, or the poster frame when there is a `video`. */
   src: string
+  /** An ambient loop to play in place of the photo, WebM first with an MP4 fallback. */
+  video?: { webm: string, mp4: string }
   title: string
   /** The part of `title` set in serif italic. */
   em: string
@@ -26,8 +30,11 @@ const TONE = {
  * fades in underneath the title. Touch screens have no hover, so there the
  * description is simply always open.
  */
-export default function BenefitCard({ src, title, em, body, tone, focus }: BenefitCardProps) {
+export default function BenefitCard({ src, video, title, em, body, tone, focus }: BenefitCardProps) {
   const [before, after] = title.split(em)
+  // Reduced motion holds on the poster: the card is decoration, so it needs no controls.
+  const playback = useAmbientVideo({ autoPlay: true, loop: true, muted: true, playsInline: true, controls: false, posterOnReduce: true })
+  const media = 'absolute inset-0 h-full w-full object-cover'
 
   return (
     <article
@@ -35,7 +42,14 @@ export default function BenefitCard({ src, title, em, body, tone, focus }: Benef
       className="group flex h-[36.75rem] flex-col overflow-hidden rounded-[10px] outline-none transition-[translate] duration-500 ease-glide hover:-translate-y-2.5 focus-visible:-translate-y-2.5 focus-visible:ring-2 focus-visible:ring-soft-volt focus-visible:ring-offset-4 focus-visible:ring-offset-ink tablet:h-[32rem] landscape:h-auto"
     >
       <div className="relative min-h-0 grow bg-chalk landscape:aspect-[4/3] landscape:grow-0">
-        <img src={src} alt="" loading="lazy" decoding="async" style={{ objectPosition: focus }} className="absolute inset-0 h-full w-full object-cover" />
+        {video ? (
+          <video {...playback} poster={src} aria-hidden="true" style={{ objectPosition: focus }} className={media}>
+            <source src={video.webm} type="video/webm" />
+            <source src={video.mp4} type="video/mp4" />
+          </video>
+        ) : (
+          <img src={src} alt="" loading="lazy" decoding="async" style={{ objectPosition: focus }} className={media} />
+        )}
       </div>
       <div
         className={cn(

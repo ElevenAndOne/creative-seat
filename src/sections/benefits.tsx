@@ -4,7 +4,11 @@ import Em from '../components/em'
 import Heading from '../components/heading'
 import { benefitCards } from '../content'
 
-/** On the dark Forest-to-Ink gradient: three tall photo cards with Soft Volt, Forest and Paper caption bands. */
+/**
+ * On the dark Forest-to-Ink gradient: three tall cards with Soft Volt, Forest
+ * and Paper caption bands. The middle card plays the Brief, Design, Delivery
+ * loop exported from Figma.
+ */
 export default function FasterOutput() {
   return (
     <Section id="benefits" className="bg-night text-paper" pad="md" width="wide">

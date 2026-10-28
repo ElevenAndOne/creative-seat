@@ -1,10 +1,11 @@
 /**
- * Benefit cards: a photo over a solid caption band. `em` is the phrase of the
- * title set in serif italic; `tone` picks the band — Soft Volt, Forest or Paper.
+ * Benefit cards: a photo (or, with `video`, an ambient loop whose poster is
+ * `src`) over a solid caption band. `em` is the phrase of the title set in
+ * serif italic; `tone` picks the band — Soft Volt, Forest or Paper.
  */
 export const benefitCards = [
   {
-    src: '/images/sections/benefit-capacity.avif',
+    src: '/images/benefits/capacity.webp',
     title: 'More creative capacity',
     em: 'creative capacity',
     body: 'Spin up extra hands the moment a campaign demands it and scale back just as easily — capacity that flexes with your roadmap.',
@@ -12,20 +13,21 @@ export const benefitCards = [
     focus: 'center',
   },
   {
-    src: '/images/sections/benefit-workflow.avif',
+    src: '/images/benefits/workflow-poster.webp',
+    video: { webm: '/videos/benefit-workflow.webm', mp4: '/videos/benefit-workflow.mp4' },
     title: 'Streamlined workflow',
     em: 'Streamlined',
     body: 'Brief once and track everything in a single place, with a dedicated project manager keeping every task moving from kickoff to delivery.',
     tone: 'deep',
-    focus: 'center 20%',
+    focus: 'center 25%',
   },
   {
-    src: '/images/sections/benefit-subscription.avif',
+    src: '/images/benefits/subscription.webp',
     title: 'One simple subscription',
     em: 'simple subscription',
     body: 'A full creative team for one predictable monthly fee — no per-project quotes, retainers, or surprise invoices.',
     tone: 'light',
-    focus: 'center 30%',
+    focus: 'center 41%',
   },
 ] as const
 
