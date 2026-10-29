@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
 import Button from '../components/autton'
 import Em from '../components/em'
 import BrandLogo from '../components/brand-logo'
@@ -24,16 +24,11 @@ const HEADER = '4.75rem'
  * (tablets, phones) lets it grow past one screen rather than squash.
  */
 export default function Hero() {
-  const reduce = useReducedMotion() ?? false
-
-  // Copy rises in just ahead of the cards. The props must be the same on server
-  // and client (the reduced-motion preference is only known in the browser, and
-  // React won't patch a mismatched `style` on hydration, leaving the copy
-  // invisible), so reduced motion just makes the transition instant.
+  // Copy rises in just ahead of the cards.
   const rise = (delay: number) => ({
     initial: { opacity: 0, y: 24 },
     animate: { opacity: 1, y: 0 },
-    transition: reduce ? { duration: 0 } : { duration: 0.7, ease: EASE, delay },
+    transition: { duration: 0.7, ease: EASE, delay },
   })
 
   return (

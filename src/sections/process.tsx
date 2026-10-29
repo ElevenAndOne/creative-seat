@@ -1,4 +1,4 @@
-import { useInView, useReducedMotion } from 'motion/react'
+import { useInView } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Section } from '../components/base/section'
 import Em from '../components/em'
@@ -15,7 +15,7 @@ const STEP_MS = 6000
 const N = processSteps.length
 
 /** One curve for every part of a change, so the columns' widths and fills land together. */
-const MOVE = 'duration-[800ms] ease-[cubic-bezier(0.65,0,0.35,1)] motion-reduce:transition-none'
+const MOVE = 'duration-[800ms] ease-[cubic-bezier(0.65,0,0.35,1)]'
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -24,18 +24,17 @@ const pad = (n: number) => String(n).padStart(2, '0')
  * step fills most of the row on Soft Volt, the other three stand beside it as
  * narrow Chalk columns showing just their number. Click one to open it. The
  * steps also open in turn by themselves while the row is on screen, pausing
- * under the pointer or keyboard focus, and not at all under reduced motion.
+ * under the pointer or keyboard focus.
  *
  * Phones stack all four steps, each one open.
  */
 export default function Process() {
-  const reduce = useReducedMotion() ?? false
   const ref = useRef<HTMLOListElement>(null)
   const inView = useInView(ref, { amount: 0.4 })
   const [active, setActive] = useState(0)
   const [held, setHeld] = useState(false)
 
-  const playing = !reduce && inView && !held
+  const playing = inView && !held
 
   useEffect(() => {
     if (!playing) return
@@ -136,7 +135,7 @@ export default function Process() {
 /** Fade-and-rise for the open column's parts: staggered in, instant out. Phones show every step open. */
 function rise(open: boolean, delay: string) {
   return cn(
-    'transition-[opacity,translate] motion-reduce:transition-none landscape:translate-y-0 landscape:opacity-100',
+    'transition-[opacity,translate] landscape:translate-y-0 landscape:opacity-100',
     open ? cn('translate-y-0 opacity-100 duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]', delay) : 'translate-y-4 opacity-0 duration-150',
   )
 }

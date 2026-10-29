@@ -67,66 +67,61 @@ const em = (px: number) => `${px / FIGMA_PX}em`
  * "Expertise, on demand." over three rows of services drifting in alternate
  * directions, a 3D chair between each pill. GSAP runs each row as an endless
  * loop over two copies of its items, eases it to a crawl under the pointer and
- * pushes it along with the page's scroll speed. Reduced motion leaves the rows
- * still.
+ * pushes it along with the page's scroll speed.
  */
 export default function Expertise() {
   const root = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
-    const mm = gsap.matchMedia()
-
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
-      gsap.from('[data-reveal]', {
-        autoAlpha: 0,
-        y: 40,
-        duration: 1,
-        ease: 'power3.out',
-        stagger: 0.12,
-        scrollTrigger: { trigger: root.current, start: 'top 75%' },
-      })
-
-      // Each row's speed is its hover factor times the shared scroll boost.
-      const scroll = { boost: 1 }
-      const rows = gsap.utils.toArray<HTMLElement>('[data-track]').map((track, i) => {
-        // A track holds two identical copies, so 50% is exactly one copy along.
-        const [from, to] = DRIFT[i] < 0 ? [0, -50] : [-50, 0]
-        const tween = gsap.fromTo(track, { xPercent: from }, { xPercent: to, duration: LOOP_S[i], ease: 'none', repeat: -1 })
-        tween.progress(START[i])
-
-        const hover = { speed: 1 }
-        const row = track.parentElement!
-        const slow = () => gsap.to(hover, { speed: 0.2, duration: 0.6, overwrite: true })
-        const resume = () => gsap.to(hover, { speed: 1, duration: 0.6, overwrite: true })
-        row.addEventListener('pointerenter', slow)
-        row.addEventListener('pointerleave', resume)
-        return { tween, hover, row, slow, resume }
-      })
-
-      const tick = () => rows.forEach(({ tween, hover }) => tween.timeScale(hover.speed * scroll.boost))
-      gsap.ticker.add(tick)
-
-      // Scrolling the page pushes every row along, then lets it settle back.
-      // Off screen the loops pause.
-      ScrollTrigger.create({
-        trigger: root.current,
-        start: 'top bottom',
-        end: 'bottom top',
-        onToggle: ({ isActive }) => rows.forEach(({ tween }) => (isActive ? tween.resume() : tween.pause())),
-        onUpdate: ({ getVelocity }) => {
-          scroll.boost = 1 + Math.min(Math.abs(getVelocity()) / 300, 5)
-          gsap.to(scroll, { boost: 1, duration: 1.2, ease: 'power2.out', overwrite: true })
-        },
-      })
-
-      return () => {
-        gsap.ticker.remove(tick)
-        rows.forEach(({ row, slow, resume }) => {
-          row.removeEventListener('pointerenter', slow)
-          row.removeEventListener('pointerleave', resume)
-        })
-      }
+    gsap.from('[data-reveal]', {
+      autoAlpha: 0,
+      y: 40,
+      duration: 1,
+      ease: 'power3.out',
+      stagger: 0.12,
+      scrollTrigger: { trigger: root.current, start: 'top 75%' },
     })
+
+    // Each row's speed is its hover factor times the shared scroll boost.
+    const scroll = { boost: 1 }
+    const rows = gsap.utils.toArray<HTMLElement>('[data-track]').map((track, i) => {
+      // A track holds two identical copies, so 50% is exactly one copy along.
+      const [from, to] = DRIFT[i] < 0 ? [0, -50] : [-50, 0]
+      const tween = gsap.fromTo(track, { xPercent: from }, { xPercent: to, duration: LOOP_S[i], ease: 'none', repeat: -1 })
+      tween.progress(START[i])
+
+      const hover = { speed: 1 }
+      const row = track.parentElement!
+      const slow = () => gsap.to(hover, { speed: 0.2, duration: 0.6, overwrite: true })
+      const resume = () => gsap.to(hover, { speed: 1, duration: 0.6, overwrite: true })
+      row.addEventListener('pointerenter', slow)
+      row.addEventListener('pointerleave', resume)
+      return { tween, hover, row, slow, resume }
+    })
+
+    const tick = () => rows.forEach(({ tween, hover }) => tween.timeScale(hover.speed * scroll.boost))
+    gsap.ticker.add(tick)
+
+    // Scrolling the page pushes every row along, then lets it settle back.
+    // Off screen the loops pause.
+    ScrollTrigger.create({
+      trigger: root.current,
+      start: 'top bottom',
+      end: 'bottom top',
+      onToggle: ({ isActive }) => rows.forEach(({ tween }) => (isActive ? tween.resume() : tween.pause())),
+      onUpdate: ({ getVelocity }) => {
+        scroll.boost = 1 + Math.min(Math.abs(getVelocity()) / 300, 5)
+        gsap.to(scroll, { boost: 1, duration: 1.2, ease: 'power2.out', overwrite: true })
+      },
+    })
+
+    return () => {
+      gsap.ticker.remove(tick)
+      rows.forEach(({ row, slow, resume }) => {
+        row.removeEventListener('pointerenter', slow)
+        row.removeEventListener('pointerleave', resume)
+      })
+    }
   }, { scope: root })
 
   return (

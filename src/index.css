@@ -306,24 +306,6 @@ body {
   outline-offset: 4px;
 }
 
-/* Respect users who ask for less motion: hold every animation still. */
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  .cs-hint,
-  .cs-marquee-track,
-  .cs-ruler-fill {
-    animation: none;
-  }
-
-  .cs-scrub::-webkit-slider-thumb,
-  .cs-scrub::-moz-range-thumb {
-    transition: none;
-  }
-}
-
 [data-grid-component] {
   --columns-count: 4;
   --gap: 1rem;

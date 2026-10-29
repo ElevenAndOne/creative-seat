@@ -3,7 +3,6 @@ import {
   motion,
   useInView,
   useMotionValue,
-  useReducedMotion,
   useTransform,
   type AnimationPlaybackControls,
   type MotionValue,
@@ -48,15 +47,13 @@ const visibility = (a: number) => (a <= 2 ? 1 : Math.max(0, 1 - (a - 2) / 0.7))
  * each side, cycling through `heroCards`. It's draggable — grab and throw it
  * either way, and it settles on the nearest card — and moves on by itself
  * every few seconds when left alone. On load the cards fan out from a single
- * stack. The cycle pauses while the hero is off screen, the tab is hidden, or
- * under reduced motion (dragging still works there).
+ * stack. The cycle pauses while the hero is off screen or the tab is hidden.
  *
  * The markup is identical on server and client: every card's pose is derived
  * from motion values that start at the same values in both.
  * Purely decorative — the images carry no information the copy doesn't.
  */
 export default function HeroStack({ className }: { className?: string }) {
-  const reduce = useReducedMotion() ?? false
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { amount: 0.3 })
 
@@ -70,26 +67,26 @@ export default function HeroStack({ className }: { className?: string }) {
 
   const goTo = (target: number, velocity = 0) => {
     motionRef.current?.stop()
-    motionRef.current = animate(pos, target, reduce ? { duration: 0 } : { ...SPRING, velocity })
+    motionRef.current = animate(pos, target, { ...SPRING, velocity })
   }
 
   // Fan out on load.
   useEffect(() => {
-    const controls = animate(spread, 1, reduce ? { duration: 0 } : { type: 'spring', stiffness: 55, damping: 15, delay: 0.25 })
+    const controls = animate(spread, 1, { type: 'spring', stiffness: 55, damping: 15, delay: 0.25 })
     return () => controls.stop()
-  }, [spread, reduce])
+  }, [spread])
 
   // Move on every few seconds, unless the visitor has just been dragging.
   useEffect(() => {
-    if (reduce || !inView) return
+    if (!inView) return
     const id = window.setInterval(() => {
       if (document.hidden || draggingRef.current || Date.now() - lastTouchRef.current < STEP_MS) return
       goTo(Math.round(pos.get()) + 1)
     }, STEP_MS)
     return () => window.clearInterval(id)
-    // goTo only closes over refs and `reduce`, which is a dependency already.
+    // goTo only closes over refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reduce, inView, pos])
+  }, [inView, pos])
 
   const stepPx = () => (ref.current?.offsetWidth ?? 500) * DRAG_STEP
 

@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
-import { useAnimationFrame, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from 'motion/react'
+import { useRef, useState } from 'react'
+import { useAnimationFrame, useMotionValue, useScroll, useSpring, useTransform, useVelocity } from 'motion/react'
 import { cn } from '../../utils/cn'
 import { useMediaFlag } from '../../hooks/useMediaFlag'
-import { projects } from '../../content'
-import { COLUMN_CONFIG, TILE_ASPECT, columns, type Project } from './tiles'
-import ProjectMedia from '../project-media'
+import { COLUMN_CONFIG, columns, type Project } from './tiles'
 import MarqueeColumn from './MarqueeColumn'
 import ExpandCursor from './ExpandCursor'
 import Lightbox from './Lightbox'
@@ -17,10 +15,6 @@ const LERP_RATE = 6 // hover-slow easing rate (per second)
 const clamp = (min: number, max: number, v: number) => Math.max(min, Math.min(max, v))
 
 export default function ScrollMarquee({ className }: { className?: string }) {
-  const reduce = useReducedMotion() ?? false
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-
   const mobile = useMediaFlag('(max-width: 48rem)')
   const finePointer = useMediaFlag('(pointer: fine)')
   const axis: 'y' | 'x' = mobile ? 'x' : 'y'
@@ -54,31 +48,6 @@ export default function ScrollMarquee({ className }: { className?: string }) {
     triggerRef.current?.focus()
   }
 
-  const showCursor = finePointer && !reduce
-
-  // Reduced motion: render a static grid (post-hydration swap via `mounted`), no
-  // rAF drift, no cursor/drag — but cards still open the modal.
-  if (mounted && reduce) {
-    return (
-      <>
-        <div className={cn('grid grid-cols-3 gap-bg landscape:grid-cols-2 landscape:gap-md', className)}>
-          {projects.slice(0, 6).map((project, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={(e) => openCard(project, e.currentTarget)}
-              style={{ aspectRatio: TILE_ASPECT }}
-              className="group block overflow-hidden rounded-card bg-white/5 shadow-2xl shadow-black/20 outline-none focus-visible:ring-2 focus-visible:ring-lime"
-            >
-              <ProjectMedia src={project.cover} poster={project.poster} alt={project.title} draggable={false} className="h-full w-full select-none object-cover [-webkit-user-drag:none]" />
-            </button>
-          ))}
-        </div>
-        <Lightbox project={selected} onClose={closeCard} />
-      </>
-    )
-  }
-
   const verticalMask = '[-webkit-mask-image:linear-gradient(to_bottom,transparent,#000_var(--edge),#000_calc(100%-var(--edge)),transparent)] [mask-image:linear-gradient(to_bottom,transparent,#000_var(--edge),#000_calc(100%-var(--edge)),transparent)]'
 
   return (
@@ -100,7 +69,7 @@ export default function ScrollMarquee({ className }: { className?: string }) {
           axis === 'y'
             ? cn('h-full flex-row gap-bg [--edge:9%] tablet:h-[34rem]', verticalMask)
             : 'h-[26rem] flex-col gap-md -mx-[var(--container-margin)]',
-          showCursor && 'cursor-none',
+          finePointer && 'cursor-none',
           className,
         )}
       >
@@ -117,7 +86,7 @@ export default function ScrollMarquee({ className }: { className?: string }) {
         ))}
       </div>
 
-      {showCursor && <ExpandCursor visible={cursorVisible} />}
+      {finePointer && <ExpandCursor visible={cursorVisible} />}
       <Lightbox project={selected} onClose={closeCard} />
     </>
   )

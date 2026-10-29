@@ -182,9 +182,9 @@ interface SketchCanvasProps {
 
 /**
  * A photo redrawn live as a pencil sketch — WebGL, no libraries. It only
- * redraws on a boil frame or when the pointer moves, pauses off screen, and
- * holds one still frame under reduced motion. Purely decorative; if WebGL is
- * missing the section simply keeps its plain paper colour.
+ * redraws on a boil frame or when the pointer moves, and pauses off screen.
+ * Purely decorative; if WebGL is missing the section simply keeps its plain
+ * paper colour.
  */
 export default function SketchCanvas({ src, paper, ink, focusX = 0.6, className }: SketchCanvasProps) {
   const ref = useRef<HTMLCanvasElement>(null)
@@ -223,7 +223,6 @@ export default function SketchCanvas({ src, paper, ink, focusX = 0.6, className 
     gl.uniform1i(u('uImage'), 0)
     gl.uniform1i(u('uSoft'), 1)
 
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     let image: HTMLImageElement | null = null
     let dpr = 1
     let mouse: [number, number] = [-1, -1]
@@ -276,7 +275,7 @@ export default function SketchCanvas({ src, paper, ink, focusX = 0.6, className 
     const tick = (now: number) => {
       frame = requestAnimationFrame(tick)
       if (!visible) return
-      const boil = reduce ? 0 : Math.floor((now / 1000) * BOIL_FPS) % BOIL_DRAWINGS
+      const boil = Math.floor((now / 1000) * BOIL_FPS) % BOIL_DRAWINGS
       if (boil !== lastBoil || dirty) {
         lastBoil = boil
         dirty = false
