@@ -32,8 +32,7 @@ const TONE = {
  */
 export default function BenefitCard({ src, video, title, em, body, tone, focus }: BenefitCardProps) {
   const [before, after] = title.split(em)
-  // Reduced motion holds on the poster: the card is decoration, so it needs no controls.
-  const playback = useAmbientVideo({ autoPlay: true, loop: true, muted: true, playsInline: true, controls: false, posterOnReduce: true })
+  const playback = useAmbientVideo({ autoPlay: true, loop: true, muted: true, playsInline: true, controls: false })
   const media = 'absolute inset-0 h-full w-full object-cover'
 
   return (

@@ -176,7 +176,7 @@ export default function VideoPlayer({ src, poster, label, autoPlay = false, clas
       {/* Controls. `focus-within` keeps them up while they're being driven from the keyboard. */}
       <div
         className={cn(
-          'absolute inset-x-0 bottom-0 z-10 flex items-center gap-3 bg-gradient-to-t from-ink/90 via-ink/60 to-transparent px-4 pb-3 pt-10 text-paper transition-[opacity,translate] duration-300 ease-glide focus-within:translate-y-0 focus-within:opacity-100 motion-reduce:transition-none portrait:gap-2 portrait:px-3',
+          'absolute inset-x-0 bottom-0 z-10 flex items-center gap-3 bg-gradient-to-t from-ink/90 via-ink/60 to-transparent px-4 pb-3 pt-10 text-paper transition-[opacity,translate] duration-300 ease-glide focus-within:translate-y-0 focus-within:opacity-100 portrait:gap-2 portrait:px-3',
           hidden && 'translate-y-2 opacity-0 focus-within:pointer-events-auto',
           hidden && 'pointer-events-none',
         )}
@@ -226,7 +226,7 @@ export default function VideoPlayer({ src, poster, label, autoPlay = false, clas
               el.volume = Number(e.target.value)
               el.muted = Number(e.target.value) === 0
             }}
-            className="cs-scrub h-1 w-0 opacity-0 transition-[width,opacity,margin] duration-[350ms] ease-glide group-hover/volume:ml-2 group-hover/volume:w-20 group-hover/volume:opacity-100 focus-visible:ml-2 focus-visible:w-20 focus-visible:opacity-100 motion-reduce:transition-none"
+            className="cs-scrub h-1 w-0 opacity-0 transition-[width,opacity,margin] duration-[350ms] ease-glide group-hover/volume:ml-2 group-hover/volume:w-20 group-hover/volume:opacity-100 focus-visible:ml-2 focus-visible:w-20 focus-visible:opacity-100"
             style={{ '--p': `${(muted ? 0 : volume) * 100}%`, '--b': `${(muted ? 0 : volume) * 100}%` } as CSSProperties}
           />
         </div>

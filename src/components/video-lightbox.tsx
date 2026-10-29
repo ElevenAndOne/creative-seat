@@ -1,5 +1,5 @@
 import { Dialog } from '@base-ui/react/dialog'
-import { motion, useAnimationControls, useIsomorphicLayoutEffect, useReducedMotion } from 'motion/react'
+import { motion, useAnimationControls, useIsomorphicLayoutEffect } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { cn } from '../utils/cn'
 import { useAmbientVideo } from './base/media'
@@ -14,8 +14,6 @@ const PLAYER_RADIUS = 6
 const OPEN_S = 0.62
 const CLOSE_S = 0.5
 const FADE_S = 0.4
-/** Reduced motion keeps the change, just short enough not to read as movement. */
-const REDUCED_S = 0.2
 
 type VideoLightboxProps = {
   /** The film itself — played full size, with sound and controls, in the lightbox. */
@@ -43,16 +41,15 @@ type Morph = { x: number; y: number; scale: number }
  * its own frame — with sound and the brand's own controls — when clicked.
  *
  * The preview is the trigger, so it carries no controls of its own: it plays
- * only while on screen, holds on its poster when motion is reduced, and pauses
- * while the lightbox is open so the two aren't buffering against each other.
+ * only while on screen, and pauses while the lightbox is open so the two aren't
+ * buffering against each other.
  *
  * Both boxes are 16:9, so open and close are a plain translate and a uniform
  * scale between them — a true morph, with nothing stretched. When the preview
- * has scrolled away (or motion is reduced) the player fades instead.
+ * has scrolled away the player fades instead.
  */
 export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'Watch the showreel', className, id, trackLocation }: VideoLightboxProps) {
   const [open, setOpen] = useState(false)
-  const reduce = useReducedMotion() ?? false
   const player = useAnimationControls()
   const backdrop = useAnimationControls()
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -60,7 +57,7 @@ export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'W
   const closing = useRef(false)
   /** The player itself, held as state: Base UI portals it in a tick after the dialog opens. */
   const [popup, setPopup] = useState<HTMLDivElement | null>(null)
-  const preview = useAmbientVideo({ autoPlay: true, loop: true, muted: true, playsInline: true, controls: false, posterOnReduce: true })
+  const preview = useAmbientVideo({ autoPlay: true, loop: true, muted: true, playsInline: true, controls: false })
 
   /**
    * The preview's box relative to the player's. The player is centred with
@@ -70,7 +67,7 @@ export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'W
    */
   const morphFrom = (): Morph | null => {
     const box = triggerRef.current?.getBoundingClientRect()
-    if (reduce || !popup?.offsetWidth || !box?.width) return null
+    if (!popup?.offsetWidth || !box?.width) return null
     const { clientWidth: vw, clientHeight: vh } = document.documentElement
     // Scrolled out of sight: there's nothing on screen to grow out of.
     if (box.bottom <= 0 || box.top >= vh) return null
@@ -85,9 +82,9 @@ export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'W
     const from = morphFrom()
     player.set(from ? { ...from, borderRadius: CARD_RADIUS / from.scale, opacity: 1 } : { x: 0, y: 0, scale: 1, borderRadius: PLAYER_RADIUS, opacity: 0 })
     backdrop.set({ opacity: 0 })
-    void player.start({ x: 0, y: 0, scale: 1, borderRadius: PLAYER_RADIUS, opacity: 1 }, { duration: reduce ? REDUCED_S : OPEN_S, ease: EASE })
-    void backdrop.start({ opacity: 1 }, { duration: reduce ? REDUCED_S : FADE_S, ease: EASE })
-  }, [popup, reduce])
+    void player.start({ x: 0, y: 0, scale: 1, borderRadius: PLAYER_RADIUS, opacity: 1 }, { duration: OPEN_S, ease: EASE })
+    void backdrop.start({ opacity: 1 }, { duration: FADE_S, ease: EASE })
+  }, [popup])
 
   // Nothing to watch behind a full-screen player: hand the bandwidth to the
   // lightbox while it's open, and pick the loop back up once it has gone.
@@ -95,8 +92,8 @@ export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'W
     const el = preview.ref.current
     if (!el) return
     if (open) el.pause()
-    else if (!reduce) void el.play().catch(() => {})
-  }, [open, reduce, preview.ref])
+    else void el.play().catch(() => {})
+  }, [open, preview.ref])
 
   /**
    * Base UI hides a closed popup on the spot, so the shrink has to play out
@@ -109,8 +106,8 @@ export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'W
     // Re-measure: the page may have scrolled under the lightbox.
     const to = morphFrom()
     void Promise.all([
-      player.start(to ? { ...to, borderRadius: CARD_RADIUS / to.scale } : { opacity: 0 }, { duration: reduce ? REDUCED_S : CLOSE_S, ease: EASE }),
-      backdrop.start({ opacity: 0 }, { duration: reduce ? REDUCED_S : FADE_S, ease: EASE }),
+      player.start(to ? { ...to, borderRadius: CARD_RADIUS / to.scale } : { opacity: 0 }, { duration: CLOSE_S, ease: EASE }),
+      backdrop.start({ opacity: 0 }, { duration: FADE_S, ease: EASE }),
     ]).then(() => {
       closing.current = false
       setOpen(false)
@@ -134,11 +131,11 @@ export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'W
           src={previewSrc ?? src}
           poster={poster}
           aria-hidden
-          className="block aspect-video w-full object-cover transition-transform duration-[900ms] ease-glide group-hover:scale-[1.03] motion-reduce:transition-none"
+          className="block aspect-video w-full object-cover transition-transform duration-[900ms] ease-glide group-hover:scale-[1.03]"
         />
         <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink/70 from-0% via-ink/10 via-45% to-transparent" />
         <span className="absolute inset-x-0 bottom-0 flex items-center gap-4 p-xbg text-left text-paper">
-          <span aria-hidden className="grid size-14 shrink-0 place-items-center rounded-full bg-volt text-ink transition-transform duration-[350ms] ease-glide group-hover:scale-105 motion-reduce:transition-none portrait:size-12">
+          <span aria-hidden className="grid size-14 shrink-0 place-items-center rounded-full bg-volt text-ink transition-transform duration-[350ms] ease-glide group-hover:scale-105 portrait:size-12">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M8 5.2v13.6a.6.6 0 0 0 .92.5l10.7-6.8a.6.6 0 0 0 0-1l-10.7-6.8a.6.6 0 0 0-.92.5Z" /></svg>
           </span>
           <span className="text-p-sm font-semibold leading-tight">{cta}</span>

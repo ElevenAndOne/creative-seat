@@ -14,7 +14,7 @@ export interface Project {
   tags: string[]
   /** Card / grid thumbnail (link) — an image, or a video (.mp4/.webm/.mov) played as ambient b-roll. */
   cover: string
-  /** Still frame for a video `cover`: shown before it loads, and instead of it under reduced motion. */
+  /** Still frame for a video `cover`, shown before it loads. */
   poster?: string
   /** Modal media (list of links, images or videos) — adaptive grid: 1 = centered, multiple = grid. */
   images: string[]
