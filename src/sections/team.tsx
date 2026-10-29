@@ -1,4 +1,4 @@
-import { motion, useAnimate, useDragControls, useInView, useMotionValue, useReducedMotion } from 'motion/react'
+import { motion, useAnimate, useDragControls, useInView, useMotionValue } from 'motion/react'
 import { useEffect, useRef, type PointerEvent, type ReactNode, type RefObject } from 'react'
 import { Section } from '../components/base/section'
 import Em from '../components/em'
@@ -80,7 +80,6 @@ const grabPoint = (id: PieceId, at: { x: number; y: number }) => ({
 })
 
 function Canvas() {
-  const reduce = useReducedMotion() ?? false
   const [scope, animate] = useAnimate<HTMLDivElement>()
   const inView = useInView(scope, { amount: 0.3 })
   const visible = useRef(false)
@@ -88,16 +87,16 @@ function Canvas() {
   const videoRef = useRef<HTMLVideoElement>(null)
   useEffect(() => {
     visible.current = inView
-    // The model loops only while the canvas is on screen (and never under
-    // reduced motion), and doesn't download until it first comes into view.
+    // The model loops only while the canvas is on screen, and doesn't
+    // download until it first comes into view.
     const video = videoRef.current
     if (!video) return
     // React doesn't server-render the muted attribute, and an unmuted video
     // isn't allowed to start on its own — so set it here, before play().
     video.muted = true
-    if (inView && !reduce) video.play().catch(() => {})
+    if (inView) video.play().catch(() => {})
     else video.pause()
-  }, [inView, reduce])
+  }, [inView])
 
   // The visitor's own cursor — motion values only, so hovering never re-renders the canvas.
   const youX = useMotionValue(0)
@@ -106,7 +105,6 @@ function Canvas() {
   const youScale = useMotionValue(1)
 
   useEffect(() => {
-    if (reduce) return
     let alive = true
     /** Hold between steps while the canvas is off screen or the visitor is dragging a piece. */
     const gate = async () => {
@@ -158,7 +156,7 @@ function Canvas() {
       ])
 
     const run = async () => {
-      // Prerendered finished (the reduced-motion view); take it apart before it's seen.
+      // Prerendered finished; take it apart before it's seen.
       await scatter(0)
       while (alive) {
         if (!(await gate())) return
@@ -173,7 +171,7 @@ function Canvas() {
     return () => {
       alive = false
     }
-  }, [reduce, animate])
+  }, [animate])
 
   const onPointerMove = (e: PointerEvent) => {
     if (e.pointerType !== 'mouse') return
@@ -255,7 +253,7 @@ function Canvas() {
         </span>
       </Piece>
 
-      {/* Prerendered at rest beside their finished work (the reduced-motion view). */}
+      {/* Prerendered at rest beside their finished work. */}
       {CREW.map((member) => (
         <div key={member.id} data-cursor={member.id} aria-hidden className="pointer-events-none absolute z-20" style={{ left: pct(member.rest.x), top: pct(member.rest.y) }}>
           <Pointer label={member.label} flip={member.flip} />
