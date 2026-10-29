@@ -1,5 +1,5 @@
 import { Popover } from '@base-ui/react/popover'
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode, type RefObject } from 'react'
 import Button, { PillArrow } from '../components/autton'
 import Em from '../components/em'
@@ -74,8 +74,6 @@ const without = (errors: Partial<Record<Field, string>>, field: Field) => {
  * Below 992px it stacks: pitch, then the form.
  */
 export default function BookDemo() {
-  const reduce = useReducedMotion() ?? false
-
   const [details, setDetails] = useState<Details>({ firstName: '', lastName: '', email: '', phone: '', company: '', role: '', website: '' })
   const [calendar, setCalendar] = useState<Calendar>({ status: 'loading' })
   const [dayKey, setDayKey] = useState<string | null>(null)
@@ -109,8 +107,8 @@ export default function BookDemo() {
   // The confirmation is shorter than the form: on a phone, bring its top back into view.
   useEffect(() => {
     const card = cardRef.current
-    if (booking && card && card.getBoundingClientRect().top < 80) card.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
-  }, [booking, reduce])
+    if (booking && card && card.getBoundingClientRect().top < 80) card.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [booking])
 
   const days = useMemo(() => (calendar.status === 'ready' ? groupByDay(calendar.data.slots) : []), [calendar])
   const day = days.find((d) => d.key === dayKey) ?? null
@@ -183,7 +181,7 @@ export default function BookDemo() {
   const rise = (delay: number) => ({
     initial: { opacity: 0, y: 24 },
     animate: { opacity: 1, y: 0 },
-    transition: reduce ? { duration: 0 } : { duration: 0.7, ease: EASE, delay },
+    transition: { duration: 0.7, ease: EASE, delay },
   })
 
   const ready = calendar.status === 'ready' && days.length > 0
@@ -210,7 +208,7 @@ export default function BookDemo() {
         <motion.div {...rise(0.3)}>
           <div ref={cardRef} className="scroll-mt-24 overflow-hidden rounded-frame bg-paper text-ink shadow-[0_40px_90px_-40px_color-mix(in_oklab,var(--color-ink)_90%,transparent)]">
             {booking ? (
-              <Confirmation booking={booking} name={details.firstName} email={details.email} reduce={reduce} />
+              <Confirmation booking={booking} name={details.firstName} email={details.email} />
             ) : (
               <form noValidate onSubmit={submit} aria-label="Book a demo" className="relative p-9 landscape:p-6">
                 <div className="grid grid-cols-2 gap-x-4 gap-y-5 portrait:grid-cols-1">
@@ -317,7 +315,7 @@ function TextField({
 
 /** The popovers' shared look: a Paper card that scales in from its trigger. */
 const POPUP =
-  'origin-[var(--transform-origin)] rounded-card border border-line bg-paper p-4 text-ink shadow-[0_24px_60px_-24px_color-mix(in_oklab,var(--color-ink)_55%,transparent)] outline-none transition-[opacity,scale] duration-150 ease-out data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0 motion-reduce:transition-none'
+  'origin-[var(--transform-origin)] rounded-card border border-line bg-paper p-4 text-ink shadow-[0_24px_60px_-24px_color-mix(in_oklab,var(--color-ink)_55%,transparent)] outline-none transition-[opacity,scale] duration-150 ease-out data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0'
 
 /** A field that looks like an input and opens a popover — the date and time pickers' trigger. */
 function PickerTrigger({ id, labelId, value, placeholder, disabled, error, icon }: { id: string; labelId: string; value: string | null; placeholder: string; disabled: boolean; error?: string; icon: ReactNode }) {
@@ -544,7 +542,7 @@ function CalendarError({ code, onRetry }: { code: BookingErrorCode; onRetry: () 
   )
 }
 
-function Confirmation({ booking, name, email, reduce }: { booking: Booking; name: string; email: string; reduce: boolean }) {
+function Confirmation({ booking, name, email }: { booking: Booking; name: string; email: string }) {
   const ref = useRef<HTMLHeadingElement>(null)
   // The form is gone: move focus to what replaced it.
   useEffect(() => ref.current?.focus({ preventScroll: true }), [])
@@ -552,9 +550,9 @@ function Confirmation({ booking, name, email, reduce }: { booking: Booking; name
   const when = `${formatDay(booking.start)} at ${formatTime(booking.start)} ${formatZone(booking.start)}`
   return (
     <motion.div
-      initial={{ opacity: 0, y: reduce ? 0 : 12 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: reduce ? 0 : 0.4, ease: EASE }}
+      transition={{ duration: 0.4, ease: EASE }}
       className="flex min-h-[20rem] flex-col items-start p-10 landscape:p-7"
       role="status"
     >

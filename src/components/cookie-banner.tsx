@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import { track, updateConsent } from '../utils/analytics'
 import { cn } from '../utils/cn'
@@ -50,7 +50,6 @@ const PILL = 'h-11 rounded-full border border-ink px-[18px] text-[0.9375rem] fon
  * reopens it. Prerendered closed, so returning visitors never see it flash.
  */
 export default function CookieBanner() {
-  const reduce = useReducedMotion() ?? false
   const choice = useSyncExternalStore(subscribe, read, () => null)
   const [reopened, setReopened] = useState(false)
 
@@ -76,10 +75,10 @@ export default function CookieBanner() {
           role="region"
           aria-labelledby="cookie-banner-title"
           className="fixed bottom-5 left-5 z-[60] w-[24rem] rounded-card border border-line bg-paper p-6 text-ink shadow-[0_30px_60px_-30px_rgba(33,44,38,0.45)] portrait:inset-x-3 portrait:bottom-3 portrait:w-auto"
-          initial={{ opacity: 0, y: reduce ? 0 : 24 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: reduce ? 0 : 24 }}
-          transition={{ duration: reduce ? 0 : 0.45, ease: [0.16, 1, 0.3, 1] }}
+          exit={{ opacity: 0, y: 24 }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
         >
           <h2 id="cookie-banner-title" className="text-h4 font-bold">
             We value your privacy

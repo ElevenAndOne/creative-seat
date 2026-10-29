@@ -1,5 +1,5 @@
 import { Dialog } from '@base-ui/react/dialog'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react'
 import type { Project } from '../content'
 import { cn } from '../utils/cn'
@@ -20,11 +20,11 @@ const FULL = 'inset(0px 0px 0px 0px round 0px)'
 /**
  * The overlay grows out of the clicked card's media and shrinks back into it:
  * `origin` is that box as a clip-path inset. With no origin (deep link, card
- * scrolled away) or under reduced motion it fades instead.
+ * scrolled away) it fades instead.
  */
 const reveal = {
-  hidden: ({ origin, reduce }: { origin: string | null; reduce: boolean }) =>
-    origin && !reduce ? { clipPath: `inset(${origin} round 12px)`, opacity: 1 } : { clipPath: FULL, opacity: 0 },
+  hidden: (origin: string | null) =>
+    origin ? { clipPath: `inset(${origin} round 12px)`, opacity: 1 } : { clipPath: FULL, opacity: 0 },
   shown: { clipPath: FULL, opacity: 1 },
 }
 
@@ -49,14 +49,12 @@ type ProjectViewerProps = {
  * ends on a card for the next project. Below 48rem it becomes a vertical stack.
  */
 export default function ProjectViewer({ projects, index, origin, onNavigate, onClose, returnFocus }: ProjectViewerProps) {
-  const reduce = useReducedMotion() ?? false
   const trackRef = useRef<HTMLDivElement>(null)
   const [swapping, setSwapping] = useState(false)
   const project = index === null ? null : projects[index]
 
   // Fade the rail out, switch project, and let the new one fade its tiles in.
   const goTo = (next: number) => {
-    if (reduce) return onNavigate(next)
     setSwapping(true)
     window.setTimeout(() => {
       onNavigate(next)
@@ -66,13 +64,13 @@ export default function ProjectViewer({ projects, index, origin, onNavigate, onC
 
   return (
     <Dialog.Root open={project !== null} onOpenChange={(open) => { if (!open) onClose() }}>
-      <AnimatePresence custom={{ origin, reduce }}>
+      <AnimatePresence custom={origin}>
         {project && index !== null && (
           <Dialog.Portal>
             <Dialog.Popup
               render={
                 <motion.div
-                  custom={{ origin, reduce }}
+                  custom={origin}
                   variants={reveal}
                   initial="hidden"
                   animate="shown"
@@ -91,7 +89,6 @@ export default function ProjectViewer({ projects, index, origin, onNavigate, onC
                 position={index + 1}
                 total={projects.length}
                 swapping={swapping}
-                reduce={reduce}
                 trackRef={trackRef}
                 onNext={() => goTo((index + 1) % projects.length)}
               />
@@ -109,7 +106,6 @@ type ViewerBodyProps = {
   position: number
   total: number
   swapping: boolean
-  reduce: boolean
   trackRef: RefObject<HTMLDivElement | null>
   onNext: () => void
 }
@@ -118,7 +114,7 @@ type ViewerBodyProps = {
  * One project's worth of viewer. Keyed by project, so switching projects
  * remounts it: scroll starts at zero and the tiles stagger in afresh.
  */
-function ViewerBody({ project, next, position, total, swapping, reduce, trackRef, onNext }: ViewerBodyProps) {
+function ViewerBody({ project, next, position, total, swapping, trackRef, onNext }: ViewerBodyProps) {
   const railRef = useRef<HTMLDivElement>(null)
   const fillRef = useRef<HTMLDivElement>(null)
   const cursorRef = useRef<HTMLDivElement>(null)
@@ -130,9 +126,9 @@ function ViewerBody({ project, next, position, total, swapping, reduce, trackRef
 
   // Let the clip-path open a little before the tiles start rising in.
   useEffect(() => {
-    const t = window.setTimeout(() => setRevealed(true), reduce ? 0 : 220)
+    const t = window.setTimeout(() => setRevealed(true), 220)
     return () => window.clearTimeout(t)
-  }, [reduce])
+  }, [])
 
   // Scale the artboard to the track's height, keep the progress bar and arrow
   // buttons in step with the scroll position, and turn vertical wheel into
@@ -219,7 +215,6 @@ function ViewerBody({ project, next, position, total, swapping, reduce, trackRef
       delete cursor.dataset.down
       // Let the click that ends a drag see the flag, then clear it.
       window.setTimeout(() => { draggedRef.current = false }, 0)
-      if (reduce) return
       let v = velocity * 16
       const step = () => {
         if (Math.abs(v) < 0.4) return
@@ -232,7 +227,7 @@ function ViewerBody({ project, next, position, total, swapping, reduce, trackRef
     const onKey = (e: KeyboardEvent) => {
       if (mobile.matches || (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft')) return
       e.preventDefault()
-      page(track, e.key === 'ArrowRight' ? 1 : -1, reduce)
+      page(track, e.key === 'ArrowRight' ? 1 : -1)
     }
     const noDrag = (e: DragEvent) => e.preventDefault()
 
@@ -249,7 +244,7 @@ function ViewerBody({ project, next, position, total, swapping, reduce, trackRef
       window.removeEventListener('pointerup', onUp)
       window.removeEventListener('keydown', onKey)
     }
-  }, [trackRef, reduce])
+  }, [trackRef])
 
   // Keep focus inside the viewer when the body remounts for the next project.
   useEffect(() => {
@@ -271,10 +266,10 @@ function ViewerBody({ project, next, position, total, swapping, reduce, trackRef
           <b className="font-semibold text-paper">{pad(position)}</b> / {pad(total)}
         </p>
         <div className="flex justify-end gap-2">
-          <IconButton label="Scroll back" disabled={edges.atStart} onClick={() => trackRef.current && page(trackRef.current, -1, reduce)} className="landscape:hidden">
+          <IconButton label="Scroll back" disabled={edges.atStart} onClick={() => trackRef.current && page(trackRef.current, -1)} className="landscape:hidden">
             <path d="M15 18l-6-6 6-6" />
           </IconButton>
-          <IconButton label="Scroll forward" disabled={edges.atEnd} onClick={() => trackRef.current && page(trackRef.current, 1, reduce)} className="landscape:hidden">
+          <IconButton label="Scroll forward" disabled={edges.atEnd} onClick={() => trackRef.current && page(trackRef.current, 1)} className="landscape:hidden">
             <path d="M9 18l6-6-6-6" />
           </IconButton>
           <Dialog.Close aria-label="Close project" className="ml-2 grid size-11 place-items-center rounded-full border-[1.5px] border-paper bg-paper text-ink transition-colors duration-200 hover:border-volt hover:bg-volt focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-paper">
@@ -410,7 +405,7 @@ function Tile({ revealed, delay, className, style, children }: { revealed: boole
   return (
     <figure
       className={cn(
-        'm-0 overflow-hidden rounded-[10px] bg-paper/5 transition-[opacity,translate,scale] duration-[700ms,900ms,900ms] ease-glide motion-reduce:transition-none',
+        'm-0 overflow-hidden rounded-[10px] bg-paper/5 transition-[opacity,translate,scale] duration-[700ms,900ms,900ms] ease-glide',
         revealed ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-7 scale-[0.985] opacity-0',
         className,
       )}
@@ -460,8 +455,8 @@ export function Arrow() {
 }
 
 /** Scroll the wall by most of a screen in `dir` (1 forward, -1 back). */
-function page(track: HTMLElement, dir: 1 | -1, reduce: boolean) {
-  track.scrollBy({ left: dir * track.clientWidth * 0.7, behavior: reduce ? 'auto' : 'smooth' })
+function page(track: HTMLElement, dir: 1 | -1) {
+  track.scrollBy({ left: dir * track.clientWidth * 0.7, behavior: 'smooth' })
 }
 
 const pad = (n: number) => String(n).padStart(2, '0')

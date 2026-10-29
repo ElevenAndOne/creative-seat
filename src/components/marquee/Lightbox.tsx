@@ -1,6 +1,6 @@
 import { Dialog } from '@base-ui/react/dialog'
 import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import ProjectMedia from '../project-media'
 import type { Project } from './tiles'
 
@@ -10,7 +10,6 @@ type LightboxProps = {
 }
 
 export default function Lightbox({ project, onClose }: LightboxProps) {
-  const reduce = useReducedMotion()
   const closeRef = useRef<HTMLButtonElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const [contentH, setContentH] = useState(0)
@@ -29,9 +28,7 @@ export default function Lightbox({ project, onClose }: LightboxProps) {
     return () => ro.disconnect()
   }, [open, project])
 
-  const contentMotion = reduce
-    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0, transition: { duration: 0.15 } } }
-    : { initial: { opacity: 0, y: 28 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 16, transition: { duration: 0.18 } } }
+  const contentMotion = { initial: { opacity: 0, y: 28 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 16, transition: { duration: 0.18 } } }
 
   return (
     <Dialog.Root open={open} onOpenChange={(nextOpen) => { if (!nextOpen) onClose() }}>
@@ -74,7 +71,7 @@ export default function Lightbox({ project, onClose }: LightboxProps) {
                 ref={contentRef}
                 className="absolute inset-x-0 bottom-0 z-10 bg-grape/70 px-[var(--container-margin)] py-xlg text-white backdrop-blur-md"
                 {...contentMotion}
-                transition={{ type: reduce ? 'tween' : 'spring', duration: reduce ? 0.2 : undefined, stiffness: 260, damping: 28 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 28 }}
               >
                 <div className="flex items-end justify-between gap-xlg landscape:flex-col landscape:items-start landscape:gap-md">
                   <div className="shrink-0">
