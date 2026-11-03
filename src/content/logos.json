@@ -6,5 +6,8 @@
   { "name": "DuToit", "src": "/images/brands/dutoit.svg" },
   { "name": "Dried Fruit South Africa", "src": "/images/brands/dried-fruit-sa.svg" },
   { "name": "Sojern", "src": "/images/brands/sojern.svg" },
-  { "name": "Leva Foundation", "src": "/images/brands/leva-foundation.svg" }
+  { "name": "Leva Foundation", "src": "/images/brands/leva-foundation.svg" },
+  { "name": "Foresight Sports", "src": "/images/brands/foresight.svg" },
+  { "name": "Bushnell Golf", "src": "/images/brands/bushnell-golf.svg" },
+  { "name": "GolfLogix", "src": "/images/brands/golflogix.svg" }
 ]
