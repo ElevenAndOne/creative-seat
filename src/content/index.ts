@@ -17,7 +17,6 @@ export {
   benefitCards,
   contact,
   creditServices,
-  creditSizes,
   currencies,
   demoAgenda,
   faqItems,

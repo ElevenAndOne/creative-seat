@@ -6,7 +6,7 @@ import { Section } from '../components/base/section'
 import Em from '../components/em'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
-import { creditServices, creditSizes, pricingPlans } from '../content'
+import { creditServices, pricingPlans } from '../content'
 import { useCurrency } from '../hooks/useCurrency'
 import { cn } from '../utils/cn'
 import { demoPage } from '../utils/contact'
@@ -162,19 +162,18 @@ function Roll({ value, id, order, distance, settle, className, itemClassName }: 
 }
 
 /* ---------------------------------------------------------------------------
-   State: the chosen seat, each service's slider step (0 = not included, then
-   one step per job size), and which pile slot each added service's chair
-   holds. A chair keeps its slot while its service stays in; a removed one
-   frees it for the next.
+   State: the chosen seat, each service's quantity, and which pile slot each
+   added service's chair holds. A chair keeps its slot while its service stays
+   in; a removed one frees it for the next.
    ------------------------------------------------------------------------- */
 
-type State = { seat: string, step: Record<ServiceId, number>, slots: Partial<Record<ServiceId, number>> }
-type Action = { type: 'seat', seat: string } | { type: 'step', id: ServiceId, value: number }
+type State = { seat: string, qty: Record<ServiceId, number>, slots: Partial<Record<ServiceId, number>> }
+type Action = { type: 'seat', seat: string } | { type: 'qty', id: ServiceId, value: number }
 
 const initialState: State = {
   // Half seat is chosen to start with, so a visitor can go straight to the sliders.
   seat: seats[0].id,
-  step: Object.fromEntries(creditServices.map((s) => [s.id, 0])) as Record<ServiceId, number>,
+  qty: Object.fromEntries(creditServices.map((s) => [s.id, 0])) as Record<ServiceId, number>,
   slots: {},
 }
 
@@ -182,7 +181,7 @@ function reducer(state: State, action: Action): State {
   if (action.type === 'seat') return { ...state, seat: action.seat }
 
   const { id, value } = action
-  const was = state.step[id]
+  const was = state.qty[id]
   if (was === value) return state
 
   let slots = state.slots
@@ -195,12 +194,11 @@ function reducer(state: State, action: Action): State {
     slots = { ...slots }
     delete slots[id]
   }
-  return { ...state, step: { ...state.step, [id]: value }, slots }
+  return { ...state, qty: { ...state.qty, [id]: value }, slots }
 }
 
-const credits = (n: number) => `${n} ${n === 1 ? 'credit' : 'credits'}`
-/** What a service costs at a slider step — nothing at 0, else that job size's credits. */
-const creditsAt = (service: Service, step: number) => (step ? service.credits[step - 1] : 0)
+const plural = (n: number, word: string) => (n === 1 ? word : /[^aeiou]y$/.test(word) ? `${word.slice(0, -1)}ies` : `${word}s`)
+const credits = (n: number) => `${n} ${plural(n, 'credit')}`
 
 /* ---------------------------------------------------------------------------
    The builder: seat cards and the service sliders.
@@ -239,21 +237,18 @@ function SeatOption({ seat, checked, onSelect }: { seat: (typeof seats)[number],
   )
 }
 
-const STEPS = creditSizes.length
-
 /**
- * A stepped slider — not included, then each job size: a native range input,
- * invisible, over the drawn track so pointer, touch and keyboard all just
- * work. Its thumb is sized to the drawn handle's 15px stop, so a click lands
- * on the step under the pointer.
+ * A stepped slider: a native range input, invisible, over the drawn track so
+ * pointer, touch and keyboard all just work. Its thumb is sized to the drawn
+ * handle's 15px stop, so a click lands on the step under the pointer.
  */
-function SizeSlider({ service, value, onChange }: { service: Service, value: number, onChange: (value: number) => void }) {
-  const f = value / STEPS
-  const text = value ? `${creditSizes[value - 1]}, ${credits(creditsAt(service, value))}` : 'Not included'
+function QuantitySlider({ service, value, onChange }: { service: Service, value: number, onChange: (value: number) => void }) {
+  const f = value / service.max
+  const text = `${value} ${plural(value, service.unit)}, ${credits(value * service.credits)}`
   return (
     <div className="relative h-6 overflow-hidden rounded-sm bg-chalk has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink">
       <div aria-hidden className="absolute inset-0 flex items-center justify-between px-1.5">
-        {Array.from({ length: STEPS + 1 }, (_, i) => (
+        {Array.from({ length: service.max + 1 }, (_, i) => (
           <span key={i} className="size-[3px] rounded-full bg-ink/30" />
         ))}
       </div>
@@ -268,11 +263,11 @@ function SizeSlider({ service, value, onChange }: { service: Service, value: num
       <input
         type="range"
         min={0}
-        max={STEPS}
+        max={service.max}
         step={1}
         value={value}
         onChange={(e) => onChange(Number(e.currentTarget.value))}
-        aria-label={`${service.name}: job size`}
+        aria-label={`${service.name}: how many`}
         aria-valuetext={text}
         className="cs-quantity absolute inset-0 size-full cursor-pointer opacity-0"
       />
@@ -293,29 +288,26 @@ function ServiceRow({ service, value, onChange }: { service: Service, value: num
 
   const crop = ICON_CROPS[service.chair] ?? CHAIRS[service.chair]
   return (
-    <li className="grid min-h-[4.25rem] grid-cols-[13rem_minmax(0,1fr)_5.5rem] items-center gap-x-6 border-b border-chalk px-md py-sm landscape:grid-cols-[minmax(0,1fr)_5.5rem] landscape:gap-y-sm">
+    <li className="grid min-h-[4.25rem] grid-cols-[13rem_minmax(0,1fr)_4rem] items-center gap-x-6 border-b border-chalk px-md py-sm landscape:grid-cols-[minmax(0,1fr)_4rem] landscape:gap-y-sm">
       <div className="flex min-w-0 items-center gap-sm">
         <span ref={icon} className="grid size-12 shrink-0 place-items-center">
           <ChairArt crop={crop} className="h-12 max-w-12" />
         </span>
-        <p className="min-w-0 truncate text-sm font-medium landscape:whitespace-normal">{service.name}</p>
+        <div className="flex min-w-0 flex-col gap-xxxsm">
+          <p className="truncate text-sm font-medium landscape:whitespace-normal">{service.name}</p>
+          <p className="text-xs text-forest/60">
+            {credits(service.credits)} / {service.unit}
+          </p>
+        </div>
       </div>
 
       <div className="landscape:col-span-2 landscape:row-start-2">
-        <SizeSlider service={service} value={value} onChange={set} />
+        <QuantitySlider service={service} value={value} onChange={set} />
       </div>
 
-      {/* The job size by name, its credits underneath. */}
       <div aria-hidden className="flex flex-col items-end gap-xxxsm text-right">
-        <Roll
-          value={value ? creditSizes[value - 1] : '—'}
-          order={value}
-          distance={6}
-          settle={spring(1740, 58)}
-          className="whitespace-nowrap text-base font-semibold"
-          itemClassName={value ? 'text-ink' : 'text-ink/40'}
-        />
-        <Roll value={value ? credits(creditsAt(service, value)) : ''} order={value} distance={4} settle={{ duration: 0.3, ease: 'easeOut' }} className="h-4 whitespace-nowrap text-xs text-forest/60" />
+        <Roll value={value} distance={6} settle={spring(1740, 58)} className="text-base font-semibold" itemClassName={value ? 'text-ink' : 'text-ink/60'} />
+        <Roll value={value ? credits(value * service.credits) : ''} order={value} distance={4} settle={{ duration: 0.3, ease: 'easeOut' }} className="h-4 whitespace-nowrap text-xs text-forest/60" />
       </div>
     </li>
   )
@@ -470,7 +462,7 @@ export default function CreditCalculator() {
   const seatIndex = seats.findIndex((s) => s.id === state.seat)
   const seat = seats[seatIndex]
   const next = seats[seatIndex + 1]
-  const used = creditServices.reduce((sum, s) => sum + creditsAt(s, state.step[s.id]), 0)
+  const used = creditServices.reduce((sum, s) => sum + state.qty[s.id] * s.credits, 0)
   const overBy = used - seat.credits
   const over = overBy > 0
 
@@ -479,7 +471,7 @@ export default function CreditCalculator() {
     return slot === undefined ? [] : [{ id: s.id, crop: CHAIRS[s.chair], slot }]
   })
 
-  const setStep = (id: ServiceId, value: number) => dispatch({ type: 'step', id, value })
+  const setQty = (id: ServiceId, value: number) => dispatch({ type: 'qty', id, value })
   const detail = `${seat.name} · ${formatPrice(seat.price[currency ?? 'USD'], currency ?? 'USD')} / month`
 
   return (
@@ -504,7 +496,7 @@ export default function CreditCalculator() {
           <div className="relative min-h-0 flex-1 rounded-card bg-paper">
             <ul ref={list} className="h-full overflow-y-auto overscroll-contain rounded-card [scrollbar-width:none] tablet:h-auto tablet:overflow-visible [&::-webkit-scrollbar]:hidden">
               {creditServices.map((s) => (
-                <ServiceRow key={s.id} service={s} value={state.step[s.id]} onChange={setStep} />
+                <ServiceRow key={s.id} service={s} value={state.qty[s.id]} onChange={setQty} />
               ))}
               <li>
                 <a

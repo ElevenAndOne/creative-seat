@@ -176,41 +176,36 @@ export const pricingPlans = [
 }[]
 
 /**
- * The credit calculator's job sizes, smallest first — each service's slider
- * steps through them. The 11&1 credit grid's XS · S · M · L · XL tiers: a
- * trivial quick fix, a small standard deliverable, a typical job for the type,
- * a bigger than usual one, and a major bespoke job.
- */
-export const creditSizes = ['Trivial', 'Standard', 'Typical', 'Big', 'Major'] as const
-
-/**
  * The credit calculator's services (sections/credit-calculator.tsx), most
- * requested first: the credits each job size costs (one per `creditSizes`
- * entry) and the chair it brings to the summary (one of the CHAIRS crops in
- * that file).
+ * requested first: what one costs in credits, the unit it's counted in, the
+ * most its slider goes up to, and the chair it brings to the summary (one of
+ * the CHAIRS crops in that file).
  *
- * Credits are the 11&1 Services credit grid's (recalibrated 3 Sep 2026 from 12
- * months of pointed tasks). Its retiring generic "Design" type and its
- * flat-rate types (review, meetings, maintenance) aren't listed.
+ * Credits are the "Typical" (M) size from the 11&1 Services credit grid
+ * (recalibrated 3 Sep 2026 from 12 months of pointed tasks). Its retiring
+ * generic "Design" type and its flat-rate types (review, meetings,
+ * maintenance) aren't listed.
  */
 export const creditServices = [
-  { id: 'social', name: 'Social media posts', credits: [1, 2, 3, 5, 13], chair: 'flower' },
-  { id: 'websites', name: 'Websites', credits: [1, 2, 3, 13, 30], chair: 'fluffy-blue' },
-  { id: 'paid-ads', name: 'Paid ads', credits: [1, 1, 3, 5, 8], chair: 'panton' },
-  { id: 'video', name: 'Video production', credits: [3, 5, 8, 13, 20], chair: 'director' },
-  { id: 'email', name: 'Email / EDM', credits: [1, 2, 3, 5, 8], chair: 'egg' },
-  { id: 'animation', name: 'Animation', credits: [2, 3, 5, 20, 40], chair: 'pixel' },
-  { id: 'landing-design', name: 'Landing page design', credits: [2, 3, 5, 13, 20], chair: 'beanbag' },
-  { id: 'print', name: 'Print', credits: [2, 2, 3, 3, 5], chair: 'cow' },
-  { id: 'branding', name: 'Branding', credits: [5, 8, 13, 20, 40], chair: 'shell' },
-  { id: 'landing-build', name: 'Landing page build', credits: [1, 2, 5, 13, 13], chair: 'brick' },
-  { id: 'copywriting', name: 'Copywriting', credits: [2, 3, 3, 3, 5], chair: 'tubular' },
-  { id: 'ebook', name: 'Ebook', credits: [3, 8, 8, 8, 13], chair: 'lounge' },
-  { id: 'illustration', name: 'Illustration', credits: [5, 5, 13, 50, 50], chair: 'fluffy-yellow' },
+  { id: 'social', name: 'Social media posts', unit: 'post', credits: 3, max: 12, chair: 'flower' },
+  { id: 'websites', name: 'Websites', unit: 'website', credits: 3, max: 6, chair: 'fluffy-blue' },
+  { id: 'paid-ads', name: 'Paid ads', unit: 'ad', credits: 3, max: 12, chair: 'panton' },
+  { id: 'video', name: 'Video production', unit: 'video', credits: 8, max: 6, chair: 'director' },
+  { id: 'email', name: 'Email / EDM', unit: 'email', credits: 3, max: 12, chair: 'egg' },
+  { id: 'animation', name: 'Animation', unit: 'animation', credits: 5, max: 8, chair: 'pixel' },
+  { id: 'landing-design', name: 'Landing page design', unit: 'page', credits: 5, max: 6, chair: 'beanbag' },
+  { id: 'print', name: 'Print', unit: 'print file', credits: 3, max: 10, chair: 'cow' },
+  { id: 'branding', name: 'Branding', unit: 'brand', credits: 13, max: 4, chair: 'shell' },
+  { id: 'landing-build', name: 'Landing page build', unit: 'page', credits: 5, max: 6, chair: 'brick' },
+  { id: 'copywriting', name: 'Copywriting', unit: 'document', credits: 3, max: 10, chair: 'tubular' },
+  { id: 'ebook', name: 'Ebook', unit: 'ebook', credits: 8, max: 4, chair: 'lounge' },
+  { id: 'illustration', name: 'Illustration', unit: 'illustration', credits: 13, max: 5, chair: 'fluffy-yellow' },
 ] as const satisfies {
   id: string
   name: string
-  credits: readonly [number, number, number, number, number]
+  unit: string
+  credits: number
+  max: number
   chair: string
 }[]
 
