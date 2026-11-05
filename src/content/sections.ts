@@ -175,6 +175,45 @@ export const pricingPlans = [
   features: string[]
 }[]
 
+/**
+ * The credit calculator's job sizes, smallest first — each service's slider
+ * steps through them. The 11&1 credit grid's XS · S · M · L · XL tiers: a
+ * trivial quick fix, a small standard deliverable, a typical job for the type,
+ * a bigger than usual one, and a major bespoke job.
+ */
+export const creditSizes = ['Trivial', 'Standard', 'Typical', 'Big', 'Major'] as const
+
+/**
+ * The credit calculator's services (sections/credit-calculator.tsx), most
+ * requested first: the credits each job size costs (one per `creditSizes`
+ * entry) and the chair it brings to the summary (one of the CHAIRS crops in
+ * that file).
+ *
+ * Credits are the 11&1 Services credit grid's (recalibrated 3 Sep 2026 from 12
+ * months of pointed tasks). Its retiring generic "Design" type and its
+ * flat-rate types (review, meetings, maintenance) aren't listed.
+ */
+export const creditServices = [
+  { id: 'social', name: 'Social media posts', credits: [1, 2, 3, 5, 13], chair: 'flower' },
+  { id: 'websites', name: 'Websites', credits: [1, 2, 3, 13, 30], chair: 'fluffy-blue' },
+  { id: 'paid-ads', name: 'Paid ads', credits: [1, 1, 3, 5, 8], chair: 'panton' },
+  { id: 'video', name: 'Video production', credits: [3, 5, 8, 13, 20], chair: 'director' },
+  { id: 'email', name: 'Email / EDM', credits: [1, 2, 3, 5, 8], chair: 'egg' },
+  { id: 'animation', name: 'Animation', credits: [2, 3, 5, 20, 40], chair: 'pixel' },
+  { id: 'landing-design', name: 'Landing page design', credits: [2, 3, 5, 13, 20], chair: 'beanbag' },
+  { id: 'print', name: 'Print', credits: [2, 2, 3, 3, 5], chair: 'cow' },
+  { id: 'branding', name: 'Branding', credits: [5, 8, 13, 20, 40], chair: 'shell' },
+  { id: 'landing-build', name: 'Landing page build', credits: [1, 2, 5, 13, 13], chair: 'brick' },
+  { id: 'copywriting', name: 'Copywriting', credits: [2, 3, 3, 3, 5], chair: 'tubular' },
+  { id: 'ebook', name: 'Ebook', credits: [3, 8, 8, 8, 13], chair: 'lounge' },
+  { id: 'illustration', name: 'Illustration', credits: [5, 5, 13, 50, 50], chair: 'fluffy-yellow' },
+] as const satisfies {
+  id: string
+  name: string
+  credits: readonly [number, number, number, number, number]
+  chair: string
+}[]
+
 /** The footer's social buttons — 11&1's own accounts, as linked from 11and1.com. */
 export const socials = [
   { name: 'Facebook', href: 'https://www.facebook.com/11and1/', icon: '/images/icons/facebook.svg', size: 'size-4' },

@@ -19,6 +19,7 @@ import HighImpact from '../sections/performance'
 import Process from '../sections/process'
 import WorkShowcase from '../sections/projects'
 import Pricing from '../sections/pricing'
+import CreditCalculator from '../sections/credit-calculator'
 import Faq from '../sections/faq'
 import CtaBanner from '../sections/cta'
 
@@ -49,6 +50,7 @@ const structuredData = homeStructuredData(Astro.site!, title, description)
     <WorkShowcase client:idle />
     <!-- Idle too: the visitor's currency should be known well before they scroll down to it. -->
     <Pricing client:idle />
+    <CreditCalculator client:visible={nearViewport} />
     <Faq client:visible={nearViewport} />
     <CtaBanner client:visible={nearViewport} />
   </main>

@@ -29,6 +29,9 @@
      and hairlines. */
   --color-muted: #6a6972;
   --color-line: #dedede;
+  /* Warning tone from the credit calculator's Figma design — only for a plan
+     that's over its monthly credits. Nowhere else. */
+  --color-flare: #f2691d;
 
   /* Drop Tailwind's default palette so off-brand colours can't creep back in. */
   --color-white: initial;
@@ -93,6 +96,7 @@
   --radius-md: 0.75rem;    /* 12px — images, icon tiles */
   --radius-card: 1rem;     /* 16px — cards */
   --radius-panel: 1.375rem; /* 22px — process panel */
+  --radius-planner: 1.75rem; /* 28px — credit calculator frame */
   --radius-frame: 1.875rem; /* 30px — pitch card */
   --radius-round: 62.5rem; /* full pill */
 
@@ -304,6 +308,27 @@ body {
 .cs-scrub:focus-visible {
   outline: 2px solid var(--color-volt);
   outline-offset: 4px;
+}
+
+/* The credit calculator's sliders (sections/credit-calculator.tsx) are native
+   range inputs, invisible over a drawn track. Only the thumb's geometry
+   matters: 15px wide, the drawn handle's stop, so the value under the pointer
+   matches the step drawn there. */
+.cs-quantity {
+  appearance: none;
+  background: transparent;
+}
+
+.cs-quantity::-webkit-slider-thumb {
+  appearance: none;
+  width: 15px;
+  height: 1.5rem;
+}
+
+.cs-quantity::-moz-range-thumb {
+  width: 15px;
+  height: 1.5rem;
+  border: 0;
 }
 
 [data-grid-component] {

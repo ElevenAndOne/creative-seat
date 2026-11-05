@@ -5,13 +5,10 @@ import Eyebrow from '../components/eyebrow'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
 import { pricingPlans } from '../content'
-import { useCurrency, type Currency } from '../hooks/useCurrency'
+import { useCurrency } from '../hooks/useCurrency'
 import { cn } from '../utils/cn'
 import { demoPage } from '../utils/contact'
-
-// A fixed locale, so the prerendered and hydrated prices match character for character.
-const formatPrice = (amount: number, currency: Currency) =>
-  new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(amount)
+import { formatPrice } from '../utils/price'
 
 function Check() {
   return (
