@@ -313,41 +313,6 @@ function ServiceRow({ service, value, onChange }: { service: Service, value: num
   )
 }
 
-/**
- * The list's own scroll indicator, drawn as in Figma (the native bar is
- * hidden). It writes straight to the thumb's style, so scrolling never
- * re-renders the calculator.
- */
-function ScrollThumb({ target }: { target: RefObject<HTMLUListElement | null> }) {
-  const thumb = useRef<HTMLSpanElement>(null)
-
-  useEffect(() => {
-    const list = target.current
-    const bar = thumb.current
-    if (!list || !bar) return
-    const INSET = 8
-    const update = () => {
-      const { scrollTop, scrollHeight, clientHeight } = list
-      const track = clientHeight - INSET * 2
-      const overflow = scrollHeight - clientHeight
-      bar.style.opacity = overflow > 1 ? '1' : '0'
-      const size = Math.max(32, (track * clientHeight) / scrollHeight)
-      bar.style.height = `${size}px`
-      bar.style.transform = `translateY(${overflow > 0 ? (scrollTop / overflow) * (track - size) : 0}px)`
-    }
-    update()
-    list.addEventListener('scroll', update, { passive: true })
-    const observer = new ResizeObserver(update)
-    observer.observe(list)
-    return () => {
-      list.removeEventListener('scroll', update)
-      observer.disconnect()
-    }
-  }, [target])
-
-  return <span ref={thumb} aria-hidden className="pointer-events-none absolute right-0.5 top-2 w-1 rounded-full bg-ink/25 opacity-0 transition-opacity tablet:hidden" />
-}
-
 /* ---------------------------------------------------------------------------
    The summary: chairs piling up, and the credits used against the seat.
    ------------------------------------------------------------------------- */
@@ -424,6 +389,56 @@ function Usage({ used, cap, over }: { used: number, cap: number, over: boolean }
   )
 }
 
+/**
+ * Stretches the summary's pinned contents over the part of their card in view:
+ * from where they rest (or pin, once they catch) down to the window's bottom
+ * edge (or the card's, at the end), never shorter than they are. The figure
+ * centres in the space and the button rides along the bottom. It writes
+ * straight to the style, so scrolling never re-renders the calculator; where
+ * the contents don't pin (tablet and down) it lets them be.
+ */
+function useFillInView(card: RefObject<HTMLDivElement | null>, contents: RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    const box = card.current
+    const fill = contents.current
+    if (!box || !fill) return
+
+    let pins = false
+    let pin = 0
+    let pad = 0
+    const measure = () => {
+      const style = getComputedStyle(fill)
+      pins = style.position === 'sticky'
+      pin = parseFloat(style.top)
+      pad = parseFloat(getComputedStyle(box).paddingTop)
+      if (!pins) fill.style.height = ''
+    }
+    const update = () => {
+      if (!pins) return
+      const { top, bottom } = box.getBoundingClientRect()
+      const from = Math.max(top + pad, pin)
+      // The same gap above the window's edge as the contents keep below the header (the band's and the card's padding).
+      const to = Math.min(window.innerHeight - pad * 2, bottom - pad)
+      fill.style.height = `${Math.max(to - from, 0)}px`
+    }
+    const refresh = () => {
+      measure()
+      update()
+    }
+
+    refresh()
+    window.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', refresh)
+    const observer = new ResizeObserver(refresh)
+    observer.observe(box)
+    return () => {
+      window.removeEventListener('scroll', update)
+      window.removeEventListener('resize', refresh)
+      observer.disconnect()
+    }
+  }, [card, contents])
+}
+
 function OverNote({ overBy, seatName, next, onUpgrade }: { overBy: number, seatName: string, next?: { name: string }, onUpgrade: () => void }) {
   return (
     <motion.p
@@ -457,7 +472,9 @@ function OverNote({ overBy, seatName, next, onUpgrade }: { overBy: number, seatN
 export default function CreditCalculator() {
   const [state, dispatch] = useReducer(reducer, initialState)
   const currency = useCurrency()
-  const list = useRef<HTMLUListElement>(null)
+  const summary = useRef<HTMLDivElement>(null)
+  const summaryContents = useRef<HTMLDivElement>(null)
+  useFillInView(summary, summaryContents)
 
   const seatIndex = seats.findIndex((s) => s.id === state.seat)
   const seat = seats[seatIndex]
@@ -483,39 +500,57 @@ export default function CreditCalculator() {
         <Paragraph className="max-w-[25rem]">Pick a seat, add the work you have in mind and see how it fits your monthly credits.</Paragraph>
       </div>
 
-      <div className="mt-xlg flex h-[33.375rem] gap-sm rounded-planner bg-volt p-sm tablet:h-auto tablet:flex-col">
+      {/* The list runs at its full height; the seats and the summary's contents stay pinned under the header while it scrolls by. */}
+      <div className="mt-xlg flex gap-sm rounded-planner bg-volt p-sm tablet:flex-col overflow-clip">
         {/* Builder */}
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-sm">
-          <fieldset className="flex gap-sm portrait:flex-col">
-            <legend className="sr-only">Choose a seat</legend>
-            {seats.map((s) => (
-              <SeatOption key={s.id} seat={s} checked={state.seat === s.id} onSelect={() => dispatch({ type: 'seat', seat: s.id })} />
-            ))}
-          </fieldset>
+        <div className="flex min-w-0 flex-1 flex-col gap-sm">
+          {/* The seats' sticky range: they let go as the list ends, before the tally. */}
+          <div className="flex flex-col">
+            {/* A Volt band the size of the gaps around the seats, pinned at the fixed header's height (4.75rem), so
+                rows slide under it rather than show through. Its bottom margin, taken back by the list, makes it let
+                go a corner's height early, so the corners below never hang past the list. */}
+            <div className="sticky top-[4.75rem] z-10 -mt-sm mb-[var(--radius-card)] bg-volt py-sm portrait:static">
+              <fieldset className="flex gap-sm portrait:flex-col">
+                <legend className="sr-only">Choose a seat</legend>
+                {seats.map((s) => (
+                  <SeatOption key={s.id} seat={s} checked={state.seat === s.id} onSelect={() => dispatch({ type: 'seat', seat: s.id })} />
+                ))}
+              </fieldset>
+              {/* Inverse corners under the band, so the rows passing beneath meet a rounded edge as the list's own top would. */}
+              <span aria-hidden className="pointer-events-none absolute inset-x-0 top-full flex justify-between portrait:hidden">
+                {['100% 100%', '0 100%'].map((at) => (
+                  <span
+                    key={at}
+                    className="size-[var(--radius-card)]"
+                    style={{ background: `radial-gradient(circle at ${at}, transparent calc(var(--radius-card) - 0.5px), var(--color-volt) var(--radius-card))` }}
+                  />
+                ))}
+              </span>
+            </div>
 
-          <div className="relative min-h-0 flex-1 rounded-card bg-paper">
-            <ul ref={list} className="h-full overflow-y-auto overscroll-contain rounded-card [scrollbar-width:none] tablet:h-auto tablet:overflow-visible [&::-webkit-scrollbar]:hidden">
-              {creditServices.map((s) => (
-                <ServiceRow key={s.id} service={s} value={state.qty[s.id]} onChange={setQty} />
-              ))}
-              <li>
-                <a
-                  href={demoPage}
-                  data-track="book_demo_click"
-                  data-track-location="credit_calculator_custom"
-                  className="group flex min-h-[4.25rem] items-center gap-6 px-md py-sm"
-                >
-                  <span className="flex min-w-0 flex-1 flex-col gap-xxxsm">
-                    <span className="text-sm font-medium">Something else?</span>
-                    <span className="text-xs text-forest/60">Tell us what you need and we’ll price it in credits</span>
-                  </span>
-                  <span className="grid size-7 shrink-0 place-items-center rounded-full bg-chalk transition-transform duration-[250ms] ease-out group-hover:rotate-45">
-                    <Arrow />
-                  </span>
-                </a>
-              </li>
-            </ul>
-            <ScrollThumb target={list} />
+            <div className="-mt-[var(--radius-card)] rounded-card bg-paper">
+              <ul>
+                {creditServices.map((s) => (
+                  <ServiceRow key={s.id} service={s} value={state.qty[s.id]} onChange={setQty} />
+                ))}
+                <li>
+                  <a
+                    href={demoPage}
+                    data-track="book_demo_click"
+                    data-track-location="credit_calculator_custom"
+                    className="group flex min-h-[4.25rem] items-center gap-6 px-md py-sm"
+                  >
+                    <span className="flex min-w-0 flex-1 flex-col gap-xxxsm">
+                      <span className="text-sm font-medium">Something else?</span>
+                      <span className="text-xs text-forest/60">Tell us what you need and we’ll price it in credits</span>
+                    </span>
+                    <span className="grid size-7 shrink-0 place-items-center rounded-full bg-chalk transition-transform duration-[250ms] ease-out group-hover:rotate-45">
+                      <Arrow />
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* Narrow screens: the summary sits below the list, so keep the tally in view while sliding. */}
@@ -529,39 +564,43 @@ export default function CreditCalculator() {
           </div>
         </div>
 
-        {/* Summary */}
-        <div className="@container flex w-[24.5rem] shrink-0 flex-col gap-6 rounded-card bg-paper p-sm tablet:w-full">
-          <div>
-            <Heading.H3 className="font-serif font-normal">Your monthly seat</Heading.H3>
-            {/* Keyed by seat, so only a seat change rolls the line; the price stays hidden until the visitor's currency is known. */}
-            <Roll
-              value={detail}
-              id={seat.id}
-              order={seatIndex}
-              distance={6}
-              settle={{ duration: 0.32, ease: 'easeOut' }}
-              className={cn('mt-xxsm text-xs text-forest/60 transition-opacity duration-300', !currency && 'opacity-0')}
-            />
-          </div>
-
-          <div className="flex flex-1 flex-col items-center justify-center gap-6 tablet:min-h-[21rem]">
-            <ChairPile placed={placed} />
-            <div className="relative w-full pb-6">
-              <Usage used={used} cap={seat.credits} over={over} />
-              <AnimatePresence>{over && <OverNote overBy={overBy} seatName={seat.name} next={next} onUpgrade={() => next && dispatch({ type: 'seat', seat: next.id })} />}</AnimatePresence>
+        {/* Summary: the card runs the planner's full height and its contents ride down it, pinned level with
+            where they rest (header, gap, card padding), so they don't jump as they catch. useFillInView
+            stretches them over the card's part in view; min-h-min keeps them from going shorter than they are. */}
+        <div ref={summary} className="@container w-[24.5rem] shrink-0 rounded-card bg-paper p-sm tablet:w-full">
+          <div ref={summaryContents} className="sticky top-[calc(4.75rem+var(--spacing-sm)*2)] flex min-h-min flex-col gap-6 tablet:static">
+            <div>
+              <Heading.H3 className="font-serif font-normal">Your monthly seat</Heading.H3>
+              {/* Keyed by seat, so only a seat change rolls the line; the price stays hidden until the visitor's currency is known. */}
+              <Roll
+                value={detail}
+                id={seat.id}
+                order={seatIndex}
+                distance={6}
+                settle={{ duration: 0.32, ease: 'easeOut' }}
+                className={cn('mt-xxsm text-xs text-forest/60 transition-opacity duration-300', !currency && 'opacity-0')}
+              />
             </div>
-          </div>
 
-          <Button
-            href={demoPage}
-            id="credit-calculator-book-demo"
-            data-track="book_demo_click"
-            data-track-location="credit_calculator"
-            full
-            className="h-10 pr-1 text-sm [&>span:first-child]:flex-1 [&>span:first-child]:text-center"
-          >
-            Discuss your creative mix
-          </Button>
+            <div className="flex flex-1 flex-col items-center justify-center gap-6 tablet:min-h-[21rem]">
+              <ChairPile placed={placed} />
+              <div className="relative w-full pb-6">
+                <Usage used={used} cap={seat.credits} over={over} />
+                <AnimatePresence>{over && <OverNote overBy={overBy} seatName={seat.name} next={next} onUpgrade={() => next && dispatch({ type: 'seat', seat: next.id })} />}</AnimatePresence>
+              </div>
+            </div>
+
+            <Button
+              href={demoPage}
+              id="credit-calculator-book-demo"
+              data-track="book_demo_click"
+              data-track-location="credit_calculator"
+              full
+              className="h-10 pr-1 text-sm [&>span:first-child]:flex-1 [&>span:first-child]:text-center"
+            >
+              Discuss your creative mix
+            </Button>
+          </div>
         </div>
       </div>
     </Section>
