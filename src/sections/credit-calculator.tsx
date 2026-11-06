@@ -210,16 +210,20 @@ function SeatOption({ seat, checked, onSelect }: { seat: (typeof seats)[number],
     <motion.label
       whileTap={{ scale: 0.97 }}
       transition={spring(1030, 35)}
-      className="relative flex h-16 min-w-0 flex-1 cursor-pointer items-center gap-sm rounded-md border border-chalk bg-paper px-md py-sm has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink"
+      className={cn(
+        'relative flex h-16 min-w-0 flex-1 cursor-pointer items-center gap-sm rounded-md bg-soft-volt px-md py-sm transition-colors duration-[220ms] ease-out has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink',
+        checked ? 'text-paper' : 'text-ink',
+      )}
     >
       <input type="radio" name="calculator-seat" value={seat.id} checked={checked} onChange={onSelect} className="sr-only" />
-      <motion.span aria-hidden className="absolute -inset-px rounded-md bg-soft-volt" initial={false} animate={{ opacity: checked ? 1 : 0 }} transition={{ duration: 0.22, ease: 'easeOut' }} />
+      {/* The chosen seat goes Ink; the other stays Soft Volt. */}
+      <motion.span aria-hidden className="absolute inset-0 rounded-md bg-ink" initial={false} animate={{ opacity: checked ? 1 : 0 }} transition={{ duration: 0.22, ease: 'easeOut' }} />
 
-      {/* Radio: an Ink disc fills the ring, then a Volt dot pops in the middle. */}
+      {/* Radio: a Volt disc fills the ring, then an Ink dot pops in the middle. */}
       <span aria-hidden className="relative grid size-5 shrink-0 place-items-center rounded-full border-[1.5px] border-ink">
-        <motion.span className="absolute -inset-[1.5px] rounded-full bg-ink" initial={false} animate={{ opacity: checked ? 1 : 0 }} transition={{ duration: 0.15, ease: 'easeOut' }} />
+        <motion.span className="absolute -inset-[1.5px] rounded-full bg-volt" initial={false} animate={{ opacity: checked ? 1 : 0 }} transition={{ duration: 0.15, ease: 'easeOut' }} />
         <motion.span
-          className="relative size-2 rounded-full bg-volt"
+          className="relative size-2 rounded-full bg-ink"
           initial={false}
           animate={{ scale: checked ? 1 : 0, opacity: checked ? 1 : 0 }}
           transition={checked ? { scale: spring(1250, 32), opacity: { duration: 0.1 } } : { duration: 0.12, ease: 'easeOut' }}
@@ -228,7 +232,7 @@ function SeatOption({ seat, checked, onSelect }: { seat: (typeof seats)[number],
 
       <span className="relative flex min-w-0 flex-1 flex-col gap-xxxsm whitespace-nowrap">
         <span className="text-sm font-semibold">{seat.name}</span>
-        <span className={cn('text-xs text-forest/60 transition-opacity duration-300', !currency && 'opacity-0')}>
+        <span className={cn('text-xs transition-[color,opacity] duration-300', checked ? 'text-paper/60' : 'text-forest/60', !currency && 'opacity-0')}>
           {formatPrice(seat.price[currency ?? 'USD'], currency ?? 'USD')} / month
         </span>
       </span>
