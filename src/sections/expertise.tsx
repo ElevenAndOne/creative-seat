@@ -2,6 +2,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useRef } from 'react'
+import { useAnimationsPaused } from '../hooks/useMotionPreference'
 import { Section } from '../components/base/section'
 import Em from '../components/em'
 import Heading from '../components/heading'
@@ -60,6 +61,7 @@ const DRIFT = [-1, 1, -1]
 const START = [0.12, 0.45, 0.3]
 /** Seconds for one full pass of each row; the outer two differ so they don't drift in step. */
 const LOOP_S = [60, 60, 72]
+const SERVICE_LABELS = [...new Set(ROWS.flat().filter((item) => typeof item === 'string'))]
 
 const em = (px: number) => `${px / FIGMA_PX}em`
 
@@ -71,8 +73,13 @@ const em = (px: number) => `${px / FIGMA_PX}em`
  */
 export default function Expertise() {
   const root = useRef<HTMLDivElement>(null)
+  const paused = useAnimationsPaused()
 
   useGSAP(() => {
+    if (paused) {
+      gsap.set('[data-reveal]', { autoAlpha: 1, y: 0 })
+      return
+    }
     gsap.from('[data-reveal]', {
       autoAlpha: 0,
       y: 40,
@@ -122,7 +129,7 @@ export default function Expertise() {
         row.removeEventListener('pointerleave', resume)
       })
     }
-  }, { scope: root })
+  }, { scope: root, dependencies: [paused], revertOnUpdate: true })
 
   return (
     <Section id="services" pad="bg" bleed className="overflow-hidden bg-ink text-paper">
@@ -131,27 +138,35 @@ export default function Expertise() {
           Expertise, <Em>on demand.</Em>
         </Heading.H1>
 
-        <ul className="sr-only">
-          {[...new Set(ROWS.flat().filter((item) => typeof item === 'string'))].map((label) => <li key={label}>{label}</li>)}
-        </ul>
+        {paused ? (
+          <ul className="mx-auto mt-xlg flex max-w-[72rem] flex-wrap justify-center gap-3 px-[var(--container-margin)] text-p-md font-medium">
+            {SERVICE_LABELS.map((label) => <li key={label} className="rounded-full bg-soft-volt px-5 py-3 text-ink">{label}</li>)}
+          </ul>
+        ) : (
+          <>
+            <ul className="sr-only">
+              {SERVICE_LABELS.map((label) => <li key={label}>{label}</li>)}
+            </ul>
 
-        <div
-          data-reveal
-          aria-hidden="true"
-          className="mt-[clamp(2rem,1.25rem+2vw,3.5rem)] flex flex-col text-[clamp(0.9375rem,0.796rem+0.604vw,1.52rem)] font-medium leading-none"
-        >
-          {ROWS.map((items, r) => (
-            <div key={r} className="flex h-[3.45em] items-center">
-              <div data-track className="flex w-max shrink-0 will-change-transform">
-                {[0, 1].map((copy) => (
-                  <div key={copy} className="flex shrink-0 items-center">
-                    {items.map((item, i) => <Cell key={i} item={item} />)}
+            <div
+              data-reveal
+              aria-hidden="true"
+              className="mt-[clamp(2rem,1.25rem+2vw,3.5rem)] flex flex-col text-[clamp(0.9375rem,0.796rem+0.604vw,1.52rem)] font-medium leading-none"
+            >
+              {ROWS.map((items, r) => (
+                <div key={r} className="flex h-[3.45em] items-center">
+                  <div data-track className="flex w-max shrink-0 will-change-transform">
+                    {[0, 1].map((copy) => (
+                      <div key={copy} className="flex shrink-0 items-center">
+                        {items.map((item, i) => <Cell key={i} item={item} />)}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     </Section>
   )

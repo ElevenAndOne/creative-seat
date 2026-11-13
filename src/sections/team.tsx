@@ -5,6 +5,7 @@ import Em from '../components/em'
 import Eyebrow from '../components/eyebrow'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
+import { useAnimationsPaused } from '../hooks/useMotionPreference'
 import { cn } from '../utils/cn'
 
 export default function NoHiring() {
@@ -81,6 +82,7 @@ const grabPoint = (id: PieceId, at: { x: number; y: number }) => ({
 
 function Canvas() {
   const [scope, animate] = useAnimate<HTMLDivElement>()
+  const paused = useAnimationsPaused()
   const inView = useInView(scope, { amount: 0.3 })
   const visible = useRef(false)
   const draggingRef = useRef(false)
@@ -94,9 +96,17 @@ function Canvas() {
     // React doesn't server-render the muted attribute, and an unmuted video
     // isn't allowed to start on its own — so set it here, before play().
     video.muted = true
-    if (inView) video.play().catch(() => {})
-    else video.pause()
-  }, [inView])
+    const sync = () => {
+      if (inView && !paused && !document.hidden) video.play().catch(() => {})
+      else video.pause()
+    }
+    sync()
+    document.addEventListener('visibilitychange', sync)
+    return () => {
+      document.removeEventListener('visibilitychange', sync)
+      video.pause()
+    }
+  }, [inView, paused])
 
   // The visitor's own cursor — motion values only, so hovering never re-renders the canvas.
   const youX = useMotionValue(0)
@@ -105,6 +115,21 @@ function Canvas() {
   const youScale = useMotionValue(1)
 
   useEffect(() => {
+    if (paused) {
+      youOpacity.set(0)
+      // Keep the complete artwork legible when its decorative choreography is off.
+      PIECE_IDS.forEach((id) => {
+        const piece = scope.current?.querySelector<HTMLElement>(pieceSel(id))
+        const { to } = PIECES[id]
+        if (piece) Object.assign(piece.style, { left: pct(to.x), top: pct(to.y), transform: 'none' })
+      })
+      scope.current?.querySelectorAll<HTMLElement>('[data-slot], [data-selection]').forEach((el) => { el.style.opacity = '0' })
+      CREW.forEach((member) => {
+        const cursor = scope.current?.querySelector<HTMLElement>(cursorSel(member.id))
+        if (cursor) Object.assign(cursor.style, { left: pct(member.rest.x), top: pct(member.rest.y), transform: 'none' })
+      })
+      return
+    }
     let alive = true
     /** Hold between steps while the canvas is off screen or the visitor is dragging a piece. */
     const gate = async () => {
@@ -117,16 +142,19 @@ function Canvas() {
       const cursor = cursorSel(crewId)
       const piece = pieceSel(id)
       await animate(cursor, grabPoint(id, from), { duration: 0.75, ease: EASE })
+      if (!alive) return
       // Grab: the pointer presses, the piece lifts and shows its selection box.
       await Promise.all([
         animate(cursor, { scale: 0.85 }, { duration: 0.12 }),
         animate(piece, { scale: 1.04 }, { duration: 0.18 }),
         animate(`${piece} [data-selection]`, { opacity: 1 }, { duration: 0.15 }),
       ])
+      if (!alive) return
       await Promise.all([
         animate(piece, { left: pct(to.x), top: pct(to.y), rotate: 0 }, { duration: 1.1, ease: EASE }),
         animate(cursor, grabPoint(id, to), { duration: 1.1, ease: EASE }),
       ])
+      if (!alive) return
       // Drop: the piece covers its slot, whose outline goes.
       await Promise.all([
         animate(`[data-slot="${id}"]`, { opacity: 0 }, { duration: 0.2 }),
@@ -170,11 +198,12 @@ function Canvas() {
     run()
     return () => {
       alive = false
+      scope.animations.forEach((control) => control.stop())
     }
-  }, [animate])
+  }, [animate, paused, scope, youOpacity])
 
   const onPointerMove = (e: PointerEvent) => {
-    if (e.pointerType !== 'mouse') return
+    if (paused || e.pointerType !== 'mouse') return
     const box = e.currentTarget.getBoundingClientRect()
     youX.set(e.clientX - box.left)
     youY.set(e.clientY - box.top)
@@ -235,13 +264,13 @@ function Canvas() {
       <Piece id="model" draggingRef={draggingRef}>
         {/* Transparent character loop: HEVC with alpha for Safari (which drops
             WebM transparency), VP9 WebM with alpha for everyone else. */}
-        <video ref={videoRef} muted loop playsInline preload="none" disablePictureInPicture className="pointer-events-none h-full w-full object-cover">
+        <video ref={videoRef} poster="/images/sections/character-craig.webp" muted loop playsInline preload="none" disablePictureInPicture className="pointer-events-none h-full w-full object-cover">
           <source src="/videos/character-craig.mov" type='video/quicktime; codecs="hvc1"' />
           <source src="/videos/character-craig.webm" type="video/webm" />
         </video>
       </Piece>
       <Piece id="button" draggingRef={draggingRef}>
-        <span className="flex h-full items-center justify-center rounded-full text-[2.7cqw] font-semibold text-paper" style={{ background: CLIENT.pink }}>
+        <span className="flex h-full items-center justify-center rounded-full text-[2.7cqw] font-semibold text-ink" style={{ background: CLIENT.pink }}>
           Shop now →
         </span>
       </Piece>

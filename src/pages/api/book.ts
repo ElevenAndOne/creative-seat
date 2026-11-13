@@ -4,11 +4,10 @@ import { withAvailability } from '../../server/calendar-api'
 import { json } from '../../server/http'
 import { sendToZapier, zapierConfigured } from '../../server/zapier'
 import { UTM_KEYS, type Booking, type BookingRequest } from '../../utils/booking'
+import { BOOKING_LIMITS, EMAIL, PHONE } from '../../utils/booking-fields'
 
 export const prerender = false
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const PHONE = /^\+?[\d\s().-]{7,}$/
 
 /** Trimmed text no longer than `max`, or null when it's missing, blank or too long. */
 const text = (value: unknown, max: number) => {
@@ -19,12 +18,12 @@ const text = (value: unknown, max: number) => {
 
 /** The request, cleaned — or null if anything in it is off. */
 function parse(body: Partial<BookingRequest>) {
-  const firstName = text(body.firstName, 60)
-  const lastName = text(body.lastName, 60)
-  const email = text(body.email, 254)
-  const phone = text(body.phone, 40)
-  const company = text(body.company, 120)
-  const role = text(body.role, 120)
+  const firstName = text(body.firstName, BOOKING_LIMITS.firstName)
+  const lastName = text(body.lastName, BOOKING_LIMITS.lastName)
+  const email = text(body.email, BOOKING_LIMITS.email)
+  const phone = text(body.phone, BOOKING_LIMITS.phone)
+  const company = text(body.company, BOOKING_LIMITS.company)
+  const role = text(body.role, BOOKING_LIMITS.role)
   const timeZone = text(body.timeZone, 64) ?? 'unknown'
   // Campaign tags are optional; anything odd is just left blank.
   const utm = Object.fromEntries(UTM_KEYS.map((key) => [key, text(body.utm?.[key], 200) ?? ''])) as Record<(typeof UTM_KEYS)[number], string>

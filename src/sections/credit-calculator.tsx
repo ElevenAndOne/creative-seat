@@ -1,13 +1,14 @@
-import { AnimatePresence, motion, useAnimate, type Transition } from 'motion/react'
+import { AnimatePresence, MotionConfig, motion, useAnimate, type Transition } from 'motion/react'
 import { useEffect, useReducer, useRef, useState, type CSSProperties, type RefObject } from 'react'
 import Arrow from '../components/arrow'
-import Button from '../components/autton'
+import LinkButton from '../components/link-button'
 import { Section } from '../components/base/section'
 import Em from '../components/em'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
 import { creditServices, pricingPlans } from '../content'
 import { useCurrency } from '../hooks/useCurrency'
+import { useAnimationsPaused } from '../hooks/useMotionPreference'
 import { cn } from '../utils/cn'
 import { demoPage } from '../utils/contact'
 import { formatPrice } from '../utils/price'
@@ -168,7 +169,7 @@ function Roll({ value, id, order, distance, settle, className, itemClassName }: 
    ------------------------------------------------------------------------- */
 
 type State = { seat: string, qty: Record<ServiceId, number>, slots: Partial<Record<ServiceId, number>> }
-type Action = { type: 'seat', seat: string } | { type: 'qty', id: ServiceId, value: number }
+type Action = { type: 'seat', seat: string } | { type: 'qty', id: ServiceId, value: number } | { type: 'reset' }
 
 const initialState: State = {
   // Half seat is chosen to start with, so a visitor can go straight to the sliders.
@@ -178,6 +179,7 @@ const initialState: State = {
 }
 
 function reducer(state: State, action: Action): State {
+  if (action.type === 'reset') return { ...initialState, seat: state.seat }
   if (action.type === 'seat') return { ...state, seat: action.seat }
 
   const { id, value } = action
@@ -232,7 +234,7 @@ function SeatOption({ seat, checked, onSelect }: { seat: (typeof seats)[number],
 
       <span className="relative flex min-w-0 flex-1 flex-col gap-xxxsm whitespace-nowrap">
         <span className="text-sm font-semibold">{seat.name}</span>
-        <span className={cn('text-xs transition-[color,opacity] duration-300', checked ? 'text-paper/60' : 'text-forest/60', !currency && 'opacity-0')}>
+        <span className={cn('text-xs transition-[color,opacity] duration-300', checked ? 'text-paper/60' : 'text-ink/70', !currency && 'opacity-0')}>
           {formatPrice(seat.price[currency ?? 'USD'], currency ?? 'USD')} / month
         </span>
       </span>
@@ -281,10 +283,11 @@ function QuantitySlider({ service, value, onChange }: { service: Service, value:
 
 function ServiceRow({ service, value, onChange }: { service: Service, value: number, onChange: (id: ServiceId, value: number) => void }) {
   const [icon, animate] = useAnimate<HTMLSpanElement>()
+  const paused = useAnimationsPaused()
 
   const set = (next: number) => {
     // Adding a service bounces its chair.
-    if (!value && next) {
+    if (!paused && !value && next) {
       animate(icon.current, { scale: 1.18 }, { duration: 0.12, ease: 'easeOut' }).then(() => animate(icon.current, { scale: 1 }, spring(940, 31)))
     }
     onChange(service.id, next)
@@ -292,14 +295,14 @@ function ServiceRow({ service, value, onChange }: { service: Service, value: num
 
   const crop = ICON_CROPS[service.chair] ?? CHAIRS[service.chair]
   return (
-    <li className="grid min-h-[4.25rem] grid-cols-[13rem_minmax(0,1fr)_4rem] items-center gap-x-6 border-b border-chalk px-md py-sm landscape:grid-cols-[minmax(0,1fr)_4rem] landscape:gap-y-sm">
+    <li className="grid min-h-[4.25rem] grid-cols-[13rem_minmax(0,1fr)_4rem] items-center gap-x-6 border-b border-chalk px-md py-sm landscape:grid-cols-[minmax(0,1fr)_4rem] landscape:gap-y-sm portrait:grid-cols-[minmax(0,1fr)_3rem] portrait:gap-x-2">
       <div className="flex min-w-0 items-center gap-sm">
-        <span ref={icon} className="grid size-12 shrink-0 place-items-center">
+        <span ref={icon} className="grid size-12 shrink-0 place-items-center portrait:size-10">
           <ChairArt crop={crop} className="h-12 max-w-12" />
         </span>
         <div className="flex min-w-0 flex-col gap-xxxsm">
           <p className="truncate text-sm font-medium landscape:whitespace-normal">{service.name}</p>
-          <p className="text-xs text-forest/60">
+          <p className="text-xs text-muted">
             {credits(service.credits)} / {service.unit}
           </p>
         </div>
@@ -311,7 +314,7 @@ function ServiceRow({ service, value, onChange }: { service: Service, value: num
 
       <div aria-hidden className="flex flex-col items-end gap-xxxsm text-right">
         <Roll value={value} distance={6} settle={spring(1740, 58)} className="text-base font-semibold" itemClassName={value ? 'text-ink' : 'text-ink/60'} />
-        <Roll value={value ? credits(value * service.credits) : ''} order={value} distance={4} settle={{ duration: 0.3, ease: 'easeOut' }} className="h-4 whitespace-nowrap text-xs text-forest/60" />
+        <Roll value={value ? credits(value * service.credits) : ''} order={value} distance={4} settle={{ duration: 0.3, ease: 'easeOut' }} className="h-4 whitespace-nowrap text-xs text-muted" />
       </div>
     </li>
   )
@@ -350,11 +353,12 @@ function ChairPile({ placed }: { placed: { id: ServiceId, crop: Crop, slot: numb
 
 function Usage({ used, cap, over }: { used: number, cap: number, over: boolean }) {
   const [figure, animate] = useAnimate<HTMLDivElement>()
+  const paused = useAnimationsPaused()
 
   // Going over the seat's credits shakes the figure, once.
   useEffect(() => {
-    if (over) animate(figure.current, { x: [0, -8, 8, -5, 4, 0] }, { duration: 0.4, ease: IN_OUT })
-  }, [over, animate, figure])
+    if (over && !paused) animate(figure.current, { x: [0, -8, 8, -5, 4, 0] }, { duration: 0.4, ease: IN_OUT })
+  }, [over, paused, animate, figure])
 
   // The figure is sized to fit the panel: Figma's 84px where there's room, and
   // smaller as the digits grow or the panel narrows (ems are per character).
@@ -370,13 +374,13 @@ function Usage({ used, cap, over }: { used: number, cap: number, over: boolean }
         className="flex items-start justify-center overflow-y-clip text-[length:var(--fig)] font-extrabold leading-[1.2] tracking-[-1px]"
         style={{ '--fig': `min(5.25rem, calc((100cqw - 4.25rem) / ${chars * 0.59}))` } as CSSProperties}
       >
-        <motion.span layout="position" transition={spring(581, 33.7)} className={cn('min-w-[1.31em] text-right tabular-nums transition-colors duration-200', over ? 'text-flare' : 'text-ink')}>
+        <motion.span layout="position" transition={spring(581, 33.7)} className="min-w-[1.31em] text-right tabular-nums text-ink transition-colors duration-200">
           <Roll value={used} distance={22} settle={spring(900, 40)} />
         </motion.span>
-        <motion.span layout="position" transition={spring(581, 33.7)} className="text-ink/40">
+        <motion.span layout="position" transition={spring(581, 33.7)} className="text-muted">
           <Roll value={`/${cap}`} order={cap} distance={18} settle={spring(765, 33)} />
         </motion.span>
-        <motion.span layout="position" transition={spring(581, 33.7)} className="ml-2 mt-[calc(var(--fig)*0.845)] text-base font-normal leading-[1.1] tracking-normal text-ink/40">
+        <motion.span layout="position" transition={spring(581, 33.7)} className="ml-2 mt-[calc(var(--fig)*0.845)] text-base font-normal leading-[1.1] tracking-normal text-muted">
           credits
         </motion.span>
       </div>
@@ -446,7 +450,7 @@ function useFillInView(card: RefObject<HTMLDivElement | null>, contents: RefObje
 function OverNote({ overBy, seatName, next, onUpgrade }: { overBy: number, seatName: string, next?: { name: string }, onUpgrade: () => void }) {
   return (
     <motion.p
-      className="absolute inset-x-0 bottom-0 text-center text-xs text-flare"
+      className="absolute inset-x-0 bottom-0 text-center text-xs text-ink"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, transition: { duration: 0.2, ease: 'easeOut' } }}
@@ -474,6 +478,11 @@ function OverNote({ overBy, seatName, next, onUpgrade }: { overBy: number, seatN
  * the Figma prototype (Creative Seat — Website, node 79:3347).
  */
 export default function CreditCalculator() {
+  const paused = useAnimationsPaused()
+  return <MotionConfig reducedMotion={paused ? 'always' : 'never'}><Calculator /></MotionConfig>
+}
+
+function Calculator() {
   const [state, dispatch] = useReducer(reducer, initialState)
   const currency = useCurrency()
   const summary = useRef<HTMLDivElement>(null)
@@ -546,7 +555,7 @@ export default function CreditCalculator() {
                   >
                     <span className="flex min-w-0 flex-1 flex-col gap-xxxsm">
                       <span className="text-sm font-medium">Something else?</span>
-                      <span className="text-xs text-forest/60">Tell us what you need and we’ll price it in credits</span>
+                      <span className="text-xs text-muted">Tell us what you need and we’ll price it in credits</span>
                     </span>
                     <span className="grid size-7 shrink-0 place-items-center rounded-full bg-chalk transition-transform duration-[250ms] ease-out group-hover:rotate-45">
                       <Arrow />
@@ -574,7 +583,10 @@ export default function CreditCalculator() {
         <div ref={summary} className="@container w-[24.5rem] shrink-0 rounded-card bg-paper p-sm tablet:w-full">
           <div ref={summaryContents} className="sticky top-[calc(4.75rem+var(--spacing-sm)*2)] flex min-h-min flex-col gap-6 tablet:static">
             <div>
-              <Heading.H3 className="font-serif font-normal">Your monthly seat</Heading.H3>
+              <div className="flex items-center justify-between gap-3">
+                <Heading.H3 className="font-serif font-normal">Your monthly seat</Heading.H3>
+                <button type="button" onClick={() => dispatch({ type: 'reset' })} disabled={!used} className="min-h-11 text-p-xs underline underline-offset-4 disabled:opacity-40 disabled:no-underline">Reset mix</button>
+              </div>
               {/* Keyed by seat, so only a seat change rolls the line; the price stays hidden until the visitor's currency is known. */}
               <Roll
                 value={detail}
@@ -582,7 +594,7 @@ export default function CreditCalculator() {
                 order={seatIndex}
                 distance={6}
                 settle={{ duration: 0.32, ease: 'easeOut' }}
-                className={cn('mt-xxsm text-xs text-forest/60 transition-opacity duration-300', !currency && 'opacity-0')}
+                className={cn('mt-xxsm text-xs text-muted transition-opacity duration-300', !currency && 'opacity-0')}
               />
             </div>
 
@@ -594,7 +606,7 @@ export default function CreditCalculator() {
               </div>
             </div>
 
-            <Button
+            <LinkButton
               href={demoPage}
               id="credit-calculator-book-demo"
               data-track="book_demo_click"
@@ -603,7 +615,7 @@ export default function CreditCalculator() {
               className="h-10 pr-1 text-sm [&>span:first-child]:flex-1 [&>span:first-child]:text-center"
             >
               Discuss your creative mix
-            </Button>
+            </LinkButton>
           </div>
         </div>
       </div>

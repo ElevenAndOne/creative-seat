@@ -10,6 +10,7 @@ import {
 } from 'motion/react'
 import { useEffect, useRef } from 'react'
 import { heroCards } from '../content'
+import { useAnimationsPaused } from '../hooks/useMotionPreference'
 import { cn } from '../utils/cn'
 
 /** How long each card holds the front before the fan moves on by itself. */
@@ -56,6 +57,7 @@ const visibility = (a: number) => (a <= 2 ? 1 : Math.max(0, 1 - (a - 2) / 0.7))
 export default function HeroStack({ className }: { className?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { amount: 0.3 })
+  const paused = useAnimationsPaused()
 
   /** Which card is at the front — fractional mid-move, unbounded (it wraps). */
   const pos = useMotionValue(0)
@@ -67,18 +69,23 @@ export default function HeroStack({ className }: { className?: string }) {
 
   const goTo = (target: number, velocity = 0) => {
     motionRef.current?.stop()
-    motionRef.current = animate(pos, target, { ...SPRING, velocity })
+    motionRef.current = animate(pos, target, paused ? { duration: 0 } : { ...SPRING, velocity })
   }
 
   // Fan out on load.
   useEffect(() => {
+    if (paused) {
+      motionRef.current?.stop()
+      spread.set(1)
+      return
+    }
     const controls = animate(spread, 1, { type: 'spring', stiffness: 55, damping: 15, delay: 0.25 })
     return () => controls.stop()
-  }, [spread])
+  }, [spread, paused])
 
   // Move on every few seconds, unless the visitor has just been dragging.
   useEffect(() => {
-    if (!inView) return
+    if (!inView || paused) return
     const id = window.setInterval(() => {
       if (document.hidden || draggingRef.current || Date.now() - lastTouchRef.current < STEP_MS) return
       goTo(Math.round(pos.get()) + 1)
@@ -86,7 +93,7 @@ export default function HeroStack({ className }: { className?: string }) {
     return () => window.clearInterval(id)
     // goTo only closes over refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inView, pos])
+  }, [inView, pos, paused])
 
   const stepPx = () => (ref.current?.offsetWidth ?? 500) * DRAG_STEP
 

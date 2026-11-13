@@ -1,4 +1,4 @@
-import Button from '../components/autton'
+import LinkButton from '../components/link-button'
 import { Section } from '../components/base/section'
 import Em from '../components/em'
 import Heading from '../components/heading'
@@ -68,9 +68,9 @@ export default function DemoAgenda() {
             <Heading.H3>Takes under a minute.</Heading.H3>
             <Paragraph className="mt-3 text-paper/80">Add your details, choose a time from our live calendar, and the invite is on its way.</Paragraph>
           </div>
-          <Button href="#book" id="agenda-book-demo" data-track="book_demo_click" data-track-location="book_demo_agenda" variant="inverse">
+          <LinkButton href="#book" id="agenda-book-demo" data-track="book_demo_click" data-track-location="book_demo_agenda" variant="inverse">
             Pick a time
-          </Button>
+          </LinkButton>
         </div>
       </div>
     </Section>

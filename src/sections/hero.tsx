@@ -1,11 +1,13 @@
 import { motion } from 'motion/react'
-import Button from '../components/autton'
+import LinkButton from '../components/link-button'
 import Em from '../components/em'
 import BrandLogo from '../components/brand-logo'
 import Heading from '../components/heading'
 import HeroStack from '../components/hero-stack'
+import MotionToggle from '../components/motion-toggle'
 import Paragraph from '../components/paragraph'
 import { logos } from '../content'
+import { useAnimationsPaused } from '../hooks/useMotionPreference'
 import { demoPage } from '../utils/contact'
 
 const EASE = [0.16, 1, 0.3, 1] as const
@@ -24,11 +26,12 @@ const HEADER = '4.75rem'
  * (tablets, phones) lets it grow past one screen rather than squash.
  */
 export default function Hero() {
+  const paused = useAnimationsPaused()
   // Copy rises in just ahead of the cards.
   const rise = (delay: number) => ({
-    initial: { opacity: 0, y: 24 },
+    initial: paused ? false as const : { opacity: 0, y: 24 },
     animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.7, ease: EASE, delay },
+    transition: { duration: paused ? 0 : 0.7, ease: EASE, delay: paused ? 0 : delay },
   })
 
   return (
@@ -54,9 +57,9 @@ export default function Hero() {
             </Paragraph.Big>
           </motion.div>
           <motion.div {...rise(0.31)} className="mt-10">
-            <Button href={demoPage} id="hero-book-demo" data-track="book_demo_click" data-track-location="hero" variant="inverse">
+            <LinkButton href={demoPage} id="hero-book-demo" data-track="book_demo_click" data-track-location="hero" variant="inverse">
               Book a demo
-            </Button>
+            </LinkButton>
           </motion.div>
         </div>
 
@@ -71,9 +74,12 @@ export default function Hero() {
           at both edges — on one ruled line on desktop, stacked below. */}
       <motion.div {...rise(0.45)} id="clients" className="mx-auto w-full max-w-[var(--container-width)] pb-[clamp(1.75rem,4dvh,2.75rem)]">
         <div className="flex items-center gap-x-12 border-t border-paper/15 pt-6 tablet:flex-col tablet:items-start tablet:gap-y-6">
-          <h2 className="max-w-[11rem] shrink-0 text-eyebrow font-semibold uppercase leading-[1.5] text-paper/70 tablet:max-w-none">
-            Creative partner to worldwide brands
-          </h2>
+          <div className="max-w-[11rem] shrink-0 tablet:flex tablet:w-full tablet:max-w-none tablet:items-center tablet:justify-between tablet:gap-6">
+            <h2 className="text-eyebrow font-semibold uppercase leading-[1.5] text-paper/70">
+              Creative partner to worldwide brands
+            </h2>
+            <MotionToggle className="mt-1 text-paper/70 hover:text-paper tablet:mt-0" />
+          </div>
           <div className="cs-marquee min-w-0 flex-1 overflow-hidden tablet:w-full">
             {/* Two identical runs side by side; the track slides one run's
                 width, then loops — seamless because the second run is where

@@ -1,4 +1,4 @@
-import Button from '../components/autton'
+import LinkButton from '../components/link-button'
 import { Section } from '../components/base/section'
 import Em from '../components/em'
 import Eyebrow from '../components/eyebrow'
@@ -28,9 +28,9 @@ export default function HighImpact() {
             </Paragraph>
             <Paragraph className="mt-5">Launch standout campaigns and content that perform on every platform.</Paragraph>
           </div>
-          <Button href={demoPage} id="performance-book-demo" data-track="book_demo_click" data-track-location="performance" variant="inverse" className="mt-9">
+          <LinkButton href={demoPage} id="performance-book-demo" data-track="book_demo_click" data-track-location="performance" variant="inverse" className="mt-9">
             Book a demo
-          </Button>
+          </LinkButton>
         </div>
         <VideoLightbox
           src={SHOWREEL}

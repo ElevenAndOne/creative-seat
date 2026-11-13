@@ -34,14 +34,27 @@ export default function Accordion({
   }
 
   return (
-    <BaseAccordion.Root defaultValue={defaultValue} onValueChange={onValueChange} className="border-t border-line">
+    <BaseAccordion.Root
+      defaultValue={defaultValue}
+      onValueChange={onValueChange}
+      className="border-t border-line"
+      onKeyDown={(event) => {
+        if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || !['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return
+        const triggers = [...event.currentTarget.querySelectorAll<HTMLButtonElement>('[data-accordion-trigger]')].filter((trigger) => trigger.getAttribute('aria-disabled') !== 'true')
+        const index = triggers.findIndex((trigger) => trigger === event.target)
+        if (index < 0) return
+        event.preventDefault()
+        const next = event.key === 'Home' ? 0 : event.key === 'End' ? triggers.length - 1 : (index + (event.key === 'ArrowDown' ? 1 : -1) + triggers.length) % triggers.length
+        triggers[next]?.focus()
+      }}
+    >
       {items.map((item, i) => {
         const value = `item-${i}`
         return (
           <BaseAccordion.Item key={item.question} value={value} className="border-b border-line">
             <BaseAccordion.Header>
               {/* An open item tightens the gap under its question to the design's 15px. */}
-              <BaseAccordion.Trigger id={idPrefix && `${idPrefix}-${i + 1}`} className="group flex w-full items-center justify-between gap-6 py-[26px] text-left outline-none transition-[padding] duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink data-[panel-open]:pb-[15px]">
+              <BaseAccordion.Trigger data-accordion-trigger id={idPrefix && `${idPrefix}-${i + 1}`} className="group flex w-full items-center justify-between gap-6 py-[26px] text-left outline-none transition-[padding] duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink data-[panel-open]:pb-[15px]">
                 <span className="text-h4 font-bold">{item.question}</span>
                 <img src="/images/icons/plus.svg" alt="" aria-hidden className="size-5 shrink-0 transition-transform duration-[250ms] ease-out group-data-[panel-open]:rotate-45" />
               </BaseAccordion.Trigger>

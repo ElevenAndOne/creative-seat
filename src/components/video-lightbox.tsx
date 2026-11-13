@@ -1,8 +1,9 @@
 import { Dialog } from '@base-ui/react/dialog'
 import { motion, useAnimationControls, useIsomorphicLayoutEffect } from 'motion/react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
+import { useReducedMotion } from '../hooks/useMotionPreference'
 import { cn } from '../utils/cn'
-import { useAmbientVideo } from './base/media'
+import { useAmbientVideo } from '../hooks/useAmbientVideo'
 import VideoPlayer from './video-player'
 
 /** The portfolio's soft deceleration — same curve as the `ease-glide` token. */
@@ -50,6 +51,7 @@ type Morph = { x: number; y: number; scale: number }
  */
 export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'Watch the showreel', className, id, trackLocation }: VideoLightboxProps) {
   const [open, setOpen] = useState(false)
+  const reduced = useReducedMotion()
   const player = useAnimationControls()
   const backdrop = useAnimationControls()
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -57,7 +59,7 @@ export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'W
   const closing = useRef(false)
   /** The player itself, held as state: Base UI portals it in a tick after the dialog opens. */
   const [popup, setPopup] = useState<HTMLDivElement | null>(null)
-  const preview = useAmbientVideo({ autoPlay: true, loop: true, muted: true, playsInline: true, controls: false })
+  const preview = useAmbientVideo({ autoPlay: !open, loop: true, muted: true, playsInline: true, controls: false })
 
   /**
    * The preview's box relative to the player's. The player is centred with
@@ -79,21 +81,12 @@ export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'W
   // the island is server-rendered, where a layout effect would only warn.)
   useIsomorphicLayoutEffect(() => {
     if (!popup) return
-    const from = morphFrom()
+    const from = reduced ? null : morphFrom()
     player.set(from ? { ...from, borderRadius: CARD_RADIUS / from.scale, opacity: 1 } : { x: 0, y: 0, scale: 1, borderRadius: PLAYER_RADIUS, opacity: 0 })
     backdrop.set({ opacity: 0 })
-    void player.start({ x: 0, y: 0, scale: 1, borderRadius: PLAYER_RADIUS, opacity: 1 }, { duration: OPEN_S, ease: EASE })
-    void backdrop.start({ opacity: 1 }, { duration: FADE_S, ease: EASE })
-  }, [popup])
-
-  // Nothing to watch behind a full-screen player: hand the bandwidth to the
-  // lightbox while it's open, and pick the loop back up once it has gone.
-  useEffect(() => {
-    const el = preview.ref.current
-    if (!el) return
-    if (open) el.pause()
-    else void el.play().catch(() => {})
-  }, [open, preview.ref])
+    void player.start({ x: 0, y: 0, scale: 1, borderRadius: PLAYER_RADIUS, opacity: 1 }, { duration: reduced ? 0 : OPEN_S, ease: EASE })
+    void backdrop.start({ opacity: 1 }, { duration: reduced ? 0 : FADE_S, ease: EASE })
+  }, [popup, reduced])
 
   /**
    * Base UI hides a closed popup on the spot, so the shrink has to play out
@@ -104,10 +97,10 @@ export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'W
     if (closing.current) return
     closing.current = true
     // Re-measure: the page may have scrolled under the lightbox.
-    const to = morphFrom()
+    const to = reduced ? null : morphFrom()
     void Promise.all([
-      player.start(to ? { ...to, borderRadius: CARD_RADIUS / to.scale } : { opacity: 0 }, { duration: CLOSE_S, ease: EASE }),
-      backdrop.start({ opacity: 0 }, { duration: FADE_S, ease: EASE }),
+      player.start(to ? { ...to, borderRadius: CARD_RADIUS / to.scale } : { opacity: 0 }, { duration: reduced ? 0 : CLOSE_S, ease: EASE }),
+      backdrop.start({ opacity: 0 }, { duration: reduced ? 0 : FADE_S, ease: EASE }),
     ]).then(() => {
       closing.current = false
       setOpen(false)

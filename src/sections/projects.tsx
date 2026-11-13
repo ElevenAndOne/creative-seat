@@ -18,7 +18,7 @@ const trackView = (i: number, method: 'card' | 'next' | 'deep_link') =>
 /** Mirror the open project in the URL without adding history entries. */
 function setHash(slug: string | null) {
   try {
-    history.replaceState(null, '', slug ? `#work-${slug}` : location.pathname + location.search)
+    history.replaceState(history.state, '', slug ? `#work-${slug}` : location.pathname + location.search)
   } catch {
     // Some embedded browsers refuse history changes; the viewer works without them.
   }
@@ -71,6 +71,11 @@ export default function WorkShowcase() {
         setIndex(i)
         shown.current = i
         trackView(i, 'deep_link')
+      } else {
+        // Removing a deep link, navigating Back, or selecting another section
+        // must also dismiss the project that the URL no longer names.
+        setOrigin(null)
+        setIndex(null)
       }
     }
     const raf = requestAnimationFrame(fromHash)

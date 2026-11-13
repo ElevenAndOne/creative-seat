@@ -90,7 +90,20 @@ async function call<T>(path: string, init?: RequestInit): Promise<T> {
   throw new BookingError(code === 'slot_taken' || code === 'not_configured' || code === 'invalid' ? code : 'unavailable')
 }
 
-export const loadAvailability = (signal?: AbortSignal) => call<Availability>('/api/slots', { signal })
+/** A stalled read must reach the same recoverable error state as a failed one. */
+export async function loadAvailability(signal?: AbortSignal) {
+  const controller = new AbortController()
+  const abort = () => controller.abort()
+  if (signal?.aborted) controller.abort()
+  signal?.addEventListener('abort', abort, { once: true })
+  const timer = setTimeout(abort, 12_000)
+  try {
+    return await call<Availability>('/api/slots', { signal: controller.signal })
+  } finally {
+    clearTimeout(timer)
+    signal?.removeEventListener('abort', abort)
+  }
+}
 
 export const requestBooking = (body: BookingRequest) =>
   call<Booking>('/api/book', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })

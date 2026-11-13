@@ -9,7 +9,7 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 export default defineConfig([
   // '.astro' (no trailing wildcard) ignores the generated .astro/ directory
   // only — it must not match *.astro source files, which are linted below.
-  globalIgnores(['dist', '.astro']),
+  globalIgnores(['dist', '.astro', '.claude/**', '.vercel/**', 'output/**']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -20,6 +20,7 @@ export default defineConfig([
     ],
     languageOptions: {
       globals: globals.browser,
+      parserOptions: { tsconfigRootDir: import.meta.dirname },
     },
   },
   ...astro.configs['flat/recommended'],

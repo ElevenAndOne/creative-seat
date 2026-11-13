@@ -1,5 +1,5 @@
 import { cn } from '../utils/cn'
-import { useAmbientVideo } from './base/media'
+import { useAmbientVideo } from '../hooks/useAmbientVideo'
 
 interface BenefitCardProps {
   /** The photo, or the poster frame when there is a `video`. */

@@ -1,4 +1,4 @@
-import Button from '../components/autton'
+import LinkButton from '../components/link-button'
 import { Section } from '../components/base/section'
 import Em from '../components/em'
 import Eyebrow from '../components/eyebrow'
@@ -81,7 +81,7 @@ export default function Pricing() {
               </ul>
 
               <div className="mt-auto pt-5">
-                <Button
+                <LinkButton
                   href={demoPage}
                   id={`pricing-${plan.id}-book-demo`}
                   data-track="book_demo_click"
@@ -90,7 +90,7 @@ export default function Pricing() {
                   full
                 >
                   Book a demo
-                </Button>
+                </LinkButton>
               </div>
             </article>
           )

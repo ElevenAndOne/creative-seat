@@ -6,6 +6,7 @@ import Eyebrow from '../components/eyebrow'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
 import { processSteps } from '../content'
+import { useAnimationsPaused } from '../hooks/useMotionPreference'
 import { track } from '../utils/analytics'
 import { cn } from '../utils/cn'
 
@@ -33,8 +34,9 @@ export default function Process() {
   const inView = useInView(ref, { amount: 0.4 })
   const [active, setActive] = useState(0)
   const [held, setHeld] = useState(false)
+  const paused = useAnimationsPaused()
 
-  const playing = inView && !held
+  const playing = inView && !held && !paused
 
   useEffect(() => {
     if (!playing) return

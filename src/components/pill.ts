@@ -13,7 +13,7 @@ const VARIANTS: Record<PillVariant, string> = {
 }
 
 /**
- * The call-to-action pill's classes (see components/autton.tsx), also for a
+ * The call-to-action pill's classes (see components/link-button.tsx), also for a
  * <button> that has to look like one — a form's submit. Pair it with
  * <PillArrow /> at the end.
  */

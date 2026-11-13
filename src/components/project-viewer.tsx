@@ -2,8 +2,9 @@ import { Dialog } from '@base-ui/react/dialog'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react'
 import type { Project } from '../content'
+import { useReducedMotion } from '../hooks/useMotionPreference'
 import { cn } from '../utils/cn'
-import Button from './autton'
+import LinkButton from './link-button'
 import ProjectMedia from './project-media'
 import Wordmark from './wordmark'
 import { demoPage } from '../utils/contact'
@@ -50,20 +51,42 @@ type ProjectViewerProps = {
  */
 export default function ProjectViewer({ projects, index, origin, onNavigate, onClose, returnFocus }: ProjectViewerProps) {
   const trackRef = useRef<HTMLDivElement>(null)
-  const [swapping, setSwapping] = useState(false)
+  const navigationTimer = useRef<number | null>(null)
+  const reducedMotion = useReducedMotion()
+  const [transition, setTransition] = useState({ index, pending: false })
+  // A controlled project change starts a fresh transition, including a hash
+  // change or a close followed by reopening the same project.
+  if (transition.index !== index) setTransition({ index, pending: false })
+  const swapping = transition.index === index && transition.pending
   const project = index === null ? null : projects[index]
+
+  // A delayed Next action must never outlive the project it came from.
+  useEffect(() => () => {
+    if (navigationTimer.current !== null) window.clearTimeout(navigationTimer.current)
+    navigationTimer.current = null
+  }, [index])
 
   // Fade the rail out, switch project, and let the new one fade its tiles in.
   const goTo = (next: number) => {
-    setSwapping(true)
-    window.setTimeout(() => {
+    if (index === null || navigationTimer.current !== null) return
+    if (reducedMotion) return onNavigate(next)
+    setTransition({ index, pending: true })
+    navigationTimer.current = window.setTimeout(() => {
+      navigationTimer.current = null
+      setTransition({ index, pending: false })
       onNavigate(next)
-      setSwapping(false)
     }, SWAP_MS)
   }
 
+  const close = () => {
+    if (navigationTimer.current !== null) window.clearTimeout(navigationTimer.current)
+    navigationTimer.current = null
+    setTransition({ index, pending: false })
+    onClose()
+  }
+
   return (
-    <Dialog.Root open={project !== null} onOpenChange={(open) => { if (!open) onClose() }}>
+    <Dialog.Root open={project !== null} onOpenChange={(open) => { if (!open) close() }}>
       <AnimatePresence custom={origin}>
         {project && index !== null && (
           <Dialog.Portal>
@@ -72,10 +95,10 @@ export default function ProjectViewer({ projects, index, origin, onNavigate, onC
                 <motion.div
                   custom={origin}
                   variants={reveal}
-                  initial="hidden"
+                  initial={reducedMotion ? false : 'hidden'}
                   animate="shown"
-                  exit="hidden"
-                  transition={{ clipPath: { duration: 0.7, ease: EASE }, opacity: { duration: 0.3, ease: EASE } }}
+                  exit={reducedMotion ? { opacity: 0 } : 'hidden'}
+                  transition={reducedMotion ? { duration: 0 } : { clipPath: { duration: 0.7, ease: EASE }, opacity: { duration: 0.3, ease: EASE } }}
                 />
               }
               initialFocus={trackRef}
@@ -89,6 +112,7 @@ export default function ProjectViewer({ projects, index, origin, onNavigate, onC
                 position={index + 1}
                 total={projects.length}
                 swapping={swapping}
+                reducedMotion={reducedMotion}
                 trackRef={trackRef}
                 onNext={() => goTo((index + 1) % projects.length)}
               />
@@ -106,6 +130,7 @@ type ViewerBodyProps = {
   position: number
   total: number
   swapping: boolean
+  reducedMotion: boolean
   trackRef: RefObject<HTMLDivElement | null>
   onNext: () => void
 }
@@ -114,7 +139,7 @@ type ViewerBodyProps = {
  * One project's worth of viewer. Keyed by project, so switching projects
  * remounts it: scroll starts at zero and the tiles stagger in afresh.
  */
-function ViewerBody({ project, next, position, total, swapping, trackRef, onNext }: ViewerBodyProps) {
+function ViewerBody({ project, next, position, total, swapping, reducedMotion, trackRef, onNext }: ViewerBodyProps) {
   const railRef = useRef<HTMLDivElement>(null)
   const fillRef = useRef<HTMLDivElement>(null)
   const cursorRef = useRef<HTMLDivElement>(null)
@@ -182,6 +207,7 @@ function ViewerBody({ project, next, position, total, swapping, trackRef, onNext
 
     const onDown = (e: PointerEvent) => {
       if (e.pointerType !== 'mouse' || mobile.matches || e.button !== 0) return
+      if (e.target instanceof Element && e.target.closest('a,button,input,select,textarea,[contenteditable="true"]')) return
       cancelAnimationFrame(glide)
       down = true
       draggedRef.current = false
@@ -222,12 +248,14 @@ function ViewerBody({ project, next, position, total, swapping, trackRef, onNext
         v *= 0.94
         glide = requestAnimationFrame(step)
       }
-      step()
+      if (!reducedMotion) step()
     }
     const onKey = (e: KeyboardEvent) => {
-      if (mobile.matches || (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft')) return
+      // Only the focused rail owns these shortcuts; controls and browser or
+      // assistive-technology key combinations retain their native behaviour.
+      if (e.target !== track || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || mobile.matches || (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft')) return
       e.preventDefault()
-      page(track, e.key === 'ArrowRight' ? 1 : -1)
+      page(track, e.key === 'ArrowRight' ? 1 : -1, reducedMotion)
     }
     const noDrag = (e: DragEvent) => e.preventDefault()
 
@@ -235,16 +263,16 @@ function ViewerBody({ project, next, position, total, swapping, trackRef, onNext
     track.addEventListener('dragstart', noDrag)
     window.addEventListener('pointermove', onMove)
     window.addEventListener('pointerup', onUp)
-    window.addEventListener('keydown', onKey)
+    track.addEventListener('keydown', onKey)
     return () => {
       cancelAnimationFrame(glide)
       track.removeEventListener('pointerdown', onDown)
       track.removeEventListener('dragstart', noDrag)
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerup', onUp)
-      window.removeEventListener('keydown', onKey)
+      track.removeEventListener('keydown', onKey)
     }
-  }, [trackRef])
+  }, [trackRef, reducedMotion])
 
   // Keep focus inside the viewer when the body remounts for the next project.
   useEffect(() => {
@@ -266,10 +294,10 @@ function ViewerBody({ project, next, position, total, swapping, trackRef, onNext
           <b className="font-semibold text-paper">{pad(position)}</b> / {pad(total)}
         </p>
         <div className="flex justify-end gap-2">
-          <IconButton label="Scroll back" disabled={edges.atStart} onClick={() => trackRef.current && page(trackRef.current, -1)} className="landscape:hidden">
+          <IconButton label="Scroll back" disabled={edges.atStart} onClick={() => trackRef.current && page(trackRef.current, -1, reducedMotion)} className="landscape:hidden">
             <path d="M15 18l-6-6 6-6" />
           </IconButton>
-          <IconButton label="Scroll forward" disabled={edges.atEnd} onClick={() => trackRef.current && page(trackRef.current, 1)} className="landscape:hidden">
+          <IconButton label="Scroll forward" disabled={edges.atEnd} onClick={() => trackRef.current && page(trackRef.current, 1, reducedMotion)} className="landscape:hidden">
             <path d="M9 18l6-6-6-6" />
           </IconButton>
           <Dialog.Close aria-label="Close project" className="ml-2 grid size-11 place-items-center rounded-full border-[1.5px] border-paper bg-paper text-ink transition-colors duration-200 hover:border-volt hover:bg-volt focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-paper">
@@ -326,10 +354,10 @@ function ViewerBody({ project, next, position, total, swapping, trackRef, onNext
                 className="relative h-[var(--th)] w-[calc(var(--ww)*var(--s)*1px)] shrink-0 landscape:flex landscape:h-auto landscape:w-auto landscape:flex-col landscape:gap-2.5"
                 style={{ '--ww': study.wall.width } as CSSProperties}
               >
-                {study.wall.tiles.map(([src, x, y, w, h], k) => (
+                {study.wall.tiles.map(([src, x, y, w, h, poster], k) => (
                   <Tile
                     key={k}
-                    revealed={revealed}
+                    revealed={revealed || reducedMotion}
                     delay={Math.min(k * 55, 600)}
                     className="absolute left-[calc(var(--x)*var(--s)*1px)] top-[calc(var(--y)*var(--s)*1px)] h-[calc(var(--h)*var(--s)*1px)] w-[calc(var(--w)*var(--s)*1px)] landscape:relative landscape:left-auto landscape:top-auto landscape:aspect-[var(--w)/var(--h)] landscape:h-auto landscape:w-full"
                     style={{ '--x': x, '--y': y, '--w': w, '--h': h, ...(src === 'logo' ? { background: study.logoBg } : {}) } as CSSProperties}
@@ -338,8 +366,15 @@ function ViewerBody({ project, next, position, total, swapping, trackRef, onNext
                       <div className="grid h-full w-full place-items-center">
                         <img src={study.logo} alt={`${project.title} logo`} className="max-h-[60%] w-[76%] object-contain" />
                       </div>
+                    ) : poster ? (
+                      <ProjectMedia
+                        src={src}
+                        poster={poster}
+                        alt={`${project.title} work sample ${k + 1}`}
+                        className="block h-full w-full select-none object-cover"
+                      />
                     ) : (
-                      <FadeImage src={src} alt={`${project.title} work sample ${k}`} loading={k > 5 ? 'lazy' : undefined} />
+                      <FadeImage src={src} alt={`${project.title} work sample ${k + 1}`} loading={k > 5 ? 'lazy' : undefined} />
                     )}
                   </Tile>
                 ))}
@@ -347,7 +382,7 @@ function ViewerBody({ project, next, position, total, swapping, trackRef, onNext
             ) : (
               <div className="flex h-[var(--th)] shrink-0 gap-[var(--gap)] landscape:h-auto landscape:flex-col landscape:gap-2.5">
                 {project.images.map((src, k) => (
-                  <Tile key={src} revealed={revealed} delay={Math.min(k * 55, 600)} className="h-full landscape:h-auto">
+                  <Tile key={src} revealed={revealed || reducedMotion} delay={Math.min(k * 55, 600)} className="h-full landscape:h-auto">
                     <ProjectMedia
                       src={src}
                       poster={src === project.cover ? project.poster : undefined}
@@ -365,6 +400,8 @@ function ViewerBody({ project, next, position, total, swapping, trackRef, onNext
               type="button"
               id="viewer-next-project"
               data-next
+              disabled={swapping}
+              aria-busy={swapping}
               onClick={() => { if (!draggedRef.current) onNext() }}
               className="group/next relative isolate flex h-[var(--th)] w-[calc(var(--th)*0.62)] shrink-0 flex-col justify-end overflow-hidden rounded-[10px] p-7 text-left text-paper outline-none focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-paper landscape:mt-2.5 landscape:aspect-[4/3] landscape:h-auto landscape:w-full"
             >
@@ -386,7 +423,7 @@ function ViewerBody({ project, next, position, total, swapping, trackRef, onNext
         <div aria-hidden className="h-0.5 flex-1 overflow-hidden rounded-full bg-paper/15">
           <div ref={fillRef} className="h-full w-full origin-left scale-x-0 bg-volt" />
         </div>
-        <Button href={demoPage} id="viewer-book-demo" data-track="book_demo_click" data-track-location="project_viewer" variant="inverse">Book a demo</Button>
+        <LinkButton href={demoPage} id="viewer-book-demo" data-track="book_demo_click" data-track-location="project_viewer" variant="inverse">Book a demo</LinkButton>
       </footer>
 
       <div
@@ -405,7 +442,7 @@ function Tile({ revealed, delay, className, style, children }: { revealed: boole
   return (
     <figure
       className={cn(
-        'm-0 overflow-hidden rounded-[10px] bg-paper/5 transition-[opacity,translate,scale] duration-[700ms,900ms,900ms] ease-glide',
+        'm-0 overflow-hidden rounded-[10px] bg-paper/5 transition-[opacity,translate,scale] duration-[700ms,900ms,900ms] ease-glide motion-reduce:transition-none',
         revealed ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-7 scale-[0.985] opacity-0',
         className,
       )}
@@ -455,8 +492,8 @@ export function Arrow() {
 }
 
 /** Scroll the wall by most of a screen in `dir` (1 forward, -1 back). */
-function page(track: HTMLElement, dir: 1 | -1) {
-  track.scrollBy({ left: dir * track.clientWidth * 0.7, behavior: 'smooth' })
+function page(track: HTMLElement, dir: 1 | -1, reducedMotion: boolean) {
+  track.scrollBy({ left: dir * track.clientWidth * 0.7, behavior: reducedMotion ? 'auto' : 'smooth' })
 }
 
 const pad = (n: number) => String(n).padStart(2, '0')

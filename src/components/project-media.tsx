@@ -1,5 +1,5 @@
 import type { ComponentPropsWithoutRef } from 'react'
-import { useAmbientVideo } from './base/media'
+import { useAmbientVideo } from '../hooks/useAmbientVideo'
 
 const VIDEO_EXT = /\.(mp4|webm|mov|m4v)$/i
 

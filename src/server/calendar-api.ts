@@ -15,7 +15,7 @@ import { studioClock, type Interval } from './availability'
 async function freeTimes(date: string): Promise<Set<string>> {
   const url = new URL('/api/slots', CALENDAR_API_URL)
   url.search = new URLSearchParams({ date, duration: String(DEMO_MINUTES), buffer: String(BOOKING_BUFFER_MINUTES), timeZone: BOOKING_TIME_ZONE }).toString()
-  const response = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' })
+  const response = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store', signal: AbortSignal.timeout(8_000) })
   const data = await response.json().catch(() => null)
   if (!response.ok || !Array.isArray(data)) throw new Error(`Calendar API ${url.pathname}?date=${date} failed (${response.status}): ${data?.error ?? 'no detail'}`)
   return new Set(data)

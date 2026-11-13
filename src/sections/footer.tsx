@@ -2,6 +2,7 @@ import Container from '../components/container'
 import Wordmark from '../components/wordmark'
 import { socials } from '../content'
 import { demoPage } from '../utils/contact'
+import { navigation } from '../content/navigation'
 
 const LINK = 'text-p-sm text-paper/75 underline decoration-paper/35 underline-offset-[5px] transition-colors hover:text-paper hover:decoration-paper'
 
@@ -23,9 +24,9 @@ export default function SiteFooter() {
         </div>
 
         <nav className="flex flex-wrap items-center gap-x-6 gap-y-3 tablet:order-last tablet:w-full landscape:order-none" aria-label="Footer navigation">
-          <a href="/#services" id="footer-nav-services" data-track="nav_click" data-track-location="footer" className={LINK}>Services</a>
-          <a href="/#resources" id="footer-nav-resources" data-track="nav_click" data-track-location="footer" className={LINK}>Resources</a>
-          <a href="/#pricing" id="footer-nav-pricing" data-track="nav_click" data-track-location="footer" className={LINK}>Pricing</a>
+          {navigation.map(({ id, href, label }) => (
+            <a key={id} href={href} id={`footer-nav-${id}`} data-track="nav_click" data-track-location="footer" className={LINK}>{label}</a>
+          ))}
           <a href={demoPage} id="footer-book-demo" data-track="book_demo_click" data-track-location="footer" className={LINK}>Book a demo</a>
           {/* Reopens the cookie banner (components/cookie-banner.tsx). */}
           <button type="button" id="footer-cookie-settings" data-cookie-settings className={LINK}>

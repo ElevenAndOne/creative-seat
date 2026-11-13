@@ -53,9 +53,9 @@ creative-seat/
     │   └── base.astro    # <html>/<head>: title, description, favicon, fonts, index.css
     ├── sections/         # one React component per page section
     ├── components/
-    │   ├── base/         # Grid, Layout, Media, Section, Polymorphic
+    │   ├── base/         # Section, Polymorphic
     │   ├── marquee/      # scroll marquee + lightbox (not currently mounted)
-    │   └── ...           # Button, Eyebrow, Heading, Accordion, HeroStack, ProjectViewer, Wordmark, BenefitCard, BrandLogo
+    │   └── ...           # LinkButton, Eyebrow, Heading, Accordion, HeroStack, ProjectViewer, Wordmark, BenefitCard, BrandLogo
     ├── content/          # typed content collection (the site's "CMS")
     │   ├── index.ts      # single import point — typed + re-exported
     │   ├── types.ts      # Project / Testimonial / Logo shapes
@@ -63,8 +63,8 @@ creative-seat/
     │   ├── projects.json
     │   ├── testimonials.json
     │   └── logos.json
-    ├── hooks/            # useMediaFlag
-    ├── utils/            # cn (class merge), cv (variant), analytics, structured data, booking contract
+    ├── hooks/            # booking workflow, ambient media, motion preferences, currency, media queries
+    ├── utils/            # cn (class merge), analytics, structured data, booking contract + shared field constraints
     └── index.css         # Tailwind v4 entry, design tokens, breakpoints
 ```
 
@@ -86,7 +86,7 @@ Build output goes to `dist/`, as before.
 
 ## Book a demo
 
-Every "Book a demo" and "Get in touch" button leads to `/book-a-demo`. The page is one `client:load` island, `sections/book-demo.tsx`, on the night gradient. The pitch sits on the left and the form on the right: first and last name, email, phone, company and job role two to a row, then a date and a time, each picked from a small popover (Base UI). Below the form, `sections/demo-agenda.tsx` (static) lays the 30 minutes along a minute ruler that fills with Volt as it scrolls past.
+Every "Book a demo" and "Get in touch" button leads to `/book-a-demo`. The page is one `client:load` island, `sections/book-demo.tsx`, composed from a feature controller (`hooks/useBookingForm.ts`) and independent field, picker and status components (`components/booking/`), on the night gradient. The pitch sits on the left and the form on the right: first and last name, email, phone, company and job role two to a row, then a date and a time, each picked from a small popover (Base UI). Below the form, `sections/demo-agenda.tsx` (static) lays the 30 minutes along a minute ruler that fills with Volt as it scrolls past.
 
 It works like miacreate.ai's booking form, and shares its calendar:
 
@@ -116,7 +116,7 @@ The visuals follow the **Creative Seat brand guide** (v1.0, Sept 2026):
 - **Colour** — Volt, Soft Volt, Ink, Paper, Forest and Chalk are the only theme colours (Tailwind's own palette, `white` and `black` included, is switched off). Paper leads; text uses the guide's approved pairings. The hero, performance and benefits sections keep the original Forest-to-Ink gradient (`bg-night` / `bg-night-low`) by request.
 - **Type** — **Golos Text** for almost everything (the hero's Bold + Regular *display duet*, Headlines 2–3, body), and **Instrument Serif** for Headline 1 — section titles, each ending on an italic phrase (`<Em>`) — and the pricing plans' names. Eyebrows are the only all-caps text. Both fonts are self-hosted through Fontsource and imported in `src/layouts/base.astro`.
 - **Logo** — `components/wordmark.tsx` draws the guide's supplied wordmark artwork (never retyped); the chair logomark is used only for the favicon and app icons.
-- **Buttons** — `components/autton.tsx` is the one call to action across the site: a pill with a Volt arrow that turns 45° on hover. It comes in four finishes: `primary` (Ink fill, the main action), `outline` (Ink hairline, secondary actions), and `inverse` / `outline-inverse` for the same pair on dark backgrounds. Every "Book a demo" and "Get in touch" button leads to the booking page, `/book-a-demo` (`utils/contact.ts`).
+- **Buttons** — `components/link-button.tsx` is the one call to action across the site: a pill with a Volt arrow that turns 45° on hover. It comes in four finishes: `primary` (Ink fill, the main action), `outline` (Ink hairline, secondary actions), and `inverse` / `outline-inverse` for the same pair on dark backgrounds. Every "Book a demo" and "Get in touch" button leads to the booking page, `/book-a-demo` (`utils/contact.ts`).
 - **Copy** — sentence case and British English; the guide's banned words (e.g. "unlimited") are kept out.
 
 Design tokens in `src/index.css` mirror the guide: colours, a fluid type scale (display 72 / h1 56 / h2 32 / h3 24 / body 17 at 1440px), radii, and the layout tokens behind `<Container>` / `<Section>` (a 1440px content column with fluid 20–40px gutters).
@@ -136,3 +136,20 @@ Design tokens in `src/index.css` mirror the guide: colours, a fluid type scale (
 `site` in `astro.config.mjs` (**currently a placeholder — confirm the domain before launch**) drives the canonical URL, Open Graph / Twitter cards (`public/og-image.jpg`), `robots.txt`, `sitemap.xml` and `llms.txt` (all generated in `src/pages/`), plus the JSON-LD graph from `utils/structured-data.ts`: Organization, WebSite, WebPage, Service with its plans, HowTo for the process, and FAQPage. `/book-a-demo` is a ContactPage linked into that graph. Structured data and `llms.txt` are built from the same content the page renders and leave prices out (visitors only see their own currency). Icons and `site.webmanifest` live in `public/`.
 
 Breakpoints are desktop-first custom variants — `tablet:` (≤992px), `landscape:` (≤768px), `portrait:` (≤480px). Tailwind doesn't emit custom variants in declaration order, so each narrower variant carries a little extra specificity to make sure it wins; see the comment in `index.css`.
+
+
+## Motion and keyboard
+
+The hero's “Pause animations” control and the mobile menu share a session-persisted preference across independently hydrated islands. OS reduced-motion settings always take priority. Ambient videos, hero cards, process cycling, GSAP rows, team choreography and the sketch respect it; reduced-mode services become a complete static list. Explicit video playback stays user-controlled. A skip link focuses the main content, the mobile navigation uses Base UI Dialog focus management, and FAQ triggers support arrows, Home and End.
+
+## Browser regression checks
+
+With `npm run dev` serving port 3000, run the checked-in scenarios through Playwright CLI:
+
+```bash
+npx --package @playwright/cli playwright-cli open http://localhost:3000
+npx --package @playwright/cli playwright-cli run-code "$(cat scripts/verify-ui.js)"
+npx --package @playwright/cli playwright-cli run-code "$(cat scripts/verify-video.js)"
+```
+
+These cover responsive navigation, keyboard focus, FAQ, calculator reset, portfolio transition cancellation, booking validation/recovery/timeouts, motion preferences and video failure/retry. Booking POSTs and video responses are mocked. The booking fixture dates are deliberately fixed for reproducible calendar assertions. Run `npm run lint` and `npm run build` for the static checks. Audit decisions, scores and verification boundaries are recorded in [docs/quality-audit.md](docs/quality-audit.md).

@@ -188,6 +188,51 @@ body {
   @apply bg-paper font-sans font-normal text-ink antialiased;
 }
 
+/* A consistent keyboard indicator also covers plain navigation links. */
+:where(a, button, input, [tabindex]):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 200;
+  top: 1rem;
+  left: var(--container-margin);
+  transform: translateY(-200%);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  background: var(--color-volt);
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* Keep CSS motion aligned with the shared preference used by React islands. */
+html[data-animations-paused='true'] {
+  scroll-behavior: auto;
+}
+
+html[data-animations-paused='true'] *,
+html[data-animations-paused='true'] *::before,
+html[data-animations-paused='true'] *::after {
+  animation-play-state: paused !important;
+  transition-duration: 0.01ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* "Scroll to explore" hint in the project viewer — a Volt dash sweeps along a
    hairline, on repeat. */
 @keyframes cs-hint {

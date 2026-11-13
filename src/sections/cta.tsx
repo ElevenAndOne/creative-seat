@@ -1,4 +1,4 @@
-import Button from '../components/autton'
+import LinkButton from '../components/link-button'
 import { Section } from '../components/base/section'
 import Em from '../components/em'
 import Heading from '../components/heading'
@@ -17,6 +17,7 @@ export default function CtaBanner() {
     <Section id="contact" pad="md" className="isolate overflow-hidden bg-volt text-ink" innerClassName="flex flex-col items-start landscape:min-h-[32rem]">
       <div aria-hidden className="absolute inset-0 -z-10">
         <SketchCanvas src="/images/sections/pitch-marketer.avif" paper="#bce42d" ink="#212c26" focusX={0.62} />
+        <div className="absolute inset-0 bg-gradient-to-r from-volt via-volt/95 via-35% to-transparent landscape:bg-gradient-to-b landscape:via-volt/95 landscape:via-55%" />
       </div>
       {/* Hero scale, set in two lines so the italic phrase stays whole. */}
       <Heading.H1 className="max-w-[9em] text-[clamp(3rem,2.7143rem+1.4286vw,4rem)] leading-[0.95] tracking-[-0.015em]">
@@ -25,9 +26,9 @@ export default function CtaBanner() {
       <Paragraph.Big className="mt-7 max-w-[28rem]">
         Design, illustration and animation for marketing teams that need more capacity.
       </Paragraph.Big>
-      <Button href={demoPage} id="cta-book-demo" data-track="book_demo_click" data-track-location="cta" className="mt-9">
+      <LinkButton href={demoPage} id="cta-book-demo" data-track="book_demo_click" data-track-location="cta" className="mt-9">
         Book a demo
-      </Button>
+      </LinkButton>
     </Section>
   )
 }
