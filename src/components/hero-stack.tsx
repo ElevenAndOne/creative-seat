@@ -10,7 +10,7 @@ import {
 } from 'motion/react'
 import { useEffect, useRef } from 'react'
 import { heroCards } from '../content'
-import { useAnimationsPaused } from '../hooks/useMotionPreference'
+import { readAnimationsPaused, useAnimationsPaused } from '../hooks/useMotionPreference'
 import { cn } from '../utils/cn'
 
 /** How long each card holds the front before the fan moves on by itself. */
@@ -29,7 +29,9 @@ const mod = (n: number, m: number) => ((n % m) + m) % m
  * Sideways spread is in container units, so the fan scales with its column.
  * `spread` (0 → 1) fans the cards out from a single stack on load.
  */
-function pose(d: number, spread: number) {
+function pose(d: number, rawSpread: number) {
+  // Never fan wider than the resting layout, so a stray spring can't push cards out of the hero.
+  const spread = Math.min(1, Math.max(0, rawSpread))
   const a = Math.abs(d)
   const s = Math.sign(d)
   const ac = Math.min(a, 2.4)
@@ -72,14 +74,22 @@ export default function HeroStack({ className }: { className?: string }) {
     motionRef.current = animate(pos, target, paused ? { duration: 0 } : { ...SPRING, velocity })
   }
 
-  // Fan out on load.
+  // Fan out on load. The hydration render always reports paused, so check
+  // the real preference: snapping the fan open for that one commit would
+  // leave the motion value with a huge velocity, which the spring then
+  // inherits and flings the cards far off screen before settling.
   useEffect(() => {
-    if (paused) {
+    if (paused && readAnimationsPaused()) {
       motionRef.current?.stop()
-      spread.set(1)
+      spread.jump(1)
       return
     }
-    const controls = animate(spread, 1, { type: 'spring', stiffness: 55, damping: 15, delay: 0.25 })
+    const from = spread.get()
+    if (from >= 1) return
+    // Cards grow out from behind the front card. Critically damped, so the
+    // fan opens straight to its resting width without swinging past it; the
+    // short hold only applies to a fresh start, not a resumed spread.
+    const controls = animate(spread, 1, { type: 'spring', stiffness: 55, damping: 16, delay: from > 0 ? 0 : 0.25 })
     return () => controls.stop()
   }, [spread, paused])
 

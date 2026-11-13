@@ -11,7 +11,7 @@ import { demoPage } from '../utils/contact'
 
 /** The viewer's soft deceleration — same curve as the `ease-glide` token. */
 const EASE = [0.22, 0.8, 0.18, 1] as const
-/** Matches the `landscape:` variant: below it the wall stacks vertically and the drag cursor is off. */
+/** Matches the `landscape:` variant: below it the wall stacks vertically. */
 const MOBILE = '(max-width: 48rem)'
 /** Rail fade between projects, ms. */
 const SWAP_MS = 320
@@ -45,9 +45,9 @@ type ProjectViewerProps = {
  * Full-screen project viewer, opened from a portfolio card. Each project lays
  * out as a horizontally scrolling wall: an intro column, then either the
  * curated two-row artboard from its case study (scaled to the viewport height)
- * or, without one, a row of its media. It scrolls with the wheel, the arrow
- * buttons/keys or a drag with inertia (a "Drag" cursor follows the mouse), and
- * ends on a card for the next project. Below 48rem it becomes a vertical stack.
+ * or, without one, a row of its media. It scrolls with the wheel, a trackpad
+ * or the arrow buttons/keys, and ends on a card for the next project. Below
+ * 48rem it becomes a vertical stack.
  */
 export default function ProjectViewer({ projects, index, origin, onNavigate, onClose, returnFocus }: ProjectViewerProps) {
   const trackRef = useRef<HTMLDivElement>(null)
@@ -142,9 +142,6 @@ type ViewerBodyProps = {
 function ViewerBody({ project, next, position, total, swapping, reducedMotion, trackRef, onNext }: ViewerBodyProps) {
   const railRef = useRef<HTMLDivElement>(null)
   const fillRef = useRef<HTMLDivElement>(null)
-  const cursorRef = useRef<HTMLDivElement>(null)
-  /** Set while a drag is in progress or has just ended, so it doesn't count as a click. */
-  const draggedRef = useRef(false)
   const [revealed, setRevealed] = useState(false)
   const [edges, setEdges] = useState({ atStart: true, atEnd: false })
   const study = project.caseStudy
@@ -197,59 +194,12 @@ function ViewerBody({ project, next, position, total, swapping, reducedMotion, t
     }
   }, [trackRef, study])
 
-  // Mouse drag with inertia, the "Drag" cursor, and arrow-key paging (desktop only).
+  // Arrow-key paging (desktop only).
   useEffect(() => {
     const track = trackRef.current
-    const cursor = cursorRef.current
-    if (!track || !cursor) return
+    if (!track) return
     const mobile = window.matchMedia(MOBILE)
-    let down = false, startX = 0, startLeft = 0, lastX = 0, lastT = 0, velocity = 0, glide = 0
 
-    const onDown = (e: PointerEvent) => {
-      if (e.pointerType !== 'mouse' || mobile.matches || e.button !== 0) return
-      if (e.target instanceof Element && e.target.closest('a,button,input,select,textarea,[contenteditable="true"]')) return
-      cancelAnimationFrame(glide)
-      down = true
-      draggedRef.current = false
-      startX = lastX = e.clientX
-      startLeft = track.scrollLeft
-      velocity = 0
-      lastT = performance.now()
-      cursor.dataset.down = ''
-    }
-    const onMove = (e: PointerEvent) => {
-      if (e.pointerType === 'mouse') {
-        cursor.style.setProperty('--cx', `${e.clientX}px`)
-        cursor.style.setProperty('--cy', `${e.clientY}px`)
-        const target = e.target instanceof Element ? e.target : null
-        const over = !mobile.matches && !!target && track.contains(target) && !target.closest('[data-next]')
-        cursor.style.setProperty('--cs', over ? '1' : '0')
-        track.style.cursor = over ? 'none' : ''
-      }
-      if (!down) return
-      const dx = e.clientX - startX
-      if (Math.abs(dx) > 4) draggedRef.current = true
-      track.scrollLeft = startLeft - dx
-      const now = performance.now()
-      velocity = (e.clientX - lastX) / Math.max(1, now - lastT)
-      lastX = e.clientX
-      lastT = now
-    }
-    const onUp = () => {
-      if (!down) return
-      down = false
-      delete cursor.dataset.down
-      // Let the click that ends a drag see the flag, then clear it.
-      window.setTimeout(() => { draggedRef.current = false }, 0)
-      let v = velocity * 16
-      const step = () => {
-        if (Math.abs(v) < 0.4) return
-        track.scrollLeft -= v
-        v *= 0.94
-        glide = requestAnimationFrame(step)
-      }
-      if (!reducedMotion) step()
-    }
     const onKey = (e: KeyboardEvent) => {
       // Only the focused rail owns these shortcuts; controls and browser or
       // assistive-technology key combinations retain their native behaviour.
@@ -259,17 +209,10 @@ function ViewerBody({ project, next, position, total, swapping, reducedMotion, t
     }
     const noDrag = (e: DragEvent) => e.preventDefault()
 
-    track.addEventListener('pointerdown', onDown)
     track.addEventListener('dragstart', noDrag)
-    window.addEventListener('pointermove', onMove)
-    window.addEventListener('pointerup', onUp)
     track.addEventListener('keydown', onKey)
     return () => {
-      cancelAnimationFrame(glide)
-      track.removeEventListener('pointerdown', onDown)
       track.removeEventListener('dragstart', noDrag)
-      window.removeEventListener('pointermove', onMove)
-      window.removeEventListener('pointerup', onUp)
       track.removeEventListener('keydown', onKey)
     }
   }, [trackRef, reducedMotion])
@@ -344,8 +287,7 @@ function ViewerBody({ project, next, position, total, swapping, reducedMotion, t
                 <span aria-hidden className="relative block h-px w-[34px] overflow-hidden bg-current">
                   <span className="cs-hint absolute inset-0 bg-volt" />
                 </span>
-                <span className="landscape:hidden">Scroll or drag to explore</span>
-                <span className="hidden landscape:inline">Scroll to explore</span>
+                <span>Scroll to explore</span>
               </p>
             </div>
 
@@ -402,7 +344,7 @@ function ViewerBody({ project, next, position, total, swapping, reducedMotion, t
               data-next
               disabled={swapping}
               aria-busy={swapping}
-              onClick={() => { if (!draggedRef.current) onNext() }}
+              onClick={onNext}
               className="group/next relative isolate flex h-[var(--th)] w-[calc(var(--th)*0.62)] shrink-0 flex-col justify-end overflow-hidden rounded-[10px] p-7 text-left text-paper outline-none focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-paper landscape:mt-2.5 landscape:aspect-[4/3] landscape:h-auto landscape:w-full"
             >
               <img src={nextImage} alt="" loading="lazy" className="absolute inset-0 -z-20 h-full w-full object-cover transition-transform duration-1000 ease-glide group-hover/next:scale-105" />
@@ -425,14 +367,6 @@ function ViewerBody({ project, next, position, total, swapping, reducedMotion, t
         </div>
         <LinkButton href={demoPage} id="viewer-book-demo" data-track="book_demo_click" data-track-location="project_viewer" variant="inverse">Book a demo</LinkButton>
       </footer>
-
-      <div
-        ref={cursorRef}
-        aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[101] -ml-[42px] -mt-[42px] grid size-[84px] place-items-center rounded-full bg-volt text-[11px] font-bold uppercase tracking-[0.14em] text-ink transition-transform duration-[250ms] ease-glide [transform:translate3d(var(--cx,-200px),var(--cy,-200px),0)_scale(var(--cs,0))] data-[down]:[transform:translate3d(var(--cx,-200px),var(--cy,-200px),0)_scale(0.8)] landscape:hidden [@media(hover:none)]:hidden"
-      >
-        Drag
-      </div>
     </>
   )
 }

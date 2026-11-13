@@ -41,6 +41,25 @@ function subscribe(listener: () => void) {
   }
 }
 
+/**
+ * The visitor's actual preference, read straight from storage and the media
+ * query. `useAnimationsPaused` reports paused on the hydration render (the
+ * server can't know), so an effect that runs in that first commit can use
+ * this to avoid acting on the placeholder.
+ */
+export function readAnimationsPaused() {
+  if (typeof window === 'undefined') return true
+  let stored = userPaused
+  if (!restored) {
+    try {
+      stored = sessionStorage.getItem(STORAGE_KEY) === 'true'
+    } catch {
+      // Blocked storage: fall back to the in-memory value.
+    }
+  }
+  return stored || isReduced()
+}
+
 /** One ambient-motion preference shared by the independently hydrated islands. */
 export function useAnimationsPaused() {
   return useSyncExternalStore(subscribe, isPaused, serverPaused)
