@@ -47,3 +47,20 @@ Pass bar: **every reviewer ≥ 8 overall** (target 9).
 | 1 | DM product grid tiny and static | Focus on the card row, then Separate: three cards launch out while card 2 pops to a 1.6× hero (2x‑crisp from a new **DM render**). |
 | 1 | Easing monotony | Added an `ease.pop` token (0.22, 1.12, 0.36, 1; under 4 % overshoot) for hero landings. |
 | all 3 | Add type and brand beats | **Not actioned** (brief forbids added type). The KPI tiles and Onvlee stats now act as large "type" moments taken from the work itself. |
+| 3 | r3: 30.3 s, Focus → Separate, 2x DM/Onvlee renders, half‑beat montage | R3‑a | 6 | 6.5 | 6 | 5 | 6 | 4 | **5.5** |
+| 3 | | R3‑b | 6 | 6 | 6 | 5 | 6 | 5 | **5.5** |
+| 3 | | R3‑c | 5 | 6 | 6 | 5 | 6 | 4 | **5** |
+
+### Round 3: what the reviewers said, and what changed for round 4
+
+| Raised by | Issue | Fix in r4 |
+|---|---|---|
+| 1 | **Lorem ipsum** body copy on three Leva cards (the client's own placeholder) | Cards re‑cropped to photo + title + subtitle only (1028 × 503); no placeholder copy appears anywhere. |
+| all 3 | Approval card is a 1.5–2 s dead hold, then the portal appears "from nowhere" | A cursor glides in, **presses Approve** (button depresses), and the DM portal grows out of the button as a pill. |
+| all 3 | Recap montage: 8 frozen shots with inconsistent scale, playing like timeline scrubbing | Rebuilt as **one anchored rounded frame**: the "350+" tile opens into it, six shots swap inside it (1 beat each) with a slow push, and the last shot (Halcyon) morphs back into frame 0. The loop seam is pixel‑identical (mean diff 0.27/255). No grid (the brief bans a grid closer). |
+| all 3 | Phones too small | DFSA is now **three phones** side by side (75 % of width): the centre one scrolls over the corner wipes, the sides drift in parallax. |
+| all 3 | Raw Onvlee numbers band (empty right side, cropped render) plus a stat hold | Band removed. The hero window launches out, and the four stat tiles rise straight into a 2×2 (2x‑crisp). The 350+ tile becomes the montage frame. |
+| all 3 | Everything flat; no depth | Tried real 3D (arc, coverflow, tilting montage frame), but **Figma's video export does not render 3D transforms** (verified with a spike). Shipped 2D depth instead: the DM cards fan out with in‑plane rotation and an arc dip before the hero card swings level and forward. |
+| 2 of 3 | Opener small and slow | Frame 0 is now the focused goal panel (legible at 1.5×). Separate starts at 0.35 s. |
+| 2 of 3 | Carousel too quick to read | Leva steps every 2 beats; cards at 1.3× (70 % width); neighbours rest fully off‑screen. |
+| all 3 | Type or brand layer; grid resolve | **Not actioned** (both forbidden by the brief). |
