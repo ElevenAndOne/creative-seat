@@ -30,3 +30,20 @@ Pass bar: **every reviewer ≥ 8 overall** (target 9).
 | all 3 | Static holds (Halcyon, Leva hero, green phone) | Every hold now has linear drift; holds shortened. Runtime cut from 37.3 s to 32.2 s for a tighter build. |
 | 2 of 3 | Ghosted dissolve under lifted components (Leva letterbox, Onvlee stats) | The window now clears in 1 beat instead of 2. |
 | all 3 | Add type and brand beats | **Not actioned.** The brief forbids added typography. |
+| 2 | r2: 32.2 s, 1536‑wide windows, scale‑through portals, loop portal | R2‑a | 5 | 5.5 | 4 | 4 | 4.5 | 3.5 | **4.5** |
+| 2 | | R2‑b | 5 | 6 | 6 | 4 | 6 | 4 | **5** |
+| 2 | | R2‑c | 6 | 6 | 6.5 | 5.5 | 6 | 5.5 | **6** |
+
+### Round 2: what the reviewers said, and what changed for round 3
+
+| Raised by | Issue | Fix in r3 |
+|---|---|---|
+| all 3 | Ghost or double layers where a window faded under its lifted component (2.4 s, 9.5 s, 27.3 s) | **New owned move, "Focus → Separate".** The window's frame contracts around the region (W/H + counter‑translated content) and scales up, so the rest of the UI is masked, never faded. The region then splits into its real components. No opacity crossfades anywhere. |
+| all 3 | Flat rhythm: every project is a ~6 s scroll, no build, no burst | Projects cut to ~3–5 s with one hero idea each. Added an **8‑shot half‑beat montage** (7 frames per shot) before the loop. |
+| all 3 | Whip scrolls strobe or read as hard cuts (Leva 14.6 s, Onvlee 26.2 s) | Long scroll flings removed. Leva enters straight on its carousel. Onvlee's hero window launches out and the numbers band rises in. The only scroll left is a 900 px step. |
+| 2 of 3 | Headline clipped at the top in the opener; the opener is dark and unreadable | Frame 0 is now a composed window. Focus lands on the goal panel at 1.5× (2x source). Separate restacks the KPI tiles into a 2.2× column. |
+| 2 of 3 | Onvlee numbers card left‑heavy; map cropped and static | Re‑cropped symmetrically from a **2x Onvlee render**. The band is shown full‑bleed at 1:1, Focus moves onto the stats, then Separate breaks them into a 2×2 at 1.75×. Map removed. |
+| 2 of 3 | Portal or wipe used identically each time | Portals now vary (2.5 / 3 / 2 beats). Wipes come from three different corners, plus a navy wipe expanding from behind the phone as the hand‑off to Onvlee. |
+| 1 | DM product grid tiny and static | Focus on the card row, then Separate: three cards launch out while card 2 pops to a 1.6× hero (2x‑crisp from a new **DM render**). |
+| 1 | Easing monotony | Added an `ease.pop` token (0.22, 1.12, 0.36, 1; under 4 % overshoot) for hero landings. |
+| all 3 | Add type and brand beats | **Not actioned** (brief forbids added type). The KPI tiles and Onvlee stats now act as large "type" moments taken from the work itself. |

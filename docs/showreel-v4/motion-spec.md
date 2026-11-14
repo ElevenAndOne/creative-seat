@@ -33,8 +33,15 @@ One system, distilled from Metalab's 2022 reel and 2024 Frames language (see `re
 | `ease.glide` | **(0.80, 0.05, 0.15, 1.00)** | 2024 frames and tile moves, fits of (0.77–0.82, 0.04–0.06, 0.12–0.21, 0.96–1.14) | portals, lifts, scroll steps, field wipes, recedes |
 | `ease.settle` | **(0.16, 1.00, 0.30, 1.00)** | decel out of momentum cuts, speed peak at 9–14 % | entrances, the in‑beat settle of burst content |
 | `ease.launch` | **(0.70, 0.00, 0.84, 0.00)** | accel into momentum cuts, speed peak at 80–90 % | exits |
+| `ease.pop` *(added in round 3)* | **(0.22, 1.12, 0.36, 1.00)** | the 2024 pull‑back fit overshoots to y2 = 1.14; this keeps the overshoot under 4 % | hero landings only (Separate, montage) |
 
 Slow drift during holds is `LINEAR` and ≤ 3 % scale or ≤ 30 px per hold. Visibility switches use `HOLD` (hard cuts).
+
+## Signature move (added in round 3): Focus → Separate
+
+- **Focus.** The window's own frame contracts around a region of the live UI. Its W/H and position animate while the content counter‑translates, then the frame scales up (glide, 2 beats). The rest of the UI is *masked*, never faded.
+- **Separate.** On the next beat the focused region splits into its real components (headline, KPI tiles, cards, stats). They pull apart into a new arrangement at a larger scale (glide position, pop scale, ¼‑beat stagger).
+- It is used once per act: Halcyon goal panel → KPI tiles; DM product row → hero card; Onvlee numbers band → 2×2 stats.
 
 ## Transition vocabulary
 
