@@ -2,7 +2,6 @@ import { useInView } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Section } from '../components/base/section'
 import Em from '../components/em'
-import Eyebrow from '../components/eyebrow'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
 import { processSteps } from '../content'
@@ -21,9 +20,9 @@ const MOVE = 'duration-[800ms] ease-[cubic-bezier(0.65,0,0.35,1)]'
 const pad = (n: number) => String(n).padStart(2, '0')
 
 /**
- * "A simpler way to work" as four columns in a fixed row, 01 to 04: the open
- * step fills most of the row on Soft Volt, the other three stand beside it as
- * narrow Chalk columns showing just their number. Click one to open it. The
+ * "Effortless from brief to launch." as four Chalk columns in a fixed row, 01
+ * to 04: the open step fills most of the row, the other three stand beside it
+ * as narrow columns showing their number and sketch. Click one to open it. The
  * steps also open in turn by themselves while the row is on screen, pausing
  * under the pointer or keyboard focus.
  *
@@ -51,25 +50,22 @@ export default function Process() {
   }
 
   return (
-    <Section id="process" pad="md">
-      <div className="border-t border-ink pt-8">
-        <Eyebrow>A simpler way to work</Eyebrow>
-        <Heading.H1 className="mt-4">
-          Effortless from <Em>brief to launch.</Em>
-        </Heading.H1>
-      </div>
+    <Section id="process" className="bg-paper">
+      <Heading.H1>
+        Effortless from <Em>brief to launch.</Em>
+      </Heading.H1>
 
       {/* Every step's copy is always in the document, in order, so assistive
           tech and search read all four whichever is open. The open column's
-          copy is laid out at its final width (the row less three 180px
-          columns and the gaps), so it never reflows as the column grows. */}
+          copy is laid out at its final width (the row less three 140px
+          columns and the 12px gaps), so it never reflows as the column grows. */}
       <ol
         ref={ref}
         onPointerEnter={() => setHeld(true)}
         onPointerLeave={() => setHeld(false)}
         onFocus={() => setHeld(true)}
         onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && setHeld(false)}
-        className="@container mt-8 flex h-[clamp(25rem,calc(100svh-24rem),26rem)] gap-2.5 landscape:h-auto landscape:flex-col"
+        className="@container mt-xlg flex h-[25.125rem] gap-3 landscape:h-auto landscape:flex-col"
       >
         {processSteps.map((step, i) => {
           const isOpen = i === active
@@ -77,14 +73,14 @@ export default function Process() {
             <li
               key={step.title}
               className={cn(
-                'relative min-w-0 basis-[180px] overflow-hidden rounded-card transition-[flex-grow,background-color] tablet:basis-24 landscape:basis-auto landscape:bg-soft-volt landscape:text-forest',
+                'relative min-w-0 basis-[140px] overflow-hidden rounded-md bg-chalk transition-[flex-grow,filter] tablet:basis-24 landscape:basis-auto landscape:text-forest',
                 MOVE,
-                isOpen ? 'grow bg-soft-volt text-forest' : 'grow-0 bg-chalk text-ink hover:bg-line',
+                isOpen ? 'grow text-forest' : 'grow-0 text-ink hover:brightness-[0.96]',
               )}
             >
-              <div className="absolute inset-y-0 left-0 flex w-[calc(100cqw-570px)] flex-col p-9 tablet:w-[calc(100cqw-318px)] tablet:p-7 landscape:static landscape:w-auto landscape:p-6">
-                <div className="flex items-start justify-between gap-6">
-                  <p aria-hidden className={cn(rise(isOpen, 'delay-[350ms]'), 'font-serif text-[8.5rem] font-normal leading-[0.75] tracking-[-0.02em] landscape:text-[5rem]')}>
+              <div className="absolute inset-y-0 left-0 flex w-[calc(100cqw-456px)] flex-col p-xxxbg tablet:w-[calc(100cqw-324px)] landscape:static landscape:w-auto">
+                <div className="flex min-h-[150px] items-start justify-between gap-6 landscape:min-h-0">
+                  <p aria-hidden className={cn(rise(isOpen, 'delay-[350ms]'), 'font-serif text-display font-normal')}>
                     {pad(i + 1)}
                   </p>
                   <img
@@ -93,26 +89,42 @@ export default function Process() {
                     loading="lazy"
                     decoding="async"
                     draggable={false}
-                    className={cn(rise(isOpen, 'delay-[420ms]'), 'cs-blend-darker -mr-1 -mt-1 aspect-square w-[min(38%,12.5rem)] object-contain object-[right_top] landscape:w-[min(38%,8rem)]')}
+                    className={cn(rise(isOpen, 'delay-[420ms]'), 'cs-blend-darker aspect-square w-[min(38%,9.375rem)] object-contain object-[right_top] landscape:w-[min(38%,8rem)]')}
                   />
                 </div>
-                <Heading.H2 as="h3" className={cn(rise(isOpen, 'delay-[500ms]'), 'mt-auto landscape:mt-8')}>
-                  <span className="sr-only">{pad(i + 1)} </span>
-                  {step.title} {step.subtitle}.
-                </Heading.H2>
-                <Paragraph.Small className={cn(rise(isOpen, 'delay-[580ms]'), 'mt-4 max-w-[36ch]')}>{step.body}</Paragraph.Small>
+                <div className="mt-auto flex max-w-[21.25rem] flex-col gap-sm pt-6 landscape:pt-8">
+                  <Heading.H3 className={rise(isOpen, 'delay-[500ms]')}>
+                    <span className="sr-only">{pad(i + 1)} </span>
+                    {step.title} {step.subtitle}.
+                  </Heading.H3>
+                  <Paragraph className={cn(rise(isOpen, 'delay-[580ms]'), 'text-ink')}>{step.body}</Paragraph>
+                </div>
               </div>
 
               {/* Closed: just the step's number, top left. */}
               <p
                 aria-hidden
                 className={cn(
-                  'pointer-events-none absolute left-6 top-5 font-serif text-[2.5rem] font-normal leading-none transition-opacity tablet:left-5 landscape:hidden',
+                  'pointer-events-none absolute left-xbg top-xbg font-serif text-h2 font-normal transition-opacity landscape:hidden',
                   isOpen ? 'opacity-0 duration-150' : 'opacity-100 delay-300 duration-500',
                 )}
               >
                 {pad(i + 1)}
               </p>
+
+              {/* Closed: the step's sketch, centred in the column. */}
+              <img
+                src={step.art}
+                alt=""
+                aria-hidden
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+                className={cn(
+                  'cs-blend-darker pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[calc(100%-3rem)] max-w-[5.75rem] -translate-x-1/2 -translate-y-1/2 object-contain transition-opacity tablet:w-[calc(100%-2.5rem)] landscape:hidden',
+                  isOpen ? 'opacity-0 duration-150' : 'opacity-100 delay-300 duration-500',
+                )}
+              />
 
               {/* The whole closed column opens its step. */}
               <button
@@ -122,7 +134,7 @@ export default function Process() {
                 aria-current={isOpen ? 'step' : undefined}
                 onClick={() => open(i)}
                 className={cn(
-                  'absolute inset-0 rounded-card outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ink landscape:hidden',
+                  'absolute inset-0 rounded-md outline-hidden focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-ink landscape:hidden',
                   isOpen ? 'cursor-default' : 'cursor-pointer',
                 )}
               />

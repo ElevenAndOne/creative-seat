@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { track, updateConsent } from '../utils/analytics'
-import { cn } from '../utils/cn'
+import { pillClass } from './pill'
 import { useAnimationsPaused } from '../hooks/useMotionPreference'
 
 /** Read inline by layouts/base.astro too, to restore consent before the Google tag configures. */
@@ -42,31 +42,43 @@ function subscribe(listener: () => void) {
   return () => listeners.delete(listener)
 }
 
-const PILL = 'h-11 rounded-full border border-ink px-[18px] text-[0.9375rem] font-medium leading-none transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink'
-
 /**
  * Cookie consent card, pinned bottom-left. Shows until the visitor accepts or
  * declines analytics cookies — the two get equal weight — and the choice feeds
  * Google Consent Mode. Any `[data-cookie-settings]` control (the footer link)
- * reopens it. Prerendered closed, so returning visitors never see it flash.
+ * reopens it, taking focus to its first button and handing it back to that
+ * control once the visitor chooses. Prerendered closed, so returning visitors
+ * never see it flash.
  */
 export default function CookieBanner() {
   const paused = useAnimationsPaused()
   const choice = useSyncExternalStore(subscribe, read, () => null)
-  const [reopened, setReopened] = useState(false)
+  // Counts reopenings, so each click on a settings control moves focus in again.
+  const [reopened, setReopened] = useState(0)
+  const trigger = useRef<HTMLElement | null>(null)
+  const first = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if ((e.target as Element | null)?.closest('[data-cookie-settings]')) setReopened(true)
+      const control = (e.target as Element | null)?.closest<HTMLElement>('[data-cookie-settings]')
+      if (!control) return
+      trigger.current = control
+      setReopened((n) => n + 1)
     }
     document.addEventListener('click', onClick)
     return () => document.removeEventListener('click', onClick)
   }, [])
 
-  const open = choice === 'unset' || reopened
+  useEffect(() => {
+    if (reopened) first.current?.focus()
+  }, [reopened])
+
+  const open = choice === 'unset' || reopened > 0
   const decide = (next: Choice) => {
     choose(next)
-    setReopened(false)
+    setReopened(0)
+    trigger.current?.focus()
+    trigger.current = null
   }
 
   return (
@@ -90,10 +102,11 @@ export default function CookieBanner() {
           </p>
           <div className="mt-5 flex gap-2.5 [&>button]:flex-1">
             <button
+              ref={first}
               type="button"
               id="cookie-accept"
               onClick={() => decide('granted')}
-              className={cn(PILL, 'bg-ink text-paper')}
+              className={pillClass('primary')}
             >
               Accept
             </button>
@@ -101,7 +114,7 @@ export default function CookieBanner() {
               type="button"
               id="cookie-decline"
               onClick={() => decide('denied')}
-              className={cn(PILL, 'text-ink hover:bg-chalk')}
+              className={pillClass('outline')}
             >
               Decline
             </button>

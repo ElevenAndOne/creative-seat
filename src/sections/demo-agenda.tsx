@@ -18,7 +18,7 @@ const QUOTE = testimonials.find((t) => t.name === 'Runei Kotze') ?? testimonials
 export default function DemoAgenda() {
   return (
     <Section id="agenda" pad="md">
-      <div className="border-t border-ink pt-xlg">
+      <div>
         <Heading.H1>
           <span className="block">What we’ll cover</span> <Em>on the call.</Em>
         </Heading.H1>

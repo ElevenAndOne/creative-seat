@@ -21,14 +21,14 @@
      kept from the original design. ---- */
   --color-volt: #bce42d;      /* primary accent — highlights, CTAs on dark, campaign bands */
   --color-soft-volt: #d7ef81; /* supporting accent — panels, tags */
-  --color-ink: #14121a;       /* our black — logo, text, dark backgrounds */
+  --color-ink: #181b1e;       /* our black (Figma neutral-950) — text, dark backgrounds */
   --color-paper: #f9f9f9;     /* our white — the default background */
   --color-forest: #212c26;    /* depth — the occasional reversed section */
   --color-chalk: #e6e6e6;     /* structure — dividers, fills, placeholders */
   /* Support tones the guide's own pages use: secondary copy (5.2:1 on Paper)
      and hairlines. */
-  --color-muted: #6a6972;
-  --color-line: #dedede;
+  --color-muted: #5b655f; /* Figma neutral-600 */
+  --color-line: #e6e6e6;  /* Figma border-subtle */
   /* Warning tone from the credit calculator's Figma design — only for a plan
      that's over its monthly credits. Nowhere else. */
   --color-flare: #f2691d;
@@ -37,67 +37,77 @@
   --color-white: initial;
   --color-black: initial;
 
-  /* ---- Fluid spacing scale (drives p-*, m-*, gap-*, w-*, …) ---- */
+  /* ---- Spacing scale (drives p-*, m-*, gap-*, w-*, …). The tokens marked
+     with a Figma name step per Figma Desktop/Tablet/Mobile mode (see the
+     media blocks after :root); the rest are code-only and stay fluid. ---- */
   --spacing-xxxsm: 0.125rem;
   --spacing-xxsm: 0.25rem;
   --spacing-xsm: 0.5rem;
   --spacing-sm: 0.75rem;
   --spacing-md: 1rem;
   --spacing-bg: clamp(1.125rem, 0.9575rem + 0.4717vi, 1.25rem);
-  --spacing-xbg: clamp(1.375rem, 1.2075rem + 0.4717vi, 1.5rem);
+  --spacing-xbg: 1.5rem;    /* Figma spacing/xl 24 / 24 / 20 */
   --spacing-xxbg: clamp(1.625rem, 1.4575rem + 0.4717vi, 1.75rem);
-  --spacing-xxxbg: clamp(1.75rem, 1.4151rem + 0.9434vi, 2rem);
+  --spacing-xxxbg: 2rem;    /* Figma spacing/2xl 32 / 28 / 24 */
   --spacing-lg: clamp(2.125rem, 1.6226rem + 1.4151vi, 2.5rem);
-  --spacing-xlg: clamp(2.5rem, 1.8302rem + 1.8868vi, 3rem);
-  --spacing-xxlg: clamp(3.5rem, 2.8302rem + 1.8868vi, 4rem);
+  --spacing-xlg: 3rem;      /* Figma spacing/3xl 48 / 40 / 32 */
+  --spacing-xxlg: 4rem;     /* Figma spacing/4xl 64 / 48 / 40 */
   --spacing-xxxlg: clamp(4.25rem, 3.2453rem + 2.8302vi, 5rem);
-  --spacing-hg: clamp(5rem, 3.6604rem + 3.7736vi, 6rem);
-  --spacing-xhg: clamp(6.5rem, 4.4906rem + 5.6604vi, 8rem);
+  --spacing-hg: 6rem;       /* Figma spacing/5xl 96 / 64 / 48 */
+  --spacing-xhg: 8rem;      /* Figma spacing/6xl 128 / 96 / 64 */
   --spacing-xxhg: clamp(8rem, 5.3208rem + 7.5472vi, 10rem);
   --spacing-xxxhg: clamp(9.25rem, 5.2311rem + 11.3208vi, 12.25rem);
 
-  /* ---- Type scale — the guide's px sizes at 1440px, easing down to 320px.
-     Display duet (Golos 700 + 400) and Headline 1 (Instrument Serif) run a
-     step under the guide's 72 and 56, at 64 and 44, to keep the page compact.
-     Headline 2 32/35 and Headline 3 24/29 (Golos 700), Body 16/26, Small 13/20,
-     Eyebrow 10px SemiBold with 8% tracking. ---- */
-  --text-display: clamp(2.75rem, 2.3929rem + 1.7857vw, 4rem);    /* 44 → 64 */
-  --text-display--line-height: 1;
-  --text-display--letter-spacing: -0.025em;
-  --text-h1: clamp(2.25rem, 2.1071rem + 0.7143vw, 2.75rem);     /* 36 → 44 */
-  --text-h1--line-height: 1.05;
-  --text-h1--letter-spacing: -0.01em;
-  --text-h2: clamp(1.625rem, 1.5179rem + 0.5357vw, 2rem);       /* 26 → 32 */
-  --text-h2--line-height: 1.1;
-  --text-h2--letter-spacing: -0.02em;
-  --text-h3: clamp(1.25rem, 1.1786rem + 0.3571vw, 1.5rem);      /* 20 → 24 */
-  --text-h3--line-height: 1.2;
-  --text-h3--letter-spacing: -0.015em;
-  --text-h4: 1.125rem;                                          /* 18 — small card titles */
-  --text-h4--line-height: 1.3;
-  --text-h4--letter-spacing: -0.01em;
+  /* ---- Type scale — the Figma website file's text styles, stepped per
+     Figma Desktop/Tablet/Mobile modes (see the media blocks below; these are
+     the Desktop values). Instrument Serif carries the display and heading
+     levels; Golos Text everything else. Tracking is Figma's fixed -1px. ----
+     display  Display/Large   60/64  hero, performance, FAQ, CTA titles
+     h1       Display/Small   48/56  section titles
+     h2       Heading/H1      36/44  smaller section titles (benefits)
+     h3       Heading/H3      24/32  card titles (Golos)
+     h4       Body/Large      18/28  small card titles (Golos) */
+  --text-display: 3.75rem;                    /* 60 / 48 / 36 */
+  --text-display--line-height: 4rem;          /* 64 / 56 / 40 */
+  --text-display--letter-spacing: -0.0625rem;
+  --text-h1: 3rem;                            /* 48 / 36 / 30 */
+  --text-h1--line-height: 3.5rem;             /* 56 / 44 / 36 */
+  --text-h1--letter-spacing: -0.0625rem;
+  --text-h2: 2.25rem;                         /* 36 / 30 / 30 */
+  --text-h2--line-height: 2.75rem;            /* 44 / 40 / 36 */
+  --text-h2--letter-spacing: -0.0625rem;
+  --text-h3: 1.5rem;                          /* 24 / 24 / 20 */
+  --text-h3--line-height: 2rem;               /* 32 / 32 / 28 */
+  --text-h3--letter-spacing: 0em;
+  --text-h4: 1.125rem;                        /* 18 / 18 / 16 */
+  --text-h4--line-height: 1.75rem;            /* 28 / 28 / 24 */
+  --text-h4--letter-spacing: 0em;
 
-  /* Paragraph ramp — lg/md are the guide's Body, sm is card copy, xs its Small. */
-  --text-p-lg: 1rem;                                            /* 16 */
-  --text-p-lg--line-height: 1.6;
-  --text-p-md: 1rem;                                            /* 16 */
-  --text-p-md--line-height: 1.6;
-  --text-p-sm: 0.9375rem; /* 15 */
-  --text-p-sm--line-height: 1.6;
-  --text-p-xs: 0.8125rem; /* 13 */
-  --text-p-xs--line-height: 1.54;
-  /* Small-caps eyebrow — the only all-caps text the brand allows. */
+  /* Body ramp — Body/Large 18/28, Body/Medium 16/24, Body/Small 14/20, Caption 12/16. */
+  --text-p-lg: 1.125rem;            /* 18 / 18 / 16 */
+  --text-p-lg--line-height: 1.75rem; /* 28 / 28 / 24 */
+  --text-p-md: 1rem;
+  --text-p-md--line-height: 1.5;
+  --text-p-sm: 0.875rem;
+  --text-p-sm--line-height: 1.4286;
+  --text-p-xs: 0.75rem;
+  --text-p-xs--line-height: 1.3333;
+  /* UI/Label, UI/Button, UI/Navigation, UI/FAQ Question — 14/20 (weight set where used). */
+  --text-ui: 0.875rem;
+  --text-ui--line-height: 1.4286;
+  /* Small-caps eyebrow — kept for the booking page; the home page has none. */
   --text-eyebrow: 0.625rem; /* 10 */
   --text-eyebrow--line-height: 1.3;
   --text-eyebrow--letter-spacing: 0.08em;
 
   /* ---- Radii ---- */
-  --radius-sm: 0.5rem;     /* 8px  — outlined logos */
-  --radius-md: 0.75rem;    /* 12px — images, icon tiles */
-  --radius-card: 1rem;     /* 16px — cards */
-  --radius-panel: 1.375rem; /* 22px — process panel */
-  --radius-planner: 1.75rem; /* 28px — credit calculator frame */
-  --radius-frame: 1.875rem; /* 30px — pitch card */
+  /* Figma radius scale: md 8 · lg 12 · xl 16 · 2xl 24 · full. */
+  --radius-sm: 0.5rem;     /* 8  — Figma md: image tiles, small cards */
+  --radius-md: 0.75rem;    /* 12 — Figma lg: images, cards */
+  --radius-card: 1rem;     /* 16 — Figma xl */
+  --radius-panel: 1.5rem;  /* Figma radius/2xl 24 / 20 / 16: large panels */
+  --radius-planner: 1.5rem;
+  --radius-frame: 1.5rem;
   --radius-round: 62.5rem; /* full pill */
 
   /* ---- Easing — the portfolio's long, soft deceleration ---- */
@@ -143,24 +153,59 @@
 }
 
 /* Layout tokens — consumed by <Container> / <Section>. Kept out of @theme so
-   they don't collide with Tailwind's container/max-w namespaces. The design is
-   a 1520px frame with 40px gutters, so content runs 1440px wide; the `wide`
-   width (1520px) is for panels whose inner padding lines their copy back up
-   with that column. */
+   they don't collide with Tailwind's container/max-w namespaces.
+   Figma: a 1200px container with page/gutter 40 / 24 / 16 (Desktop/Tablet/
+   Mobile), so content runs 1120px wide; sections pad section/p-bg 96 / 64 / 48. */
 :root {
-  --container-margin: clamp(1.25rem, 0.8929rem + 1.7857vw, 2.5rem); /* 20 → 40 */
-  --container-max-width: 90rem; /* 1440px */
-  --container-wide-width: 95rem; /* 1520px */
+  --container-margin: 2.5rem; /* Figma page/gutter 40 / 24 / 16 */
+  --container-max-width: 70rem; /* 1120px content column */
+  --container-wide-width: 70rem; /* panels sit in the same column */
   --container-mid-width: 64rem; /* 1024px */
   --paragraph-max-width: 48rem;
 
   --container-width: min(100% - var(--container-margin) * 2, var(--container-max-width));
   --container-wide: min(100% - var(--container-margin) * 2, var(--container-wide-width));
 
-  /* Sized so a section, padding included, fits a 1440 × 800 viewport. */
-  --section-pad-sm: 2.5rem;                                    /* 40 */
-  --section-pad-md: 4rem;                                      /* 64 */
-  --section-pad-bg: clamp(5rem, 4.6429rem + 1.7857vw, 6rem);   /* 80 → 96 */
+  /* Figma section padding: p-bg 96 / 64 / 48 (the default), p-md 64 / 48 / 32,
+     p-sm 32 / 24 / 16. */
+  --section-pad: 6rem;
+  --section-pad-bg: var(--section-pad);
+  --section-pad-md: 4rem;
+  --section-pad-sm: 2rem;
+}
+
+/* Figma Tablet mode (834 frame) — applies at ≤ 992px, so also 481–768px.
+   Stepped, not fluid: the Figma modes are discrete. Unlayered, so these beat
+   Tailwind's `@layer theme` :root. */
+@media (max-width: 62rem) {
+  :root {
+    --text-display: 3rem;    --text-display--line-height: 3.5rem;   /* 48/56 */
+    --text-h1: 2.25rem;      --text-h1--line-height: 2.75rem;       /* 36/44 */
+    --text-h2: 1.875rem;     --text-h2--line-height: 2.5rem;        /* 30/40 */
+    /* h3 24/32, h4 & p-lg 18/28 — unchanged at Tablet */
+    --container-margin: 1.5rem;                                     /* page/gutter 24 */
+    --section-pad: 4rem; --section-pad-md: 3rem; --section-pad-sm: 1.5rem;
+    --radius-panel: 1.25rem;                                        /* radius/2xl 20 */
+    --spacing-xxxbg: 1.75rem; --spacing-xlg: 2.5rem; --spacing-xxlg: 3rem;
+    --spacing-hg: 4rem; --spacing-xhg: 6rem;                        /* xbg stays 1.5rem */
+  }
+}
+
+/* Figma Mobile mode (390 frame) — applies at ≤ 480px. */
+@media (max-width: 30rem) {
+  :root {
+    --text-display: 2.25rem; --text-display--line-height: 2.5rem;   /* 36/40 */
+    --text-h1: 1.875rem;     --text-h1--line-height: 2.25rem;       /* 30/36 */
+    --text-h2: 1.875rem;     --text-h2--line-height: 2.25rem;       /* 30/36 */
+    --text-h3: 1.25rem;      --text-h3--line-height: 1.75rem;       /* 20/28 */
+    --text-h4: 1rem;         --text-h4--line-height: 1.5rem;        /* Body/Large/Bold 16/24 */
+    --text-p-lg: 1rem;       --text-p-lg--line-height: 1.5rem;      /* Body/Large 16/24 */
+    --container-margin: 1rem;                                       /* page/gutter 16 */
+    --section-pad: 3rem; --section-pad-md: 2rem; --section-pad-sm: 1rem;
+    --radius-panel: 1rem;                                           /* radius/2xl 16 */
+    --spacing-xbg: 1.25rem; --spacing-xxxbg: 1.5rem; --spacing-xlg: 2rem;
+    --spacing-xxlg: 2.5rem; --spacing-hg: 3rem; --spacing-xhg: 4rem;
+  }
 }
 
 /* Dark radial backdrops — a Forest glow bleeding out of one corner into Ink,
@@ -188,10 +233,21 @@ body {
   @apply bg-paper font-sans font-normal text-ink antialiased;
 }
 
-/* A consistent keyboard indicator also covers plain navigation links. */
-:where(a, button, input, [tabindex]):focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 4px;
+/* A consistent keyboard indicator also covers plain navigation links. In the
+   base layer, so a component's `focus-visible:outline-*` colour (e.g. the
+   pills' ink/paper rings) wins over this currentColor default — unlayered, it
+   beat every utility and left the hero button's ring invisible on the dark. */
+@layer base {
+  :where(a, button, input, [tabindex]):focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
+
+  /* Figma Theme selection/* — Soft Volt + Ink reads on every surface. */
+  ::selection {
+    background-color: var(--color-soft-volt);
+    color: var(--color-ink);
+  }
 }
 
 .skip-link {
@@ -221,16 +277,6 @@ html[data-animations-paused='true'] *::before,
 html[data-animations-paused='true'] *::after {
   animation-play-state: paused !important;
   transition-duration: 0.01ms !important;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
 }
 
 /* "Scroll to explore" hint in the project viewer — a Volt dash sweeps along a
@@ -374,6 +420,22 @@ html[data-animations-paused='true'] *::after {
   width: 15px;
   height: 1.5rem;
   border: 0;
+}
+
+/* On touch the input reaches 8px past the 24px drawn track on each side: a
+   40px hit area, centred on the track, which itself doesn't change. */
+@media (pointer: coarse) {
+  .cs-quantity {
+    height: 2.5rem;
+  }
+
+  .cs-quantity::-webkit-slider-thumb {
+    height: 2.5rem;
+  }
+
+  .cs-quantity::-moz-range-thumb {
+    height: 2.5rem;
+  }
 }
 
 [data-grid-component] {

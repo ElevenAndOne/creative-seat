@@ -1,29 +1,28 @@
 import { Section } from '../components/base/section'
 import Em from '../components/em'
-import Eyebrow from '../components/eyebrow'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
 
 export default function ModernMarketing() {
   return (
-    // The panel spans the column plus its gutters, so its 40px padding lines the
-    // copy back up with every other section. Soft Volt is the layout's accent;
-    // the photo fills the other half to the panel's edges, cut by its corners.
-    <Section id="pitch" pad="sm" width="wide">
-      <div className="grid min-h-[clamp(24rem,calc(100svh-12rem),30rem)] grid-cols-2 overflow-hidden rounded-frame bg-soft-volt text-forest landscape:min-h-0 landscape:grid-cols-1">
-        <div className="self-center p-10 landscape:p-xbg">
-          <Eyebrow className="text-forest">Advertising has changed</Eyebrow>
-          <Heading.H1 className="mt-4 max-w-[16ch]">
+    // Soft Volt panel per Figma: copy top-aligned beside a photo that fills the
+    // other half to the panel's edges. Padding, stack gap and radius step with
+    // Figma Desktop/Tablet/Mobile (48/40/32, 24/24/20, 24/20/16). The panel
+    // stacks at <=768, where the photo row is Figma's 320 image minimum.
+    <Section id="pitch">
+      <div className="grid min-h-[30rem] grid-cols-2 gap-x-8 overflow-hidden rounded-panel bg-soft-volt text-ink landscape:min-h-0 landscape:grid-cols-1">
+        <div className="flex flex-col gap-xbg self-start p-xlg">
+          <Heading.H1>
             Designed for <Em>modern marketing teams.</Em>
           </Heading.H1>
-          <Paragraph className="mt-6 max-w-[34rem]">
+          <Paragraph>
             Teams are expected to deliver more content across more channels than ever before.
           </Paragraph>
-          <Paragraph className="mt-5 max-w-[34rem]">
+          <Paragraph>
             Freelancers create complexity and brand inconsistency. Traditional agencies are costly and lead to production drag. Creative Seat gives your team a faster, more effective way to produce high-end content within one simple subscription.
           </Paragraph>
         </div>
-        <div className="relative landscape:aspect-[4/3]">
+        <div className="relative landscape:h-80">
           <img
             src="/images/sections/pitch-marketer.avif"
             alt="Marketer working on a laptop in an armchair, surrounded by floating social posts and ad layouts"

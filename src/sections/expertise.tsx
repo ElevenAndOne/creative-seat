@@ -4,19 +4,16 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useRef } from 'react'
 import { useAnimationsPaused } from '../hooks/useMotionPreference'
 import { Section } from '../components/base/section'
-import Em from '../components/em'
 import Heading from '../components/heading'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 const CHAIRS = '/images/expertise/chairs.webp'
 
-/** Figma's pill type size; every other measure below is in ems of it. */
-const FIGMA_PX = 24.332
-
 /**
- * One cell of the chair sprite: the box size in Figma px, then the sheet's
- * size and offset inside it in % of that box, exactly as Figma crops it.
+ * One cell of the chair sprite: the chair's own crop box in Figma px (only its
+ * proportions matter; each chair is fitted, centred, into an 80×80 slot), then
+ * the sheet's size and offset inside that crop in %, exactly as Figma crops it.
  */
 type Chair = { w: number, h: number, sheetW: number, sheetH: number, left: number, top: number }
 type Item = string | Chair
@@ -25,9 +22,10 @@ const chair = (w: number, h: number, sheetW: number, sheetH: number, left: numbe
   ({ w, h, sheetW, sheetH, left, top })
 
 /**
- * The three rows as drawn in Figma: pills with a chair between each pair. A
- * row loops back on itself, so each one holds an even number of items and
- * strictly alternates; otherwise two pills or two chairs meet at the seam.
+ * The three rows in Figma's order: every row runs pill first, each chair after
+ * its pill (seat/18 down to seat/01). A row loops back on itself, so each one
+ * holds an even number of items and strictly alternates; otherwise two pills
+ * or two chairs meet at the seam.
  */
 const ROWS: Item[][] = [
   [
@@ -36,7 +34,7 @@ const ROWS: Item[][] = [
     'Social assets', chair(88.558, 86.611, 494.51, 505.62, -102.33, -251.7),
     'Video production', chair(74, 82, 511.36, 459.18, -5.68, -120.41),
     'Photography', chair(75.205, 85.233, 500, 441.18, -300, -12.75),
-    'Apps + software', chair(80.219, 86.068, 468.75, 436.89, -191.67, -308.74),
+    'Apps + software', chair(80, 81.6, 454.55, 445.54, -175.76, -11.88),
   ],
   [
     'Email design', chair(76.877, 76.877, 489.13, 489.13, -389.13, -21.74),
@@ -44,26 +42,37 @@ const ROWS: Item[][] = [
     'Motion graphics', chair(69, 83, 548.78, 454.55, -114.63, -11.11),
     'Presentations', chair(73, 89, 511.36, 424.53, 0, -9.43),
     'Web + UI design', chair(82.726, 82.726, 454.55, 454.55, -175.76, -121.21),
-    'Illustration', chair(75.205, 83.562, 500, 450, -300, -219),
+    'Illustration', chair(59.2, 79.2, 576.92, 432.69, -358.97, -306.73),
   ],
   [
-    chair(75.205, 82.726, 500, 454.55, -300, -121.21), 'Video production',
-    chair(76.877, 82.726, 489.13, 454.55, -389.13, -220.2), 'Apps + software',
-    chair(75.205, 83.562, 500, 450, -300, -219), 'Brand development',
-    chair(80.219, 86.068, 468.75, 436.89, -191.67, -308.74), 'Email design',
-    chair(76.877, 88.575, 489.13, 424.53, -389.13, -105.66), 'Copywriting',
-    chair(76.877, 78.548, 489.13, 478.72, -386.96, -342.55), 'Social assets',
+    'Video production', chair(75.205, 82.726, 500, 454.55, -300, -121.21),
+    'Apps + software', chair(76.877, 82.726, 489.13, 454.55, -389.13, -220.2),
+    'Brand development', chair(75.205, 83.562, 500, 450, -300, -219),
+    'Email design', chair(80.219, 86.068, 468.75, 436.89, -191.67, -308.74),
+    'Copywriting', chair(76.877, 88.575, 489.13, 424.53, -389.13, -105.66),
+    'Social assets', chair(76.877, 78.548, 489.13, 478.72, -386.96, -342.55),
   ],
 ]
 
-/** Drift direction per row (−1 leftward), and where in its loop each row starts. */
+/** Drift direction per row (−1 leftward). */
 const DRIFT = [-1, 1, -1]
-const START = [0.12, 0.45, 0.3]
+/**
+ * Where each row rests (server render, paused, and the loop's first frame): the
+ * left edge of its first item, in px from the viewport's left edge, as Figma
+ * places it at 1440 (container 120 + gutter 40 + the row's own x).
+ */
+const START_PX = [32, -68, -247.5]
 /** Seconds for one full pass of each row; the outer two differ so they don't drift in step. */
 const LOOP_S = [60, 60, 72]
 const SERVICE_LABELS = [...new Set(ROWS.flat().filter((item) => typeof item === 'string'))]
 
-const em = (px: number) => `${px / FIGMA_PX}em`
+/**
+ * The resting offset as a transform that needs no measuring. A positive offset
+ * is shifted back by one copy (50% of the two-copy track), so copy 1 fills the
+ * gap at the left edge.
+ */
+const startTransform = (r: number) =>
+  START_PX[r] > 0 ? `translateX(calc(${START_PX[r]}px - 50%))` : `translateX(${START_PX[r]}px)`
 
 /**
  * "Expertise, on demand." over three rows of services drifting in alternate
@@ -93,9 +102,13 @@ export default function Expertise() {
     const scroll = { boost: 1 }
     const rows = gsap.utils.toArray<HTMLElement>('[data-track]').map((track, i) => {
       // A track holds two identical copies, so 50% is exactly one copy along.
+      // x: 0 drops the server-rendered starting offset GSAP would otherwise read in as pixels.
       const [from, to] = DRIFT[i] < 0 ? [0, -50] : [-50, 0]
-      const tween = gsap.fromTo(track, { xPercent: from }, { xPercent: to, duration: LOOP_S[i], ease: 'none', repeat: -1 })
-      tween.progress(START[i])
+      const tween = gsap.fromTo(track, { x: 0, xPercent: from }, { xPercent: to, duration: LOOP_S[i], ease: 'none', repeat: -1 })
+      // Start on the same frame the server rendered: START_PX folded into one copy.
+      const copy = track.offsetWidth / 2
+      const s = START_PX[i] > 0 ? START_PX[i] - copy : START_PX[i]
+      tween.progress(DRIFT[i] < 0 ? -s / copy : (s + copy) / copy)
 
       const hover = { speed: 1 }
       const row = track.parentElement!
@@ -132,41 +145,41 @@ export default function Expertise() {
   }, { scope: root, dependencies: [paused], revertOnUpdate: true })
 
   return (
-    <Section id="services" pad="bg" bleed className="overflow-hidden bg-ink text-paper">
+    <Section id="services" bleed className="overflow-hidden bg-ink text-paper">
       <div ref={root}>
-        <Heading.H1 data-reveal className="px-[var(--container-margin)] text-center text-[clamp(2.75rem,2.487rem+1.127vw,3.75rem)] leading-[1.05] tracking-[-0.01em]">
-          Expertise, <Em>on demand.</Em>
+        <Heading.H1 data-reveal className="px-[var(--container-margin)] text-center">
+          Expertise, on demand.
         </Heading.H1>
 
-        {paused ? (
-          <ul className="mx-auto mt-xlg flex max-w-[72rem] flex-wrap justify-center gap-3 px-[var(--container-margin)] text-p-md font-medium">
-            {SERVICE_LABELS.map((label) => <li key={label} className="rounded-full bg-soft-volt px-5 py-3 text-ink">{label}</li>)}
-          </ul>
-        ) : (
-          <>
-            <ul className="sr-only">
-              {SERVICE_LABELS.map((label) => <li key={label}>{label}</li>)}
-            </ul>
+        {/* The full list for assistive tech; the rows below are decoration. */}
+        <ul className="sr-only">
+          {SERVICE_LABELS.map((label) => <li key={label}>{label}</li>)}
+        </ul>
 
-            <div
-              data-reveal
-              aria-hidden="true"
-              className="mt-[clamp(2rem,1.25rem+2vw,3.5rem)] flex flex-col text-[clamp(0.9375rem,0.796rem+0.604vw,1.52rem)] font-medium leading-none"
-            >
-              {ROWS.map((items, r) => (
-                <div key={r} className="flex h-[3.45em] items-center">
-                  <div data-track className="flex w-max shrink-0 will-change-transform">
-                    {[0, 1].map((copy) => (
-                      <div key={copy} className="flex shrink-0 items-center">
-                        {items.map((item, i) => <Cell key={i} item={item} />)}
-                      </div>
-                    ))}
+        {/* The same three rows render on the server, paused and playing, so the
+            section's height never changes (and in-page anchors land true):
+            paused, each row simply stands still at its starting offset. */}
+        <div
+          data-reveal
+          aria-hidden="true"
+          className="mt-xlg flex flex-col gap-xxsm"
+        >
+          {ROWS.map((items, r) => (
+            <div key={r} className="flex h-20 items-center">
+              <div
+                data-track
+                className="flex w-max shrink-0 will-change-transform"
+                style={{ transform: startTransform(r) }}
+              >
+                {[0, 1].map((copy) => (
+                  <div key={copy} className="flex shrink-0 items-center">
+                    {items.map((item, i) => <Cell key={i} item={item} />)}
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </>
-        )}
+          ))}
+        </div>
       </div>
     </Section>
   )
@@ -175,22 +188,26 @@ export default function Expertise() {
 function Cell({ item }: { item: Item }) {
   if (typeof item === 'string') {
     return (
-      <span className="mr-[1.67em] shrink-0 whitespace-nowrap rounded-full bg-soft-volt px-[1.2em] py-[0.667em] text-ink">
+      <span className="mr-md shrink-0 whitespace-nowrap rounded-full bg-soft-volt px-xbg py-xsm text-p-md text-ink">
         {item}
       </span>
     )
   }
+  // Fit the chair's crop box inside the square slot, keeping its proportions.
+  const side = Math.max(item.w, item.h)
   return (
-    <span className="relative mr-[1.67em] shrink-0 overflow-hidden" style={{ width: em(item.w), height: em(item.h) }}>
-      <img
-        src={CHAIRS}
-        alt=""
-        loading="lazy"
-        decoding="async"
-        draggable={false}
-        className="absolute max-w-none select-none"
-        style={{ width: `${item.sheetW}%`, height: `${item.sheetH}%`, left: `${item.left}%`, top: `${item.top}%` }}
-      />
+    <span className="mr-md flex size-20 shrink-0 items-center justify-center">
+      <span className="relative overflow-hidden" style={{ width: `${(item.w / side) * 100}%`, height: `${(item.h / side) * 100}%` }}>
+        <img
+          src={CHAIRS}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          className="absolute max-w-none select-none"
+          style={{ width: `${item.sheetW}%`, height: `${item.sheetH}%`, left: `${item.left}%`, top: `${item.top}%` }}
+        />
+      </span>
     </span>
   )
 }

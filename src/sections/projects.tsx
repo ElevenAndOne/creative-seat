@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Section } from '../components/base/section'
-import Em from '../components/em'
-import Eyebrow from '../components/eyebrow'
 import Heading from '../components/heading'
+import Paragraph from '../components/paragraph'
 import ProjectMedia from '../components/project-media'
 import ProjectViewer, { Arrow } from '../components/project-viewer'
 import { projectSlug, showcasedProjects } from '../content'
@@ -87,15 +86,10 @@ export default function WorkShowcase() {
   }, [])
 
   return (
-    <Section id="work" pad="md" padTop="sm">
-      <div className="border-t border-ink pt-8">
-        <Eyebrow>Take a look at our work</Eyebrow>
-        <Heading.H1 className="mt-4">
-          Trusted by market leaders <Em>to deliver their vision.</Em>
-        </Heading.H1>
-      </div>
+    <Section id="work" className="bg-paper">
+      <Heading.H1>Trusted by market leaders to deliver their vision.</Heading.H1>
 
-      <div className="mt-8 grid grid-cols-3 gap-x-[30px] gap-y-6 tablet:grid-cols-2 portrait:grid-cols-1">
+      <div className="mt-xlg grid grid-cols-3 gap-8 tablet:grid-cols-2 tablet:gap-6 portrait:grid-cols-1 portrait:gap-4">
         {showcasedProjects.map((project, i) => (
           <button
             key={project.title}
@@ -104,9 +98,9 @@ export default function WorkShowcase() {
             type="button"
             onClick={() => open(i, true)}
             aria-label={`View ${project.title} project`}
-            className="group block w-full text-left outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+            className="group block w-full text-left outline-hidden focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-4 focus-visible:outline-ink"
           >
-            <div data-media className="relative isolate h-[clamp(11rem,calc((100svh-25rem)/2),15.25rem)] overflow-hidden tablet:aspect-[340/230] tablet:h-auto rounded-md bg-chalk">
+            <div data-media className="relative isolate aspect-[352/204] overflow-hidden rounded-sm bg-chalk">
               <ProjectMedia
                 src={project.cover}
                 poster={project.poster}
@@ -119,8 +113,8 @@ export default function WorkShowcase() {
                 <span className="transition-transform duration-[350ms] ease-glide group-hover:translate-x-[3px]"><Arrow /></span>
               </span>
             </div>
-            <Heading.H4 as="h3" className="mt-3">{project.title}</Heading.H4>
-            <p className="mt-1.5 text-p-xs text-muted">{project.tags.join(', ')}</p>
+            <Heading.H4 as="h3" className="mt-2">{project.title}</Heading.H4>
+            <Paragraph.Small className="mt-2 text-muted">{project.tags.join(', ')}</Paragraph.Small>
           </button>
         ))}
       </div>

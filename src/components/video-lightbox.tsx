@@ -8,8 +8,8 @@ import VideoPlayer from './video-player'
 
 /** The portfolio's soft deceleration — same curve as the `ease-glide` token. */
 const EASE = [0.22, 0.8, 0.18, 1] as const
-/** The preview's corner (`rounded-card`) and the player's, in px. */
-const CARD_RADIUS = 16
+/** The preview's corner (`rounded-md`, Figma lg 12) and the player's, in px. */
+const CARD_RADIUS = 12
 const PLAYER_RADIUS = 6
 /** Morph out, morph back, and the backdrop's fade — seconds. */
 const OPEN_S = 0.62
@@ -27,7 +27,7 @@ type VideoLightboxProps = {
   title: string
   /** The trigger's visible call to action. */
   cta?: string
-  /** Classes for the trigger — it sizes itself to them (the preview fills it 16:9). */
+  /** Classes for the trigger — it sizes itself to them (16:9 unless an `aspect-*` class overrides; the preview covers it). */
   className?: string
   /** `id` + `data-track-location` for the GTM click tracking in layouts/base.astro. */
   id?: string
@@ -45,9 +45,10 @@ type Morph = { x: number; y: number; scale: number }
  * only while on screen, and pauses while the lightbox is open so the two aren't
  * buffering against each other.
  *
- * Both boxes are 16:9, so open and close are a plain translate and a uniform
- * scale between them — a true morph, with nothing stretched. When the preview
- * has scrolled away the player fades instead.
+ * Open and close are a plain translate and a uniform scale between the two
+ * boxes, with the player fitted inside the preview: the same aspect gives an
+ * exact morph, a different one a fitted, centred one — nothing is ever
+ * stretched. When the preview has scrolled away the player fades instead.
  */
 export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'Watch the showreel', className, id, trackLocation }: VideoLightboxProps) {
   const [open, setOpen] = useState(false)
@@ -73,7 +74,7 @@ export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'W
     const { clientWidth: vw, clientHeight: vh } = document.documentElement
     // Scrolled out of sight: there's nothing on screen to grow out of.
     if (box.bottom <= 0 || box.top >= vh) return null
-    return { x: box.left + box.width / 2 - vw / 2, y: box.top + box.height / 2 - vh / 2, scale: box.width / popup.offsetWidth }
+    return { x: box.left + box.width / 2 - vw / 2, y: box.top + box.height / 2 - vh / 2, scale: Math.min(box.width / popup.offsetWidth, box.height / popup.offsetHeight) }
   }
 
   // Grow the player out of the preview, the moment the portal hands it over —
@@ -115,7 +116,7 @@ export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'W
         data-track="play_showreel"
         data-track-location={trackLocation}
         className={cn(
-          'group relative block w-full cursor-pointer overflow-hidden rounded-card bg-ink outline-none focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-paper',
+          'group relative block aspect-video w-full cursor-pointer overflow-hidden rounded-md bg-ink outline-hidden focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-paper',
           className,
         )}
       >
@@ -124,14 +125,15 @@ export default function VideoLightbox({ src, previewSrc, poster, title, cta = 'W
           src={previewSrc ?? src}
           poster={poster}
           aria-hidden
-          className="block aspect-video w-full object-cover transition-transform duration-[900ms] ease-glide group-hover:scale-[1.03]"
+          className="absolute inset-0 block size-full object-cover transition-transform duration-[900ms] ease-glide group-hover:scale-[1.03]"
         />
         <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink/70 from-0% via-ink/10 via-45% to-transparent" />
         <span className="absolute inset-x-0 bottom-0 flex items-center gap-4 p-xbg text-left text-paper">
           <span aria-hidden className="grid size-14 shrink-0 place-items-center rounded-full bg-volt text-ink transition-transform duration-[350ms] ease-glide group-hover:scale-105 portrait:size-12">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M8 5.2v13.6a.6.6 0 0 0 .92.5l10.7-6.8a.6.6 0 0 0 0-1l-10.7-6.8a.6.6 0 0 0-.92.5Z" /></svg>
           </span>
-          <span className="text-p-sm font-semibold leading-tight">{cta}</span>
+          {/* Own ink chip so the label holds AA contrast on pale frames, whatever the scrim leaves. */}
+          <span className="rounded-full bg-ink/75 px-3 py-1.5 text-p-sm font-semibold leading-tight">{cta}</span>
         </span>
       </Dialog.Trigger>
 

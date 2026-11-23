@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'motion/react'
 import { useEffect, useRef } from 'react'
-import LinkButton, { PillArrow } from '../link-button'
+import LinkButton from '../link-button'
 import Paragraph from '../paragraph'
 import { pillClass } from '../pill'
 import { contact } from '../../content'
@@ -31,7 +31,6 @@ export function CalendarError({ code, onRetry }: { code: BookingErrorCode; onRet
           </Paragraph.Small>
           <button type="button" onClick={onRetry} className={pillClass('outline')}>
             <span>Try again</span>
-            <PillArrow />
           </button>
         </div>
       )}

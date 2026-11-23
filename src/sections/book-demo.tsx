@@ -1,6 +1,5 @@
 import { useReducedMotion } from 'motion/react'
 import { useEffect, useRef } from 'react'
-import { PillArrow } from '../components/link-button'
 import { TextField } from '../components/booking/fields'
 import { FIELDS } from '../components/booking/model'
 import { DatePicker, TimePicker } from '../components/booking/pickers'
@@ -84,7 +83,6 @@ export default function BookDemo() {
 
                   <button type="submit" className={cn(pillClass('primary', true), 'mt-8 disabled:cursor-not-allowed disabled:opacity-70')} disabled={sending || !ready} aria-busy={sending} aria-describedby="book-form-guidance">
                     <span>{sending ? 'Booking…' : calendar.status === 'loading' ? 'Loading times…' : !ready ? 'No times available' : 'Book my demo'}</span>
-                    <PillArrow />
                   </button>
                 </fieldset>
 
