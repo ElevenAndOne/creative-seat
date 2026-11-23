@@ -20,7 +20,7 @@ export {
   currencies,
   demoAgenda,
   faqItems,
-  heroCards,
+  heroTiles,
   pricingPlans,
   processSteps,
   services,
