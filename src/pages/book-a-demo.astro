@@ -12,10 +12,10 @@ const structuredData = demoStructuredData(Astro.site!, new URL(Astro.url.pathnam
 ---
 
 <BaseLayout title={title} description={description}>
-  <script slot="head" type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   <!-- The header's "Get in touch" stays on this page: it jumps to the booking card. -->
   <SiteHeader client:load cta="#book" />
-  <main>
+  <main id="main-content" tabindex="-1">
     <!-- Loads straight away: it's the first screen, and it fetches availability as soon as it's up. -->
     <BookDemo client:load />
     <DemoAgenda />

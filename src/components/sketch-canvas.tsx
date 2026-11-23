@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useAnimationsPaused } from '../hooks/useMotionPreference'
 import { cn } from '../utils/cn'
 
 /**
@@ -188,12 +189,21 @@ interface SketchCanvasProps {
  */
 export default function SketchCanvas({ src, paper, ink, focusX = 0.6, className }: SketchCanvasProps) {
   const ref = useRef<HTMLCanvasElement>(null)
+  const paused = useAnimationsPaused()
+  const motionPaused = useRef(true)
+  const syncFrame = useRef<(() => void) | null>(null)
+
+  useEffect(() => {
+    motionPaused.current = paused
+    syncFrame.current?.()
+  }, [paused])
 
   useEffect(() => {
     const canvas = ref.current
     const gl = canvas?.getContext('webgl', { antialias: false, premultipliedAlpha: false })
     if (!canvas || !gl) return
 
+    let disposed = false
     let program: WebGLProgram
     try {
       program = gl.createProgram()!
@@ -239,6 +249,7 @@ export default function SketchCanvas({ src, paper, ink, focusX = 0.6, className 
       canvas.height = Math.round(h * dpr)
       gl.viewport(0, 0, canvas.width, canvas.height)
       dirty = true
+      requestDraw()
     }
 
     /**
@@ -262,7 +273,7 @@ export default function SketchCanvas({ src, paper, ink, focusX = 0.6, className 
     }
 
     const draw = (seed: number) => {
-      if (!image) return
+      if (disposed || !image) return
       gl.uniform2f(uRes, canvas.width, canvas.height)
       gl.uniform4fv(uRect, rect())
       gl.uniform1f(uSeed, seed)
@@ -273,15 +284,30 @@ export default function SketchCanvas({ src, paper, ink, focusX = 0.6, className 
     }
 
     const tick = (now: number) => {
-      frame = requestAnimationFrame(tick)
-      if (!visible) return
+      frame = 0
+      if (disposed || !visible || motionPaused.current || document.hidden) return
       const boil = Math.floor((now / 1000) * BOIL_FPS) % BOIL_DRAWINGS
       if (boil !== lastBoil || dirty) {
         lastBoil = boil
         dirty = false
         draw(boil)
       }
+      frame = requestAnimationFrame(tick)
     }
+
+    const requestDraw = () => {
+      if (disposed || !visible || document.hidden) return
+      if (motionPaused.current) draw(0)
+      else if (!frame) frame = requestAnimationFrame(tick)
+    }
+    const sync = () => {
+      cancelAnimationFrame(frame)
+      frame = 0
+      dirty = true
+      requestDraw()
+    }
+    syncFrame.current = sync
+    document.addEventListener('visibilitychange', sync)
 
     const img = new Image()
     img.decoding = 'async'
@@ -295,6 +321,7 @@ export default function SketchCanvas({ src, paper, ink, focusX = 0.6, className 
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source)
     }
     img.onload = () => {
+      if (disposed) return
       upload(0, img)
       // The soft copy — a sixth the size, so linear filtering blurs it for
       // free. It stands in for the article's normal buffer.
@@ -310,21 +337,24 @@ export default function SketchCanvas({ src, paper, ink, focusX = 0.6, className 
       gl.uniform2f(u('uImageSize'), img.naturalWidth, img.naturalHeight)
       image = img
       dirty = true
+      requestDraw()
     }
     img.src = src
 
     const onMove = (e: PointerEvent) => {
-      if (e.pointerType !== 'mouse') return
+      if (motionPaused.current || e.pointerType !== 'mouse') return
       const box = canvas.getBoundingClientRect()
       const x = e.clientX - box.left, y = e.clientY - box.top
       mouse = x >= 0 && y >= 0 && x <= box.width && y <= box.height ? [x * dpr, y * dpr] : [-1, -1]
       dirty = true
+      requestDraw()
     }
     // The canvas sits behind the copy, so listen on its section.
     const host = canvas.parentElement ?? canvas
     const onLeave = () => {
       mouse = [-1, -1]
       dirty = true
+      requestDraw()
     }
     host.addEventListener('pointermove', onMove)
     host.addEventListener('pointerleave', onLeave)
@@ -333,15 +363,19 @@ export default function SketchCanvas({ src, paper, ink, focusX = 0.6, className 
     resize.observe(canvas)
     const seen = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting
-      if (visible) dirty = true
+      sync()
     })
     seen.observe(canvas)
 
     layout()
-    frame = requestAnimationFrame(tick)
+    requestDraw()
 
     return () => {
+      disposed = true
+      img.onload = null
       cancelAnimationFrame(frame)
+      syncFrame.current = null
+      document.removeEventListener('visibilitychange', sync)
       resize.disconnect()
       seen.disconnect()
       host.removeEventListener('pointermove', onMove)

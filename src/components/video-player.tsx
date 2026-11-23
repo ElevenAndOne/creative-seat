@@ -30,9 +30,12 @@ export default function VideoPlayer({ src, poster, label, autoPlay = false, clas
   const videoRef = useRef<HTMLVideoElement>(null)
   const rootRef = useRef<HTMLDivElement>(null)
   const idleTimer = useRef(0)
-  const [playing, setPlaying] = useState(autoPlay)
+  const playRequest = useRef(0)
+  const playBlocked = useRef(false)
+  const [playing, setPlaying] = useState(false)
   /** `playing` for the media listeners and the idle timer, which both outlive a render. */
-  const playingRef = useRef(autoPlay)
+  const playingRef = useRef(false)
+  const [status, setStatus] = useState<'loading' | 'ready' | 'waiting' | 'blocked' | 'error'>('loading')
   const [muted, setMuted] = useState(false)
   const [volume, setVolume] = useState(1)
   const [time, setTime] = useState(0)
@@ -67,11 +70,16 @@ export default function VideoPlayer({ src, poster, label, autoPlay = false, clas
     const el = videoRef.current
     if (!el) return
     const onTime = () => setTime(el.currentTime)
-    const onMeta = () => setDuration(el.duration)
+    const onMeta = () => setDuration(Number.isFinite(el.duration) ? el.duration : 0)
     // The chrome follows playback: it can hide once the film is running, and
     // stays put the moment it stops.
     const onPlay = () => { playingRef.current = true; setPlaying(true); arm() }
+    const onPlaying = () => { playBlocked.current = false; setStatus('ready'); onPlay() }
     const onPause = () => { playingRef.current = false; setPlaying(false); show() }
+    const onLoad = () => { onPause(); setStatus(playBlocked.current ? 'blocked' : 'loading'); setTime(0); setDuration(0); setBuffered(0) }
+    const onReady = () => setStatus((current) => current === 'blocked' ? current : 'ready')
+    const onWaiting = () => { setStatus('waiting'); show() }
+    const onError = () => { onPause(); setStatus('error') }
     const onVolume = () => { setMuted(el.muted); setVolume(el.volume) }
     const onProgress = () => setBuffered(el.buffered.length ? el.buffered.end(el.buffered.length - 1) : 0)
 
@@ -79,23 +87,55 @@ export default function VideoPlayer({ src, poster, label, autoPlay = false, clas
     el.addEventListener('durationchange', onMeta)
     el.addEventListener('loadedmetadata', onMeta)
     el.addEventListener('play', onPlay)
-    el.addEventListener('playing', onPlay)
+    el.addEventListener('playing', onPlaying)
     el.addEventListener('pause', onPause)
     el.addEventListener('ended', onPause)
     el.addEventListener('volumechange', onVolume)
     el.addEventListener('progress', onProgress)
+    el.addEventListener('loadstart', onLoad)
+    el.addEventListener('canplay', onReady)
+    el.addEventListener('waiting', onWaiting)
+    el.addEventListener('error', onError)
     return () => {
       el.removeEventListener('timeupdate', onTime)
       el.removeEventListener('durationchange', onMeta)
       el.removeEventListener('loadedmetadata', onMeta)
       el.removeEventListener('play', onPlay)
-      el.removeEventListener('playing', onPlay)
+      el.removeEventListener('playing', onPlaying)
       el.removeEventListener('pause', onPause)
       el.removeEventListener('ended', onPause)
       el.removeEventListener('volumechange', onVolume)
       el.removeEventListener('progress', onProgress)
+      el.removeEventListener('loadstart', onLoad)
+      el.removeEventListener('canplay', onReady)
+      el.removeEventListener('waiting', onWaiting)
+      el.removeEventListener('error', onError)
     }
   }, [arm, show])
+
+  const play = useCallback(() => {
+    const el = videoRef.current
+    if (!el) return
+    const request = ++playRequest.current
+    playBlocked.current = false
+    void el.play().catch((error: unknown) => {
+      // Switching source or closing the lightbox can interrupt an in-flight play.
+      if (!el.isConnected || request !== playRequest.current) return
+      if (error instanceof DOMException && error.name === 'AbortError') return
+      playingRef.current = false
+      playBlocked.current = !el.error
+      setPlaying(false)
+      setStatus(el.error ? 'error' : 'blocked')
+      show()
+    })
+  }, [show])
+  const cancelPendingPlay = useCallback(() => { playRequest.current++ }, [])
+
+  // Calling play explicitly lets blocked autoplay leave an honest Play control.
+  useEffect(() => {
+    if (autoPlay) play()
+    return cancelPendingPlay
+  }, [autoPlay, src, play, cancelPendingPlay])
 
   // Keep the fullscreen button in step with however fullscreen was left (Esc, the OS, …).
   useEffect(() => {
@@ -107,13 +147,14 @@ export default function VideoPlayer({ src, poster, label, autoPlay = false, clas
   const toggle = () => {
     const el = videoRef.current
     if (!el) return
-    if (el.paused) void el.play().catch(() => {})
+    if (status === 'error') { el.load(); play() }
+    else if (el.paused) play()
     else el.pause()
   }
 
   const seek = (to: number) => {
     const el = videoRef.current
-    if (el) el.currentTime = Math.min(Math.max(to, 0), duration || el.duration || 0)
+    if (el && duration > 0 && Number.isFinite(to)) el.currentTime = Math.min(Math.max(to, 0), duration)
   }
 
   const toggleFullscreen = () => {
@@ -140,7 +181,7 @@ export default function VideoPlayer({ src, poster, label, autoPlay = false, clas
 
   const pct = duration ? (time / duration) * 100 : 0
   const loaded = duration ? (buffered / duration) * 100 : 0
-  const hidden = idle && playing
+  const hidden = idle && playing && status === 'ready'
 
   return (
     <div
@@ -149,13 +190,13 @@ export default function VideoPlayer({ src, poster, label, autoPlay = false, clas
       onPointerDown={wake}
       onPointerLeave={() => playing && setIdle(true)}
       onKeyDown={onKeyDown}
+      onFocus={wake}
       className={cn('group/player relative isolate bg-ink', hidden && 'cursor-none', className)}
     >
       <video
         ref={videoRef}
         src={src}
         poster={poster}
-        autoPlay={autoPlay}
         playsInline
         preload="auto"
         aria-label={label}
@@ -166,9 +207,32 @@ export default function VideoPlayer({ src, poster, label, autoPlay = false, clas
         className="h-full w-full object-contain"
       />
 
+      {status !== 'ready' && (
+        <div className="absolute inset-0 flex items-center justify-center px-6 pb-16 pt-12">
+          <div className="max-w-[24rem] rounded-card bg-ink/90 p-5 text-center text-paper">
+            <p role={status === 'error' ? 'alert' : 'status'} className="text-p-sm">
+              {status === 'error'
+                ? 'We couldn’t load this film. Please try again.'
+                : status === 'blocked'
+                  ? 'Press play to watch the film.'
+                  : status === 'waiting' ? 'Buffering the film…' : 'Loading the film…'}
+            </p>
+            {(status === 'error' || status === 'blocked') && (
+              <button
+                type="button"
+                onClick={toggle}
+                className="mt-3 min-h-11 rounded-full bg-volt px-5 text-p-sm font-medium text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper"
+              >
+                {status === 'error' ? 'Try again' : 'Play film'}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Corner slot (the lightbox's close button) — fades with the bar. */}
       {children && (
-        <div className={cn('absolute right-3 top-3 z-10 transition-opacity duration-300 ease-glide', hidden && 'pointer-events-none opacity-0')}>
+        <div className={cn('absolute right-3 top-3 z-10 transition-opacity duration-300 ease-glide focus-within:pointer-events-auto focus-within:opacity-100', hidden && 'pointer-events-none opacity-0')}>
           {children}
         </div>
       )}
@@ -196,6 +260,8 @@ export default function VideoPlayer({ src, poster, label, autoPlay = false, clas
           max={duration || 0}
           step={0.01}
           value={time}
+          disabled={duration <= 0 || status === 'error'}
+          aria-valuetext={`${clock(time)} of ${clock(duration)}`}
           onChange={(e) => seek(Number(e.target.value))}
           className="cs-scrub h-1.5 min-w-0 flex-1"
           style={{ '--p': `${pct}%`, '--b': `${Math.max(loaded, pct)}%` } as CSSProperties}

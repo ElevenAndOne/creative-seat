@@ -35,9 +35,9 @@ const structuredData = homeStructuredData(Astro.site!, title, description)
 ---
 
 <BaseLayout title={title} description={description}>
-  <script slot="head" type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   <SiteHeader client:load />
-  <main>
+  <main id="main-content" tabindex="-1">
     <Hero client:load />
     <ModernMarketing />
     <NoHiring client:visible={nearViewport} />

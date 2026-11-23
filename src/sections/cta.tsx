@@ -1,33 +1,55 @@
-import Button from '../components/autton'
+import LinkButton from '../components/link-button'
 import { Section } from '../components/base/section'
-import Em from '../components/em'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
-import SketchCanvas from '../components/sketch-canvas'
 import { demoPage } from '../utils/contact'
 
 /**
- * Closing campaign band: Volt, with Ink type and the Ink pill, over a live
- * WebGL pencil sketch of a creative in her armchair — the brand's seat, drawn
- * in Forest. The brand's campaign pattern, set close: headline, one line of
- * support, the button. Phones get extra height so the drawing can sit below.
+ * Collage pieces, placed as Figma's 320 × 333.47 frame draws them, in percent
+ * of that frame so the whole collage scales with its column. Painted back to
+ * front: the poolside ad, a campaign card (Onvlee's "Arcs & Bends" — Figma's
+ * own card was template filler; its 4px Paper frame and 12px corner are drawn
+ * in CSS since our bitmap has none), then the egg chair over both.
+ */
+const COLLAGE = [
+  { src: '/images/cta/poolside-drink.webp', width: 300, height: 450, box: { left: '60.24%', top: '21.08%', width: '39.76%', height: '56.04%' }, fit: 'object-cover' },
+  { src: '/images/cta/campaign-card.webp', width: 400, height: 583, box: { left: '0%', top: '0%', width: '53.01%', height: '74.14%' }, fit: 'object-cover rounded-md border-4 border-paper bg-paper' },
+  { src: '/images/cta/egg-chair.webp', width: 380, height: 440, box: { left: '20.78%', top: '34.26%', width: '59.34%', height: '65.74%' }, fit: 'object-contain' },
+] as const
+
+/**
+ * Closing campaign band on Volt, as the Figma file sets it: two equal columns,
+ * the Display headline, a line of support and the Paper pill on the left, and
+ * a small collage of the work on the right. Stacks on tablets and phones.
  */
 export default function CtaBanner() {
   return (
-    <Section id="contact" pad="md" className="isolate overflow-hidden bg-volt text-ink" innerClassName="flex flex-col items-start landscape:min-h-[32rem]">
-      <div aria-hidden className="absolute inset-0 -z-10">
-        <SketchCanvas src="/images/sections/pitch-marketer.avif" paper="#bce42d" ink="#212c26" focusX={0.62} />
+    <Section id="contact" className="bg-volt text-ink" innerClassName="grid grid-cols-2 items-start gap-8 tablet:grid-cols-1 tablet:gap-12">
+      <div className="flex flex-col items-start gap-6">
+        <Heading.Display className="text-pretty">The simple way to get creative.</Heading.Display>
+        <Paragraph className="max-w-[34rem] text-pretty">
+          Design, illustration and animation for marketing teams that need more capacity.
+        </Paragraph>
+        <LinkButton href={demoPage} id="cta-book-demo" data-track="book_demo_click" data-track-location="cta" variant="inverse">
+          Book a demo
+        </LinkButton>
       </div>
-      {/* Hero scale, set in two lines so the italic phrase stays whole. */}
-      <Heading.H1 className="max-w-[9em] text-[clamp(3rem,2.7143rem+1.4286vw,4rem)] leading-[0.95] tracking-[-0.015em]">
-        <span className="block">The simple way</span> <Em>to get creative.</Em>
-      </Heading.H1>
-      <Paragraph.Big className="mt-7 max-w-[28rem]">
-        Design, illustration and animation for marketing teams that need more capacity.
-      </Paragraph.Big>
-      <Button href={demoPage} id="cta-book-demo" data-track="book_demo_click" data-track-location="cta" className="mt-9">
-        Book a demo
-      </Button>
+
+      <div aria-hidden className="relative mx-auto aspect-[320/333.47] w-full max-w-80 tablet:max-w-72">
+        {COLLAGE.map(({ src, width, height, box, fit }) => (
+          <img
+            key={src}
+            src={src}
+            width={width}
+            height={height}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className={`absolute ${fit}`}
+            style={{ left: box.left, top: box.top, width: box.width, height: box.height }}
+          />
+        ))}
+      </div>
     </Section>
   )
 }

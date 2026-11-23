@@ -18,11 +18,11 @@ type SectionProps = {
   className?: string
   /** Layout classes for the inner container (grid/flex, alignment, gap…). */
   innerClassName?: string
-  /** Vertical rhythm from the spacing tokens; `pad` sets both edges. */
+  /** Vertical rhythm from the Figma section tokens (bg 96/64/48 · md 64/48/32 · sm 32/24/16); `pad` sets both edges, default `bg`. */
   pad?: Pad
   padTop?: Pad
   padBottom?: Pad
-  /** Inner container width: max (90rem) · wide (95rem) · mid (64rem) · full. */
+  /** Inner container width: max (70rem column) · wide (70rem) · mid (64rem) · full. */
   width?: Width
   /** Skip the inner container for edge-to-edge layouts. */
   bleed?: boolean
@@ -35,11 +35,11 @@ type SectionProps = {
  * the inner <Container> handles max-width and horizontal margin from tokens.
  * Building a new page is mostly: copy a <Section>, swap the content.
  *
- *   <Section className="bg-paper" pad="md" innerClassName="grid grid-cols-2 gap-lg tablet:grid-cols-1">
+ *   <Section className="bg-paper" innerClassName="grid grid-cols-2 gap-lg tablet:grid-cols-1">
  *     …
  *   </Section>
  */
-export function Section({ children, className, innerClassName, pad = 'md', padTop, padBottom, width = 'max', bleed = false, id, as: Tag = 'section' }: SectionProps) {
+export function Section({ children, className, innerClassName, pad = 'bg', padTop, padBottom, width = 'max', bleed = false, id, as: Tag = 'section' }: SectionProps) {
   return (
     <Tag id={id} className={cn('relative', className)} style={{ paddingTop: PAD[padTop ?? pad], paddingBottom: PAD[padBottom ?? pad] }} >
       {bleed && (children)}

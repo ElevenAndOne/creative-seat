@@ -1,32 +1,27 @@
 /**
  * Benefit cards: a photo (or, with `video`, an ambient loop whose poster is
- * `src`) over a solid caption band. `em` is the phrase of the title set in
- * serif italic; `tone` picks the band — Soft Volt, Forest or Paper.
+ * `src`) over a Soft Volt caption band. `em`, when set, is the phrase of the
+ * title set in serif italic; `body` opens under the title on hover or focus.
  */
 export const benefitCards = [
   {
     src: '/images/benefits/capacity.webp',
     title: 'More creative capacity',
-    em: 'creative capacity',
     body: 'Spin up extra hands the moment a campaign demands it and scale back just as easily — capacity that flexes with your roadmap.',
-    tone: 'accent',
+    em: 'creative capacity',
     focus: 'center',
   },
   {
     src: '/images/benefits/workflow-poster.webp',
     video: { webm: '/videos/benefit-workflow.webm', mp4: '/videos/benefit-workflow.mp4' },
     title: 'Streamlined workflow',
-    em: 'Streamlined',
     body: 'Brief once and track everything in a single place, with a dedicated project manager keeping every task moving from kickoff to delivery.',
-    tone: 'deep',
     focus: 'center 25%',
   },
   {
     src: '/images/benefits/subscription.webp',
     title: 'One simple subscription',
-    em: 'simple subscription',
     body: 'A full creative team for one predictable monthly fee — no per-project quotes, retainers, or surprise invoices.',
-    tone: 'light',
     focus: 'center 41%',
   },
 ] as const
@@ -99,21 +94,43 @@ export const services = [
 ]
 
 /**
- * Hero carousel of work, in the order each card reaches the centre of the fan —
- * so neighbours should contrast. 760 × 788 crops of the project imagery, sized
- * for the centre card at 2×.
+ * The hero's strip of work (sections/hero.tsx), in the Figma frame's order
+ * (Creative Seat, node 2269:231). Figma draws each card at 520 × 540; the
+ * files are 584 × 606, covering a 280 × 303 tile at 2×.
+ *
+ * A tile is a still (the logo already in the picture) or a muted loop, WebM
+ * first with an MP4 fallback, under a poster frame. Video cards keep the
+ * client's logo out of the video, as a vector laid over it: placed in % of
+ * the tile, so it stays crisp at every tile size. `loop: false` plays once
+ * and holds the last frame, for pieces that build up rather than cycle.
+ *
+ * The videos are Figma's own renditions (its HLS streams), not the original
+ * masters: Onvlee is cropped to the card as Figma frames it and runs its full
+ * 19s (three hard-cut shots, so it loops on a cut); Sojern is 520 × 540, the
+ * largest Figma holds. TFG Money builds up from an empty frame, so it plays
+ * once and holds.
  */
-export const heroCards = [
-  '/images/hero/cherry-time-shirt.avif',
-  '/images/hero/onvlee-engineer.avif',
-  '/images/hero/true-africa-ocean.avif',
-  '/images/hero/holiday-peach.avif',
-  '/images/hero/dfsa-apricots.avif',
-  '/images/hero/cherry-time-pie.avif',
-  '/images/hero/true-africa-lion.avif',
-  '/images/hero/holiday-cans.avif',
-  '/images/hero/daniel-wellington.avif',
-  '/images/hero/dutoit-shallots.avif',
+type TileLogo = { src: string, left: string, top: string, width: string }
+export type HeroTile =
+  | { kind: 'image', src: string, logo?: TileLogo }
+  | { kind: 'video', poster: string, webm: string, mp4: string, loop?: boolean, logo?: TileLogo }
+
+const HERO = '/images/hero/v2'
+/** A video tile's poster and its two encodes, by slug. */
+const clip = (slug: string) => ({ poster: `${HERO}/${slug}-poster.avif`, webm: `/videos/hero/${slug}.webm`, mp4: `/videos/hero/${slug}.mp4` })
+export const heroTiles: HeroTile[] = [
+  { kind: 'image', src: `${HERO}/bushnell-golf.avif` },
+  { kind: 'image', src: `${HERO}/daniel-wellington.avif` },
+  { kind: 'video', ...clip('tfg-money'), loop: false, logo: { src: `${HERO}/tfg-money-logo.svg`, left: '24.16%', top: '10.19%', width: '51.5%' } },
+  { kind: 'video', ...clip('onvlee'), logo: { src: `${HERO}/onvlee-logo.svg`, left: '22.03%', top: '10.99%', width: '55.91%' } },
+  { kind: 'video', ...clip('project-white-hart'), logo: { src: `${HERO}/project-white-hart-logo.webp`, left: '28.87%', top: '20.62%', width: '42.48%' } },
+  { kind: 'image', src: `${HERO}/dutoit.avif` },
+  { kind: 'image', src: `${HERO}/cherry-time.avif` },
+  { kind: 'image', src: `${HERO}/norrsken.avif` },
+  { kind: 'image', src: `${HERO}/devroux.avif` },
+  { kind: 'video', ...clip('sojern'), logo: { src: `${HERO}/sojern-logo.svg`, left: '20.14%', top: '9.26%', width: '59.72%' } },
+  { kind: 'image', src: `${HERO}/piedmont-earth-day.avif` },
+  { kind: 'image', src: `${HERO}/holiday.avif` },
 ]
 
 /** Currencies the pricing shows, picked from the visitor's region (see utils/currency). */
@@ -176,30 +193,26 @@ export const pricingPlans = [
 }[]
 
 /**
- * The credit calculator's services (sections/credit-calculator.tsx), most
- * requested first: what one costs in credits, the unit it's counted in, the
- * most its slider goes up to, and the chair it brings to the summary (one of
- * the CHAIRS crops in that file).
+ * The credit calculator's services (sections/credit-calculator.tsx), smallest
+ * first: what one costs in credits, the unit it's counted in, the most its
+ * slider goes up to, and the chair it brings to the summary (one of the
+ * CHAIRS crops in that file).
  *
- * Credits are the "Typical" (M) size from the 11&1 Services credit grid
- * (recalibrated 3 Sep 2026 from 12 months of pointed tasks). Its retiring
- * generic "Design" type and its flat-rate types (review, meetings,
- * maintenance) aren't listed.
+ * Six deliverables that show the studio's breadth. Each is priced as a whole,
+ * finished deliverable at about one credit per hour of design time (a full
+ * seat's 120 credits is a designer's month), on the 1-2-3-5-8-13-20-40 scale
+ * of the 11&1 Services credit grid. That grid's "Typical" values are medians
+ * of ClickUp tasks, where a "Website" task runs from a one-hour fix to a
+ * rebuild — so they price pieces of work, not the deliverables listed here.
+ * Every figure below still sits inside its type's range on the grid.
  */
 export const creditServices = [
-  { id: 'social', name: 'Social media posts', unit: 'post', credits: 3, max: 12, chair: 'flower' },
-  { id: 'websites', name: 'Websites', unit: 'website', credits: 3, max: 6, chair: 'fluffy-blue' },
+  { id: 'social', name: 'Social media posts', unit: 'post', credits: 2, max: 20, chair: 'flower' },
   { id: 'paid-ads', name: 'Paid ads', unit: 'ad', credits: 3, max: 12, chair: 'panton' },
-  { id: 'video', name: 'Video production', unit: 'video', credits: 8, max: 6, chair: 'director' },
-  { id: 'email', name: 'Email / EDM', unit: 'email', credits: 3, max: 12, chair: 'egg' },
-  { id: 'animation', name: 'Animation', unit: 'animation', credits: 5, max: 8, chair: 'pixel' },
-  { id: 'landing-design', name: 'Landing page design', unit: 'page', credits: 5, max: 6, chair: 'beanbag' },
-  { id: 'print', name: 'Print', unit: 'print file', credits: 3, max: 10, chair: 'cow' },
-  { id: 'branding', name: 'Branding', unit: 'brand', credits: 13, max: 4, chair: 'shell' },
-  { id: 'landing-build', name: 'Landing page build', unit: 'page', credits: 5, max: 6, chair: 'brick' },
-  { id: 'copywriting', name: 'Copywriting', unit: 'document', credits: 3, max: 10, chair: 'tubular' },
-  { id: 'ebook', name: 'Ebook', unit: 'ebook', credits: 8, max: 4, chair: 'lounge' },
-  { id: 'illustration', name: 'Illustration', unit: 'illustration', credits: 13, max: 5, chair: 'fluffy-yellow' },
+  { id: 'illustration', name: 'Illustration', unit: 'illustration', credits: 8, max: 8, chair: 'fluffy-yellow' },
+  { id: 'video', name: 'Video production', unit: 'video', credits: 13, max: 6, chair: 'director' },
+  { id: 'landing-page', name: 'Landing pages', unit: 'page', credits: 20, max: 4, chair: 'fluffy-blue' },
+  { id: 'branding', name: 'Brand identity', unit: 'identity', credits: 40, max: 2, chair: 'shell' },
 ] as const satisfies {
   id: string
   name: string
