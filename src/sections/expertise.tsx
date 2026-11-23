@@ -145,7 +145,8 @@ export default function Expertise() {
   }, { scope: root, dependencies: [paused], revertOnUpdate: true })
 
   return (
-    <Section id="services" bleed className="overflow-hidden bg-ink text-paper">
+    // At least 90% of the screen tall, the heading and rows centred in it.
+    <Section id="services" bleed className="flex min-h-[90svh] flex-col justify-center overflow-hidden bg-ink text-paper">
       <div ref={root}>
         <Heading.H1 data-reveal className="px-[var(--container-margin)] text-center">
           Expertise, on demand.

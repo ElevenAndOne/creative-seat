@@ -7,7 +7,6 @@ import { useRef } from 'react'
 import LinkButton from '../components/link-button'
 import BrandLogo from '../components/brand-logo'
 import Heading from '../components/heading'
-import MotionToggle from '../components/motion-toggle'
 import Paragraph from '../components/paragraph'
 import { heroTiles, logos } from '../content'
 import type { HeroTile } from '../content/sections'
@@ -206,11 +205,6 @@ export default function Hero() {
       <motion.div {...rise(0.5)} className="pt-xxxbg">
         <HeroTiles paused={paused} />
       </motion.div>
-
-      {/* The page-wide pause control, under the tiles at the column's right edge. */}
-      <div className="mx-auto flex w-full max-w-[var(--container-width)] justify-end pt-xsm">
-        <MotionToggle className="min-h-10 text-paper/60 hover:text-paper focus-visible:-outline-offset-2" />
-      </div>
     </section>
   )
 }

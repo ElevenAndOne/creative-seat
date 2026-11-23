@@ -28,7 +28,7 @@ export default function NoHiring() {
 
 /* ---------------------------------------------------------------------------
    The pipeline: one sample job (Sassy Locks' spring launch) passing through
-   the team in a single app window, told through the work rather than the
+   the team in a single Paper panel, told through the work rather than the
    tools. The project manager files the brief; the graphic designer takes a
    colour with the eyedropper and the wireframe card fills with it; the
    animator scrubs and the card's pieces move in; the developer drops it into
@@ -49,12 +49,37 @@ export default function NoHiring() {
 const CLIENT = { lilac: '#c9c6ec', plum: '#3b1667', pink: '#f06ca0', mist: '#edf2f4' }
 
 const STEPS = [
-  { id: 'brief', label: 'Brief', role: 'Project manager', app: 'Requests' },
-  { id: 'design', label: 'Design', role: 'Graphic designer', app: 'Design' },
-  { id: 'motion', label: 'Motion', role: 'Animator', app: 'Motion' },
-  { id: 'build', label: 'Launch', role: 'Developer', app: 'Launch' },
+  { id: 'brief', label: 'Brief' },
+  { id: 'design', label: 'Design' },
+  { id: 'motion', label: 'Motion' },
+  { id: 'build', label: 'Launch' },
 ] as const
 type StepId = (typeof STEPS)[number]['id']
+
+/**
+ * The people in the file, multiplayer-style: each has their own cursor and
+ * name-tag colour, taken from the workflow illustration on the benefit cards
+ * (its lime, sky, deep green and pink, plus Ink). `dark` colours carry Paper
+ * text and a Paper edge; the light ones Ink. `flip` puts the tag left of the
+ * pointer for people who work near the right edge.
+ */
+type Person = { label: string, colour: string, dark?: boolean, flip?: boolean, dropper?: boolean }
+type PersonId = 'client' | 'pm' | 'designer' | 'animator' | 'developer'
+const PEOPLE: Record<PersonId, Person> = {
+  client: { label: 'Client', colour: '#f28cb4' },
+  pm: { label: 'Project manager', colour: '#3c6c60', dark: true },
+  designer: { label: 'Graphic designer', colour: '#5ac0ea', dropper: true },
+  animator: { label: 'Animator', colour: 'var(--color-soft-volt)', flip: true },
+  developer: { label: 'Developer', colour: 'var(--color-ink)', dark: true, flip: true },
+}
+const PEOPLE_IDS = Object.keys(PEOPLE) as PersonId[]
+/** Who's in the file at each step: the one doing the work first, then who's with them. */
+const CAST: Record<StepId, PersonId[]> = {
+  brief: ['pm', 'client'],
+  design: ['designer', 'pm'],
+  motion: ['animator', 'designer'],
+  build: ['developer', 'client'],
+}
 
 /** Strong curves: ease-out for things arriving, ease-in-out for things moving on screen. */
 const EASE_OUT = [0.23, 1, 0.32, 1] as const
@@ -75,6 +100,8 @@ const within = (b: Box, px: number, py: number): Point => [b.x + (b.w * px) / 10
 const CARD: Box = { x: 8, y: 24, w: 38, h: 48 }
 const FOLDER: Box = { x: 58, y: 30, w: 26, h: 38 }
 const CARD_SCALE = 0.35
+/** How far right of its place the brief starts, in card widths, as the client drags it in. */
+const BRIEF_IN = 0.6
 // The work: a portrait card, in the same place from design to launch.
 const ART: Box = { x: 37, y: 14, w: 26, h: 70 }
 // Design
@@ -90,6 +117,10 @@ const PUBLISH: Box = { x: 71, y: 38, w: 21, h: 9 }
 /** Where each cursor goes, in % of the window. */
 const AT = {
   enter: [97, 97],
+  // The client brings the brief in by its top-right corner, from where it starts.
+  clientFrom: [within(CARD, 86, 20)[0] + CARD.w * BRIEF_IN, within(CARD, 86, 20)[1]],
+  clientGrab: within(CARD, 86, 20),
+  clientRest: [12, 86],
   card: [24, 36],
   // The grab point once the card has shrunk into the folder's centre.
   filed: [centre(FOLDER)[0] + (24 - centre(CARD)[0]) * CARD_SCALE, centre(FOLDER)[1] + (36 - centre(CARD)[1]) * CARD_SCALE],
@@ -97,12 +128,18 @@ const AT = {
   swatch: within(PALETTE, 50, 37.5),
   fill: within(ART, FILL_FROM[0], FILL_FROM[1]),
   designRest: [72, 76],
+  pmWatch: [68, 22],
+  pmWatch2: [65, 30],
   knobFrom: [SCRUB.x, SCRUB.y + SCRUB.h / 2],
   knobTo: [SCRUB.x + SCRUB.w, SCRUB.y + SCRUB.h / 2],
   motionRest: [80, 66],
+  designerWatch: [10, 24],
+  designerWatch2: [16, 34],
   // High on the button, so the flipped tag hangs below it rather than over the label.
   publish: within(PUBLISH, 60, 30),
+  clientWatch: [20, 60],
   shop: within(ART, 50, 91),
+  clientDone: [24, 70],
   buildRest: [86, 74],
 } satisfies Record<string, Point>
 
@@ -117,7 +154,7 @@ const SCRUB_SECONDS = 1.6
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const now = { duration: 0 }
-const cur = (id: StepId) => `[data-cursor="${id}"]`
+const cur = (id: PersonId) => `[data-cursor="${id}"]`
 const fill = (r: number) => `circle(${r}% at ${FILL_FROM[0]}% ${FILL_FROM[1]}%)`
 
 function Pipeline() {
@@ -139,7 +176,6 @@ function Pipeline() {
       animate('[data-step-active]', { opacity: 0 }, now)
       animate('[data-step-done]', { opacity: 1, scale: 1 }, now)
       animate('[data-track]', { scaleX: 1 }, now)
-      show('data-title', 'build')
       show('data-scene', 'build')
       animate('[data-cursor], [data-added]', { opacity: 0 }, now)
       animate('[data-phone]', { opacity: 1, scale: 1 }, now)
@@ -152,11 +188,12 @@ function Pipeline() {
       animate('[data-step-active]', { opacity: 0 }, now)
       animate('[data-step-done]', { opacity: 0, scale: 0.8 }, now)
       animate('[data-track]', { scaleX: 0 }, now)
-      animate('[data-title], [data-scene]', { opacity: 0 }, now)
+      animate('[data-scene]', { opacity: 0 }, now)
       animate('[data-cursor]', { opacity: 0, x: `${AT.enter[0]}%`, y: `${AT.enter[1]}%` }, now)
+      animate(cur('client'), { x: `${AT.clientFrom[0]}%`, y: `${AT.clientFrom[1]}%` }, now)
       animate('[data-pointer]', { scale: 1 }, now)
       // Brief
-      animate('[data-brief-card]', { opacity: 0, x: '30%', y: '0%', scale: 1 }, now)
+      animate('[data-brief-card]', { opacity: 0, x: `${BRIEF_IN * 100}%`, y: '0%', scale: 1 }, now)
       animate('[data-folder-tick]', { opacity: 0, scale: 0.8 }, now)
       animate('[data-brief-chip]', { opacity: 0, y: '60%' }, now)
       // Design
@@ -191,102 +228,114 @@ function Pipeline() {
       return alive
     }
 
-    const cursorTo = (id: StepId, [x, y]: Point, duration = 0.7) => animate(cur(id), { x: `${x}%`, y: `${y}%` }, { duration, ease: EASE_IN_OUT })
-    const press = (id: StepId, down: boolean) => animate(`${cur(id)} [data-pointer]`, { scale: down ? 0.85 : 1 }, { duration: down ? 0.1 : 0.16, ease: EASE_OUT })
-    const click = async (id: StepId) => {
+    const cursorTo = (id: PersonId, [x, y]: Point, duration = 0.7, ease: typeof EASE_IN_OUT | typeof EASE_OUT = EASE_IN_OUT) =>
+      animate(cur(id), { x: `${x}%`, y: `${y}%` }, { duration, ease })
+    const press = (id: PersonId, down: boolean) => animate(`${cur(id)} [data-pointer]`, { scale: down ? 0.85 : 1 }, { duration: down ? 0.1 : 0.16, ease: EASE_OUT })
+    const click = async (id: PersonId) => {
       await press(id, true)
       await press(id, false)
     }
 
-    /** A step begins: its rail dot lights, its app comes up and its specialist's cursor arrives. */
+    /** A step begins: its rail dot lights, its scene comes up, and its people join the file as the others leave. */
     const begin = async (id: StepId) => {
       animate(`[data-step-active="${id}"]`, { opacity: 1 }, { duration: 0.25, ease: EASE_OUT })
       STEPS.forEach((s) => {
-        animate(`[data-title="${s.id}"]`, { opacity: s.id === id ? 1 : 0 }, { duration: 0.25, ease: EASE_OUT })
         animate(`[data-scene="${s.id}"]`, { opacity: s.id === id ? 1 : 0 }, { duration: 0.35, ease: EASE_OUT })
       })
-      animate(cur(id), { opacity: 1 }, { duration: 0.2, ease: EASE_OUT })
+      PEOPLE_IDS.forEach((person) => animate(cur(person), { opacity: CAST[id].includes(person) ? 1 : 0 }, { duration: 0.25, ease: EASE_OUT }))
       await wait(350)
     }
 
-    /** A step is done: its dot ticks, the rail fills to the next, and the specialist steps away. */
+    /** A step is done: its dot ticks and the rail fills to the next. */
     const finish = async (id: StepId) => {
       const i = STEPS.findIndex((s) => s.id === id)
-      animate(cur(id), { opacity: 0 }, { duration: 0.25, ease: EASE_OUT })
       await animate(`[data-step-done="${id}"]`, { opacity: 1, scale: 1 }, { duration: 0.25, ease: EASE_OUT })
       animate(`[data-step-active="${id}"]`, { opacity: 0 }, now)
       if (i < STEPS.length - 1) await animate(`[data-track="${i + 1}"]`, { scaleX: 1 }, { duration: 0.5, ease: EASE_IN_OUT })
     }
 
+    /** The client drags the brief in; the project manager files it. */
     const brief = async () => {
-      await animate('[data-brief-card]', { opacity: 1, x: '0%' }, { duration: 0.5, ease: EASE_OUT })
-      await cursorTo('brief', AT.card, 0.8)
-      await Promise.all([press('brief', true), animate('[data-brief-card]', { scale: 1.03 }, { duration: 0.15, ease: EASE_OUT })])
+      await press('client', true)
+      await Promise.all([
+        animate('[data-brief-card]', { opacity: 1, x: '0%' }, { duration: 0.8, ease: EASE_OUT }),
+        cursorTo('client', AT.clientGrab, 0.8, EASE_OUT),
+      ])
+      await press('client', false)
+      cursorTo('client', AT.clientRest, 0.8)
+      await cursorTo('pm', AT.card, 0.8)
+      await Promise.all([press('pm', true), animate('[data-brief-card]', { scale: 1.03 }, { duration: 0.15, ease: EASE_OUT })])
       const target = centre(FOLDER)
       await Promise.all([
         animate('[data-brief-card]', { ...shift(CARD, target[0] - CARD.w / 2, target[1] - CARD.h / 2), scale: CARD_SCALE }, { duration: 0.9, ease: EASE_IN_OUT }),
-        cursorTo('brief', AT.filed, 0.9),
+        cursorTo('pm', AT.filed, 0.9),
       ])
-      press('brief', false)
+      press('pm', false)
       await Promise.all([
         animate('[data-brief-card]', { opacity: 0, scale: 0.2 }, { duration: 0.2, ease: EASE_OUT }),
         animate('[data-folder-front]', { scaleY: [1, 0.9, 1] }, { duration: 0.35, ease: EASE_OUT }),
       ])
       await animate('[data-folder-tick]', { opacity: 1, scale: 1 }, { duration: 0.25, ease: EASE_OUT })
       await animate('[data-brief-chip]', { opacity: 1, y: '0%' }, { duration: 0.3, ease: EASE_OUT })
-      await cursorTo('brief', AT.briefRest, 0.6)
+      await cursorTo('pm', AT.briefRest, 0.6)
       await wait(700)
     }
 
     /** The eyedropper takes the client's pink, and the wireframe card floods with colour from where it's dropped. */
     const design = async () => {
-      await cursorTo('design', AT.swatch, 0.8)
+      cursorTo('pm', AT.pmWatch, 0.9)
+      await cursorTo('designer', AT.swatch, 0.8)
       await Promise.all([
         animate('[data-swatch-ring]', { opacity: 1 }, { duration: 0.15, ease: EASE_OUT }),
         animate('[data-loupe]', { opacity: 1, scale: 1 }, { duration: 0.2, ease: EASE_OUT }),
       ])
       await wait(250)
-      await click('design')
+      await click('designer')
       animate('[data-swatch-ring]', { opacity: 0 }, { duration: 0.2 })
-      await cursorTo('design', AT.fill, 0.8)
-      await click('design')
+      await cursorTo('designer', AT.fill, 0.8)
+      await click('designer')
       animate('[data-loupe]', { opacity: 0, scale: 0.9 }, { duration: 0.15, ease: EASE_OUT })
       await animate('[data-colour]', { clipPath: fill(150) }, { duration: 0.9, ease: EASE_OUT })
-      await cursorTo('design', AT.designRest, 0.6)
+      cursorTo('pm', AT.pmWatch2, 0.6)
+      await cursorTo('designer', AT.designRest, 0.6)
       await wait(500)
     }
 
     /** The animator rewinds the card, then scrubs it forward and its pieces move in. */
     const motion = async () => {
+      cursorTo('designer', AT.designerWatch, 0.9)
       await Promise.all(PIECES.map((p) => animate(`[data-piece="${p.id}"]`, p.from, { duration: 0.25, ease: EASE_OUT })))
-      await cursorTo('motion', AT.knobFrom, 0.7)
-      await press('motion', true)
+      await cursorTo('animator', AT.knobFrom, 0.7)
+      await press('animator', true)
       await Promise.all([
-        cursorTo('motion', AT.knobTo, SCRUB_SECONDS),
+        cursorTo('animator', AT.knobTo, SCRUB_SECONDS),
         animate('[data-knob]', { x: '100%' }, { duration: SCRUB_SECONDS, ease: EASE_IN_OUT }),
         animate('[data-scrub-fill]', { scaleX: 1 }, { duration: SCRUB_SECONDS, ease: EASE_IN_OUT }),
         ...PIECES.map((p) => animate(`[data-piece="${p.id}"]`, { opacity: 1, y: '0%', scale: 1 }, { ...POP, delay: p.at })),
       ])
-      await press('motion', false)
-      await cursorTo('motion', AT.motionRest, 0.6)
+      await press('animator', false)
+      cursorTo('designer', AT.designerWatch2, 0.6)
+      await cursorTo('animator', AT.motionRest, 0.6)
       await wait(600)
     }
 
-    /** The card goes into a phone, the developer publishes, and a tap on "Shop now" shows it works. */
+    /** The card goes into a phone, the developer publishes, and the client taps "Shop now" to see it work. */
     const build = async () => {
+      cursorTo('client', AT.clientWatch, 0.9)
       await animate('[data-phone]', { opacity: 1, scale: 1 }, { duration: 0.5, ease: EASE_OUT })
-      await cursorTo('build', AT.publish, 0.8)
-      await click('build')
+      await cursorTo('developer', AT.publish, 0.8)
+      await click('developer')
       animate('[data-state="idle"]', { opacity: 0 }, { duration: 0.15 })
       animate('[data-state="busy"]', { opacity: 1 }, { duration: 0.15 })
       await animate('[data-spinner]', { rotate: [0, 540] }, { duration: 1, ease: 'linear' })
       animate('[data-state="busy"]', { opacity: 0 }, { duration: 0.15 })
       await animate('[data-state="live"]', { opacity: 1 }, { duration: 0.2, ease: EASE_OUT })
       await animate('[data-live-url]', { opacity: 1, y: '0%' }, { duration: 0.35, ease: EASE_OUT })
-      await cursorTo('build', AT.shop, 0.8)
-      await Promise.all([click('build'), animate('[data-shop]', { scale: [1, 0.92, 1] }, { duration: 0.3, ease: EASE_OUT })])
+      cursorTo('developer', AT.buildRest, 0.7)
+      await cursorTo('client', AT.shop, 0.8)
+      await Promise.all([click('client'), animate('[data-shop]', { scale: [1, 0.92, 1] }, { duration: 0.3, ease: EASE_OUT })])
       await animate('[data-added]', { opacity: 1, y: '0%' }, POP)
-      await cursorTo('build', AT.buildRest, 0.6)
+      await cursorTo('client', AT.clientDone, 0.6)
       await wait(400)
     }
 
@@ -305,7 +354,7 @@ function Pipeline() {
         if (!(await pause(2800)) || !(await gate())) return
         // Clear down for the next job.
         await Promise.all([
-          animate('[data-scene], [data-title]', { opacity: 0 }, { duration: 0.35, ease: EASE_OUT }),
+          animate('[data-scene], [data-cursor]', { opacity: 0 }, { duration: 0.35, ease: EASE_OUT }),
           animate('[data-step-done]', { opacity: 0 }, { duration: 0.35, ease: EASE_OUT }),
           animate('[data-track]', { scaleX: 0 }, { duration: 0.5, ease: EASE_IN_OUT }),
         ])
@@ -324,37 +373,20 @@ function Pipeline() {
     <div
       ref={scope}
       role="img"
-      aria-label="A Creative Seat job passing through the team: the project manager files the brief, the graphic designer adds the colour, the animator brings it to life and the developer launches it"
+      aria-label="A Creative Seat job passing through the team: the client hands over the brief and the project manager files it, the graphic designer adds the colour, the animator brings it to life, and the developer launches it for the client to try"
       className="flex w-full select-none flex-col gap-sm rounded-panel bg-soft-volt p-sm"
     >
       <Rail />
 
       <div aria-hidden className="@container relative aspect-[3/2] w-full overflow-hidden rounded-md bg-paper text-ink shadow-[0_18px_40px_-24px_rgba(24,27,30,0.45)]">
-        {/* Title bar: window dots, the app the step works in, and the job. */}
-        <div className="absolute inset-x-0 top-0 flex h-[10%] items-center gap-[2cqw] border-b border-line px-[2.4cqw]">
-          <span className="flex gap-[0.9cqw]">
-            {[0, 1, 2].map((i) => (
-              <span key={i} className="size-[1.5cqw] rounded-full bg-chalk" />
-            ))}
-          </span>
-          <span className="relative h-[3cqw] w-[10cqw] text-[2.3cqw] font-semibold leading-[3cqw]">
-            {STEPS.map((s) => (
-              <span key={s.id} data-title={s.id} className={cn('absolute inset-0', s.id !== 'build' && 'opacity-0')}>
-                {s.app}
-              </span>
-            ))}
-          </span>
-          <span className="text-[2.1cqw] text-muted">Sassy Locks / Spring launch</span>
-        </div>
-
         <BriefScene />
         <DesignScene />
         <MotionScene />
         <LaunchScene />
 
-        {STEPS.map((s) => (
-          <div key={s.id} data-cursor={s.id} className="pointer-events-none absolute inset-0 z-30 opacity-0">
-            <Pointer label={s.role} flip={s.id === 'build' || s.id === 'motion'} dropper={s.id === 'design'} />
+        {PEOPLE_IDS.map((id) => (
+          <div key={id} data-cursor={id} className="pointer-events-none absolute inset-0 z-30 opacity-0">
+            <Pointer person={PEOPLE[id]} />
           </div>
         ))}
       </div>
@@ -579,19 +611,19 @@ function Tick({ className }: { className?: string }) {
 }
 
 /**
- * A specialist's pointer and name tag: Ink arrow, Volt tag. `flip` puts the
- * tag left of the pointer for cursors working near the right edge. The
- * designer's pointer is an eyedropper, with a loupe that shows the colour
+ * A person's pointer and name tag, both in their colour, multiplayer-style.
+ * The designer's pointer is an eyedropper, with a loupe that shows the colour
  * it's holding. The tip of either glyph is the layer's top-left corner.
  */
-function Pointer({ label, flip = false, dropper = false }: { label: string, flip?: boolean, dropper?: boolean }) {
+function Pointer({ person }: { person: Person }) {
+  const edge = person.dark ? 'var(--color-paper)' : 'var(--color-ink)'
   return (
     <div data-pointer className="absolute left-0 top-0" style={{ transformOrigin: '0 0' }}>
-      {dropper ? (
+      {person.dropper ? (
         <>
           {/* An eyedropper whose tip is the bottom-left corner of its 24 × 24 box. */}
-          <svg viewBox="0 0 24 24" className="absolute -left-[2px] -top-[22px] size-6 text-ink drop-shadow-[0_1px_0_var(--color-paper)]">
-            <g fill="var(--color-paper)" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg viewBox="0 0 24 24" className="absolute -left-[2px] -top-[22px] size-6 drop-shadow-[0_1px_2px_rgba(24,27,30,0.3)]">
+            <g fill={person.colour} stroke={edge} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="m2 22 1-1h3l9-9" />
               <path d="M3 21v-3l9-9" />
               <path d="m15 6 3.4-3.4a2.1 2.1 0 1 1 3 3L18 9l.4.4a2.1 2.1 0 1 1-3 3l-3.8-3.8a2.1 2.1 0 1 1 3-3l.4.4Z" />
@@ -601,16 +633,17 @@ function Pointer({ label, flip = false, dropper = false }: { label: string, flip
         </>
       ) : (
         <svg viewBox="0 0 16 22" className="absolute left-0 top-0 h-[22px] w-4 drop-shadow-[0_2px_3px_rgba(24,27,30,0.25)]">
-          <path d="M1 1v17.5l4.6-4.4 3.3 7.2 3-1.4-3.2-7H15L1 1Z" fill="var(--color-ink)" stroke="var(--color-paper)" strokeWidth="1.3" strokeLinejoin="round" />
+          <path d="M1 1v17.5l4.6-4.4 3.3 7.2 3-1.4-3.2-7H15L1 1Z" fill={person.colour} stroke={edge} strokeWidth="1.3" strokeLinejoin="round" />
         </svg>
       )}
       <span
         className={cn(
-          'absolute top-[19px] whitespace-nowrap rounded-full bg-volt px-[9px] py-[6px] text-[11.5px] font-semibold leading-none text-ink shadow-[2px_2px_4px_rgba(24,27,30,0.15)]',
-          flip ? 'right-1' : 'left-3',
+          'absolute top-[19px] whitespace-nowrap rounded-[4px] px-[7px] py-[5px] text-[11.5px] font-semibold leading-none shadow-[1px_2px_4px_rgba(24,27,30,0.18)]',
+          person.flip ? 'right-1' : 'left-3',
         )}
+        style={{ background: person.colour, color: person.dark ? 'var(--color-paper)' : 'var(--color-ink)' }}
       >
-        {label}
+        {person.label}
       </span>
     </div>
   )
