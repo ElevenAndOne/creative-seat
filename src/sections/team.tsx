@@ -4,7 +4,6 @@ import { Section } from '../components/base/section'
 import Em from '../components/em'
 import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
-import { useAnimationsPaused } from '../hooks/useMotionPreference'
 import { cn } from '../utils/cn'
 
 export default function NoHiring() {
@@ -41,8 +40,9 @@ export default function NoHiring() {
    tip at that point of the window. The card sits in the same place in every
    step after the brief, so the scenes cross-fade around it.
 
-   Server-rendered (and shown while motion is paused) as the finished state:
-   every step ticked and the page live.
+   It plays whatever the visitor's motion setting (reduced motion, or the
+   site's pause control): the owner wants the story seen. Server-rendered as
+   the finished state, every step ticked and the page live, until it starts.
    ------------------------------------------------------------------------- */
 
 /** The sample client's own palette — their colours in a depiction of their work, not Creative Seat's. */
@@ -159,7 +159,6 @@ const fill = (r: number) => `circle(${r}% at ${FILL_FROM[0]}% ${FILL_FROM[1]}%)`
 
 function Pipeline() {
   const [scope, animate] = useAnimate<HTMLDivElement>()
-  const paused = useAnimationsPaused()
   const inView = useInView(scope, { amount: 0.3 })
   const visible = useRef(false)
   useEffect(() => {
@@ -167,22 +166,6 @@ function Pipeline() {
   }, [inView])
 
   useEffect(() => {
-    const show = (attr: string, id: string) => {
-      STEPS.forEach((s) => animate(`[${attr}="${s.id}"]`, { opacity: s.id === id ? 1 : 0 }, now))
-    }
-
-    /** Every step ticked and the page live — the server render, and the frame shown while motion is paused. */
-    const showEnd = () => {
-      animate('[data-step-active]', { opacity: 0 }, now)
-      animate('[data-step-done]', { opacity: 1, scale: 1 }, now)
-      animate('[data-track]', { scaleX: 1 }, now)
-      show('data-scene', 'build')
-      animate('[data-cursor], [data-added]', { opacity: 0 }, now)
-      animate('[data-phone]', { opacity: 1, scale: 1 }, now)
-      animate('[data-state]', { opacity: 0 }, now)
-      animate('[data-state="live"], [data-live-url]', { opacity: 1, y: '0%' }, now)
-    }
-
     /** The empty pipeline, before the brief arrives. */
     const showStart = () => {
       animate('[data-step-active]', { opacity: 0 }, now)
@@ -210,11 +193,6 @@ function Pipeline() {
       animate('[data-state="idle"]', { opacity: 1 }, now)
       animate('[data-live-url]', { opacity: 0, y: '40%' }, now)
       animate('[data-added]', { opacity: 0, y: '-40%' }, now)
-    }
-
-    if (paused) {
-      showEnd()
-      return
     }
 
     let alive = true
@@ -367,7 +345,7 @@ function Pipeline() {
       alive = false
       scope.animations.forEach((control) => control.stop())
     }
-  }, [animate, paused, scope])
+  }, [animate, scope])
 
   return (
     <div
