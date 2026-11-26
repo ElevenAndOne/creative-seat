@@ -49,11 +49,11 @@ Figma's Seats set has eight Types: Director, Manager, Copywriter, Illustrator, D
 
 - **Background**: `mix-blend-multiply`. A white studio shot of the chair (its white drops out on the band, but its floor shadow stays), with the cut-out chair over it.
 - **Foreground**: the cut-out chair at normal blend, so it keeps its true colour.
-- **Animator** (glass chair): both layers are at 80% opacity, as in Figma.
+- **Animator** (glass chair): both layers are at 80% opacity, as in Figma. The opacity is baked into its renders.
 
-Assets: `public/images/cta/seats/<seat>-{shadow,chair}-{600,1200}.webp`. Figma exports a 1200 × 1968 image per layer. Each export is cropped to the square the Seats frame shows (the `object-cover` centre band) and then saved as 1200 and 600 px WebP. The shadow plate is opaque, and the chair keeps its alpha. Served with `srcset`/`sizes`.
+Assets: `public/images/cta/seats/<seat>-{background,foreground}.avif`, one 1080 × 1080 image per layer. Each is the Figma component (resized to 1080 in Figma), rendered on its own with a transparent background. Figma's plain export paints the parent frame's Soft Volt behind it, and that would hide the background layer's shadow. The background renders are flattened onto white, which looks the same under multiply. The foreground renders keep their alpha. Encoded as AVIF at quality 80 with 4:4:4 chroma: 23–52KB each, 42.8 dB PSNR against Figma's PNG. There is a single size, because the seat is drawn at 500–600 CSS px and that needs at least 1080 on any 2× screen.
 
-**Deviation: Illustrator.** Figma places it higher than the others (top −28.77%), which puts the mannequin's head at 5% of the square. The band's top edge clips that (−67px is about 11% of the square), and on phones it would overlap the button. The export moves it down 10%, so its top sits at about 15%, level with the other seats. All other seats keep Figma's crop exactly.
+**Deviation: Illustrator.** Figma places it higher than the others (top −28.77%), which puts the mannequin's head at 5% of the square. The band's top edge clips that (−67px is about 11% of the square), and on phones it would overlap the button. Both of its renders are moved down 10% (108px), so its top sits at about 15%, level with the other seats. All other seats are Figma's renders unchanged.
 
 ## 4. Seat of the day
 
