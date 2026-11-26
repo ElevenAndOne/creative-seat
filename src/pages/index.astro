@@ -52,7 +52,8 @@ const structuredData = homeStructuredData(Astro.site!, title, description)
     <Pricing client:idle />
     <CreditCalculator client:visible={nearViewport} />
     <Faq client:visible={nearViewport} />
-    <CtaBanner client:visible={nearViewport} />
+    <!-- Idle as well: the seat of the day is picked in the browser, so it's chosen and its images queued before the visitor scrolls down to it. -->
+    <CtaBanner client:idle />
   </main>
   <SiteFooter />
 </BaseLayout>
