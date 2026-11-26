@@ -16,55 +16,36 @@ const noSubscription = () => () => {}
  */
 const useSeatOfTheDay = () => useSyncExternalStore(noSubscription, () => seatOfTheDay(), () => null)
 
-/** The seat box is 139% of its column: ~600px beside the text, up to ~620px once stacked. */
-const SIZES = '(max-width: 48rem) min(128vw, 39rem), 37.5rem'
-
-function Plate({ seat, plate, onLoad }: { seat: Seat, plate: 'shadow' | 'chair', onLoad?: () => void }) {
-  const src = (size: number) => `/images/cta/seats/${seat}-${plate}-${size}.webp`
-  return (
-    <img
-      src={src(1200)}
-      srcSet={`${src(600)} 600w, ${src(1200)} 1200w`}
-      sizes={SIZES}
-      width={1200}
-      height={1200}
-      alt=""
-      loading="lazy"
-      decoding="async"
-      onLoad={onLoad}
-      className="absolute inset-0 size-full"
-    />
-  )
-}
-
 /**
- * One seat from Figma's Seats set, built as its two layers: the studio shot
- * multiplied into the band (its white drops out and the floor shadow stays),
- * then the cut-out chair over it at full colour. The glass Animator chair is
- * drawn at 80% in both layers, as Figma has it. Fades in once both images
- * have loaded. The fade sits on each layer, not on a wrapper: a translucent
- * wrapper would isolate the multiply and flash the white plate.
+ * One seat from Figma's Seats set, as its two layers rendered from Figma at
+ * 1080: the background (studio shot with the chair, on white) multiplied
+ * into the band, so the white drops out and the floor shadow stays, then the
+ * cut-out foreground chair over it at full colour. The glass Animator's 80%
+ * opacity is baked into its renders. Fades in once both have loaded. The fade
+ * sits on each layer, not on a wrapper: a translucent wrapper would isolate
+ * the multiply and flash the white plate.
  */
 function SeatOfTheDay({ seat }: { seat: Seat }) {
   const [loaded, setLoaded] = useState(0)
   const onLoad = () => setLoaded((n) => n + 1)
-  const layer = cn('absolute inset-0 transition-opacity duration-500 ease-out', loaded < 2 && 'opacity-0')
-  const tint = cn('absolute inset-0', seat === 'animator' && 'opacity-80')
+  const fade = cn('absolute inset-0 size-full transition-opacity duration-500 ease-out', loaded < 2 && 'opacity-0')
 
   return (
     // Figma: left −13.81%, right −25.42%, top −67px of the column, square.
     <div className="pointer-events-none absolute -top-[4.1875rem] -right-[25.42%] -left-[13.81%] aspect-square">
-      <div className={cn(layer, 'mix-blend-multiply')}>
-        <div className={tint}>
-          <Plate seat={seat} plate="shadow" onLoad={onLoad} />
-          <Plate seat={seat} plate="chair" />
-        </div>
-      </div>
-      <div className={layer}>
-        <div className={tint}>
-          <Plate seat={seat} plate="chair" onLoad={onLoad} />
-        </div>
-      </div>
+      {(['background', 'foreground'] as const).map((layer) => (
+        <img
+          key={layer}
+          src={`/images/cta/seats/${seat}-${layer}.avif`}
+          width={1080}
+          height={1080}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          onLoad={onLoad}
+          className={cn(fade, layer === 'background' && 'mix-blend-multiply')}
+        />
+      ))}
     </div>
   )
 }

@@ -6,7 +6,7 @@
  * midnight.
  *
  * The names follow Figma's Seats set (221:1886), one seat per creative role;
- * the images are `/images/cta/seats/<seat>-{shadow,chair}-{600,1200}.webp`.
+ * the images are `/images/cta/seats/<seat>-{background,foreground}.avif`.
  */
 export const SEATS = ['director', 'manager', 'copywriter', 'illustrator', 'designer', 'animator', 'strategist', 'developer'] as const
 export type Seat = (typeof SEATS)[number]
