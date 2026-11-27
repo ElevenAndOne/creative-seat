@@ -1,7 +1,7 @@
 # Spec: CTA band (`cta`)
 
 Source: Figma "Creative Seat (Website)" `v6Gj8f4rdhijK9VTa99NSh`, page `130:5279`. Desktop is the Section instance **`221:1924`** in the home frame (y 8191, 1440 × 333.47). Mobile is **`221:1968`** (320 wide, beside the frame). The seats are the component set **`221:1886`** (in frame `221:1840`): 8 Types × 2 Layers.
-Code: `src/sections/cta.tsx`, `src/utils/seat-of-the-day.ts`, and `public/images/cta/seats/`. The section is mounted in `src/pages/index.astro` with `client:idle`.
+Code: `src/sections/cta.tsx`, `src/utils/session-seat.ts`, and `public/images/cta/seats/`. The section is mounted in `src/pages/index.astro` with `client:idle`.
 
 This replaces the earlier two-column collage on Volt (`130:5744`).
 
@@ -55,15 +55,16 @@ Assets: `public/images/cta/seats/<seat>-{background,foreground}.avif`, one 1080 
 
 **Deviation: Illustrator.** Figma places it higher than the others (top −28.77%), which puts the mannequin's head at 5% of the square. The band's top edge clips that (−67px is about 11% of the square), and on phones it would overlap the button. Both of its renders are moved down 10% (108px), so its top sits at about 15%, level with the other seats. All other seats are Figma's renders unchanged.
 
-## 4. Seat of the day
+## 4. A new seat every session
 
-`seatOfTheDay()` in `src/utils/seat-of-the-day.ts` picks the seat:
+`sessionSeat()` in `src/utils/session-seat.ts` picks the seat:
 
-- Days are counted on the visitor's local calendar, so the seat changes at their midnight.
-- Each eight-day run shows all eight seats once. The order is shuffled by a seeded PRNG (mulberry32 + Fisher–Yates), with the run number as the seed. Every visitor sees the same seat on a given day.
-- If a run would open on the seat the previous run closed on, its first two days are swapped, so no seat appears two days in a row. (A ten-year simulation found no back-to-back repeats, and every seat appeared 456 or 457 times.)
+- Every new browser session (a new tab or window) gets a new seat. The seat is kept in `sessionStorage` (`cs-seat`), so reloads and navigation within the session keep it.
+- Seats are dealt from a shuffled deck kept in `localStorage` (`cs-seat-deck`: `{ deck, last }`). A returning visitor sees all eight before any comes back. A fresh deck never opens on the seat the last one ended on, so no seat appears two sessions in a row. A simulation of 4,000 sessions found no back-to-back repeats, every block of eight held all eight seats, and reloads were stable.
+- Where storage is blocked (private mode, site data off), it picks at random.
+- The pick is cached for the page load, so `useSyncExternalStore` reads a stable value.
 
-The page is prerendered, so a pick made at build time would go stale. The pick happens in the browser instead, through `useSyncExternalStore` with a `null` server snapshot. The server HTML has an empty seat column, so hydration matches. Once both images have loaded, the seat fades in over 500ms. The fade is set on each layer rather than on a wrapper, because a translucent wrapper would isolate the multiply and flash the white plate. The island uses `client:idle`, so the seat is picked and its images are queued before the visitor scrolls down. Without JavaScript, the band shows no chair. It is decorative (`aria-hidden`), so nothing is lost.
+The page is prerendered, so a pick made at build time would be the same for everyone. The pick happens in the browser instead, through `useSyncExternalStore` with a `null` server snapshot. The server HTML has an empty seat column, so hydration matches. Once both images have loaded, the seat fades in over 500ms. The fade is set on each layer rather than on a wrapper, because a translucent wrapper would isolate the multiply and flash the white plate. The island uses `client:idle`, so the seat is picked and its images are queued before the visitor scrolls down. Without JavaScript, the band shows no chair. It is decorative (`aria-hidden`), so nothing is lost.
 
 ## 5. Responsive
 

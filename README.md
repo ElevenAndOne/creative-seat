@@ -83,7 +83,7 @@ Build output goes to `dist/`, as before.
   - `process`: four steps in a fixed row — the open one wide on Soft Volt, the rest as narrow numbered columns — opening in turn while on screen (paused under the pointer or focus) or on click. Phones stack all four, open.
   - `faq`: the Base UI accordion.
 
-**`cta`** is the closing band on Soft Volt: the headline, a line of support and the Ink "Book a demo" pill, beside a chair from Figma's set of eight seats (`public/images/cta/seats/`) that bleeds off the band's bottom edge. The chair changes every day: each eight-day run shows all eight in a shuffled order seeded by the date, so every visitor sees the same one that day and none comes up twice running (`utils/seat-of-the-day.ts`). Each seat is two layers, a studio shot multiplied into the band for its floor shadow and the cut-out chair over it.
+**`cta`** is the closing band on Soft Volt: the headline, a line of support and the Ink "Book a demo" pill, beside a chair from Figma's set of eight seats (`public/images/cta/seats/`) that bleeds off the band's bottom edge. The chair changes with every new browser session and stays put through reloads: seats are dealt from a shuffled deck kept on the device, so a returning visitor sees all eight before any comes back, and never the same one twice running (`utils/session-seat.ts`). Each seat is two layers, a studio shot multiplied into the band for its floor shadow and the cut-out chair over it.
 
 ## Book a demo
 
