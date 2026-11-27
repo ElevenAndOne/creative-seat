@@ -5,16 +5,16 @@ import Heading from '../components/heading'
 import Paragraph from '../components/paragraph'
 import { cn } from '../utils/cn'
 import { demoPage } from '../utils/contact'
-import { seatOfTheDay, type Seat } from '../utils/seat-of-the-day'
+import { sessionSeat, type Seat } from '../utils/session-seat'
 
 const noSubscription = () => () => {}
 
 /**
- * Today's seat, worked out in the browser: the page is prerendered, so a pick
- * made at build time would go stale. Null on the server and while hydrating,
- * so the markup matches, then the visitor's own date.
+ * This session's seat, worked out in the browser: the page is prerendered, so
+ * a pick made at build time would be the same for everyone. Null on the
+ * server and while hydrating, so the markup matches.
  */
-const useSeatOfTheDay = () => useSyncExternalStore(noSubscription, () => seatOfTheDay(), () => null)
+const useSessionSeat = () => useSyncExternalStore(noSubscription, sessionSeat, () => null)
 
 /**
  * One seat from Figma's Seats set, as its two layers rendered from Figma at
@@ -54,11 +54,11 @@ function SeatOfTheDay({ seat }: { seat: Seat }) {
  * Closing campaign band on Soft Volt, as the Figma file sets it (221:1924,
  * Mobile 221:1968): a five-column grid with the Display headline, a line of
  * support and the Ink pill across three, and a seat across two that bleeds
- * off the band's bottom edge. The seat changes every day
- * (utils/seat-of-the-day.ts). Stacks at 768px and below.
+ * off the band's bottom edge. The seat changes with every new browser session
+ * (utils/session-seat.ts). Stacks at 768px and below.
  */
 export default function CtaBanner() {
-  const seat = useSeatOfTheDay()
+  const seat = useSessionSeat()
 
   return (
     <Section
